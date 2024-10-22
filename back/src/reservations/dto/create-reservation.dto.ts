@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreatePaxDto } from 'src/pax/dto/create-pax.dto';
 
 export class CreateReservationDto {
   @ApiProperty({ description: 'Indica si el huésped ingresó al hotel', example: true })
@@ -7,18 +8,13 @@ export class CreateReservationDto {
   @ApiProperty({ description: 'Indica si el huésped se retiró del hotel', example: false })
   checkOut: boolean;
 
-  @ApiProperty()
-  pax: {
-    name: string;
-    lastname: string;
-    email: string;
-    dniPassport: string; 
-    phone:string;
-    birthdate: Date
-  };
+  @ApiProperty({ description: 'Información del pasajero', type: CreatePaxDto }) 
+  pax: CreatePaxDto;
 
+  @ApiProperty({ description: 'Número de pasajeros', example: 1 }) 
+  PaxNum: number;
 
-  @ApiProperty({ description: 'Tipo de pasajero'})
+  @ApiProperty({ description: 'Tipo de pasajero (ejemplo: 1 para adulto, 2 para niño)', example: 1 })
   paxType: number;
 
   @ApiProperty({ description: 'Plataforma origen de la reserva', example: 'Booking.com' })

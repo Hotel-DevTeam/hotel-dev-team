@@ -1,16 +1,20 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query, InternalServerErrorException, NotFoundException, ParseUUIDPipe, BadRequestException, Req, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { ApiTags, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger'; // Importa los decoradores necesarios
 import { ReservationService } from './reservation.service';
-import { UpdateReservaDto } from './dto/update-reservation.dto';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { plainToClass } from 'class-transformer';
 import { Reservation } from './entities/reservation.entity';
 
+@ApiTags('reservas') 
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @HttpCode(200)
   @Get('/')
+  @ApiResponse({ status: 200, description: 'Lista de reservas obtenida exitosamente.' }) 
+  @ApiQuery({ name: 'completed', required: false, type: Boolean, description: 'Filtrar reservas completadas o no' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Límite de reservas por página' }) 
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página para la paginación' }) 
   async getReservations(
     @Query('page', ParseIntPipe) page = 1, 
     @Query('limit', ParseIntPipe) limit = 5,
@@ -27,6 +31,9 @@ export class ReservationsController {
 
   @HttpCode(200)
   @Get('/findEmail')
+  @ApiResponse({ status: 200, description: 'Reserva encontrada por email.' }) 
+  @ApiResponse({ status: 404, description: 'Reserva no encontrada.' }) 
+  @ApiQuery({ name: 'email', required: true, description: 'Email de la reserva a buscar' }) 
   async getReservationByMail(@Query('email') email: string) {
     try {
       return await this.reservationService.getReservationByMail(email);
@@ -37,6 +44,9 @@ export class ReservationsController {
 
   @HttpCode(200)
   @Get('/:id')
+  @ApiResponse({ status: 200, description: 'Reserva encontrada por ID.' }) 
+  @ApiResponse({ status: 404, description: 'Reserva no encontrada.' }) 
+  @ApiParam({ name: 'id', required: true, description: 'ID de la reserva a buscar' }) 
   async getReservationById(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const reservation = await this.reservationService.getReservationById(id);
@@ -48,17 +58,14 @@ export class ReservationsController {
       throw new NotFoundException('Error al buscar la reserva por ID');
     }
   }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ status: 201, description: 'Reserva creada exitosamente.' }) 
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' }) 
   async createReservation(
     @Body() createReservationDto: CreateReservationDto,
   ): Promise<Reservation> {
     return await this.reservationService.createReservation(createReservationDto);
   }
 }
-
-
-
-
-/* Una ruta que permita cargar nuevas reservas y traer todas las reservas existentes, con todos sus datos. 
-La ruta get debería poder filtrar entre finalizadas y no finalizadas, y devolver las reservas que cumplan esa condición */
