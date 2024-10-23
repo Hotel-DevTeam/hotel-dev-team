@@ -38,7 +38,7 @@ export default function LoginForm() {
                 setTimeout(() => {
                     setShowNotification(false);
                 }, 3000);
-                router.push("/home");
+                router.push("/ubicaciones");
             } else {
                 setNotificationMessage("Usuario Inválido");
                 setShowNotification(true);

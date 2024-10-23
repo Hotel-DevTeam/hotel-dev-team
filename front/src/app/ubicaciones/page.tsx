@@ -4,6 +4,8 @@ import React from 'react'
 //Agregar renderizado en caso de login
 export default function page() {
   return (
-   <Ubicaciones/>
+    <div className='bg-gray-100'>
+    <Ubicaciones/>
+    </div>
   )
 }
