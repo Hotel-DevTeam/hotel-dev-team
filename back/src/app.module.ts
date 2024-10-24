@@ -8,6 +8,8 @@ import typeOrmConfig from './config/typeorm';
 import { ExchangeRateController } from './dollar/dollar.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ExchangeRateService } from './dollar/dollar.service';
+import { UsersModule } from './modules/Users/users.module';
+import { AuthModule } from './modules/Auth/auth.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { ExchangeRateService } from './dollar/dollar.service';
       useFactory: (config: ConfigService) => config.get('typeorm'),
     }),
     ReservationModule,
-    HttpModule
+    HttpModule,
+    UsersModule,
+    AuthModule
   ],
   controllers: [AppController,ExchangeRateController],
   providers: [AppService,ExchangeRateService],

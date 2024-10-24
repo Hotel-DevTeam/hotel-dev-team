@@ -8,6 +8,7 @@ async function bootstrap() {
     .setTitle('API de Reserva')
     .setDescription('Documentación de la API para el sistema de reservas')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('reservas')
     .build();
 
