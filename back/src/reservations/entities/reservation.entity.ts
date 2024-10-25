@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Pax } from 'src/pax/entity/pax.entity';
 import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Room } from 'src/modules/Rooms/entities/rooms.entity';
 
 @Entity({ name: 'reservations' })
 export class Reservation {
@@ -62,4 +63,7 @@ export class Reservation {
   @Column()
   @ApiProperty({ description: 'Indica si la reserva está completada'})
   completed: boolean;
+
+  @ManyToOne(() => Room, (room) => room.reservations)
+  room: Room;
 }
