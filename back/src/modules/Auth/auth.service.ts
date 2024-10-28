@@ -4,6 +4,7 @@ import { Users } from "../Users/entities/users.entity";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { UsersService } from "../Users/users.service";
+import { Role } from "../Users/roles.enum";
 
 @Injectable()
 export class AuthService {
@@ -32,17 +33,15 @@ export class AuthService {
         if (!email || !password) throw new BadRequestException('Email or password are required');
 
         const user = await this.userRepository.getUserByEmail(email);
-
         if (!user) throw new BadRequestException('Invalid Credentials');
 
         const validPassword = await bcrypt.compare(password, user.password);
-
         if (!validPassword) throw new BadRequestException('Invalid Credentials');
 
         const payload = {
             id: user.id,
             email: user.email,
-            role: user.isAdmin ? 'admin' : user.roles 
+            role: user.isAdmin ? Role.Admin : user.role, 
         };
 
         const token = this.jwtService.sign(payload);
@@ -54,16 +53,37 @@ export class AuthService {
     }
 
     async signUp(user: Partial<Users>) {
-        const { email, password } = user;
+        const { email, password, role } = user;
 
         const foundUser = await this.userRepository.getUserByEmail(email);
         if (foundUser) throw new BadRequestException('Registered Email');
 
+        if (!Object.values(Role).includes(role as Role)) {
+            throw new BadRequestException('Invalid role. Allowed roles are: admin, receptionist, employee');
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        return await this.userRepository.createUser({
+        const newUser = await this.userRepository.createUser({
             ...user, 
             password: hashedPassword,
         });
+
+        const payload = {
+            id: newUser.id,
+            email: newUser.email,
+            role: newUser.isAdmin ? Role.Admin : newUser.role,
+        };
+
+        const token = this.jwtService.sign(payload);
+
+        return {
+            message: 'User Registered',
+            token,
+        };
     }
 }
+
+
+
+

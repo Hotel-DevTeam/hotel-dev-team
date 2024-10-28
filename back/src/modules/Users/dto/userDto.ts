@@ -83,7 +83,7 @@ export class CreateUserDto {
 }
 
 // DTO para el login
-export class LoginUserDto extends PickType(CreateUserDto, ['email', 'password', 'name']) {}
+export class LoginUserDto extends PickType(CreateUserDto, ['email', 'password']) {}
 
 // DTO para la actualización de usuario
 export class UpdateUserDto extends PickType(CreateUserDto, ['name', 'email', 'role']) {}

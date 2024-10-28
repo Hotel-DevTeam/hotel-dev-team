@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
+import { Role } from '../roles.enum';
 
 @Entity({ name: 'Users' })
 export class Users {
@@ -26,14 +27,17 @@ export class Users {
   @ApiProperty({ description: 'Password of the user', example: 'micontraseña' }) 
   password: string;
 
-  @Column({ default: false })
-  @ApiProperty({ description: 'Is user an admin', example: false }) 
-  isAdmin: boolean;
-
-  @Column('simple-array', { nullable: true }) 
-  @ApiProperty({ description: 'Roles of the user', example: ['admin', 'employee'] }) 
-  roles: string[];
+  @Column({ type: 'enum', enum: Role, default: Role.Admin })
+  @ApiProperty({ description: 'User role', example: 'admin' })
+  role: Role;
 
   @OneToMany(() => Location, (location) => location.admin)
   location: Location[];
+
+  // Getter para isAdmin, no se almacena en la base de datos
+  @ApiProperty({ description: 'Indicates if the user is an Admin', example: true })
+  get isAdmin(): boolean {
+    return this.role === Role.Admin;
+  }
 }
+
