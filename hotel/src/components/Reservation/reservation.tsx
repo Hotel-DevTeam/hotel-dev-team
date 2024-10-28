@@ -9,7 +9,7 @@ import {
 const ReservationsList: React.FC = () => {
   const [reservations, setReservations] = useState<any[]>([]);
   const [filteredReservations, setFilteredReservations] = useState<any[]>([]);
-  const [filter, setFilter] = useState<"all" | "completed" | "notCompleted">(
+  const [filter, setFilter] = useState<"all" | "completed" | "notCompleted">(  
     "all"
   );
 
