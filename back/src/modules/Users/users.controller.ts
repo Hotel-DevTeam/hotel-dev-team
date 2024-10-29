@@ -16,7 +16,6 @@ export class UsersController {
 
   @Get()
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   getUsers(@Query('page') page: number = 1, @Query('limit') limit: number = 2) {
     return this.usersService.getAllUsers(page, limit);
   }
