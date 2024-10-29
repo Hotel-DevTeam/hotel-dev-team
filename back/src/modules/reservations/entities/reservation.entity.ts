@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Pax } from 'src/pax/entity/pax.entity';
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Pax } from 'src/modules/pax/entity/pax.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Room } from 'src/modules/Rooms/entities/rooms.entity';
 
 @Entity({ name: 'reservations' })
@@ -16,9 +16,6 @@ export class Reservation {
   @Column()
   @ApiProperty({ description: 'Indica si el huésped se retiró del hotel' })
   checkOut: boolean;
-
-  /* @Column()
-  habitacion: //idEntidadHabitacion */
 
   @ManyToOne(() => Pax, (pax) => pax.reservations) 
   @ApiProperty({ description: 'Pasajero asociado a la reserva' })

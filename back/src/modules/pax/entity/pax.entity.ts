@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Reservation } from 'src/reservations/entities/reservation.entity';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'pax' })
