@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Pax } from 'src/pax/entity/pax.entity';
+import { Pax } from 'src/modules/pax/entity/pax.entity';
 import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Room } from 'src/modules/Rooms/entities/rooms.entity';
 

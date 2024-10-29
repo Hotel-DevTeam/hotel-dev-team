@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Location } from '../../Location/entities/location.entity';
-import { Reservation } from '../../../reservations/entities/reservation.entity';
+import { Reservation } from '../../reservations/entities/reservation.entity';
 
 @Entity('rooms')
 export class Room {

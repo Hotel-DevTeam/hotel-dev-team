@@ -3,13 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ReservationModule } from './reservations/reservation.module';
+import { ReservationModule } from './modules/reservations/reservation.module';
 import typeOrmConfig from './config/typeorm';
-import { ExchangeRateController } from './dollar/dollar.controller';
+import { ExchangeRateController } from './modules/dollar/dollar.controller';
 import { HttpModule } from '@nestjs/axios';
-import { ExchangeRateService } from './dollar/dollar.service';
+import { ExchangeRateService } from './modules/dollar/dollar.service';
 import { UsersModule } from './modules/Users/users.module';
 import { AuthModule } from './modules/Auth/auth.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { AuthModule } from './modules/Auth/auth.module';
     ReservationModule,
     HttpModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    ProductsModule
   ],
   controllers: [AppController,ExchangeRateController],
   providers: [AppService,ExchangeRateService],

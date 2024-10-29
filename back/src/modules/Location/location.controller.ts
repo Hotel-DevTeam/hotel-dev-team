@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post, Put, Get, UseGuards, Request } from '@ne
 import { LocationService } from './location.service';
 import { Location } from '../Location/entities/location.entity';
 import { RoomService } from '../Rooms/rooms.service';
-import { CreateReservationDto } from 'src/reservations/dto/create-reservation.dto';
+import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
 import { AuthGuard } from '../Auth/guards/auth.guard';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { CreateRoomDto } from '../Rooms/dto/create-room.dto';
