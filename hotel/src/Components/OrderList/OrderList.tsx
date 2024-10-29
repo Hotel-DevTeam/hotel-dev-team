@@ -24,6 +24,8 @@ const OrderPage: React.FC = () => {
               {order.product.price * order.quantity} <br />
               <strong>Usuario:</strong> {order.user} <br />
               <strong>Número de habitación:</strong> {order.roomNumber} <br />
+              <strong>Fecha:</strong> {order.date} <br />{" "}
+              
               <button
                 onClick={() => removeOrder(order.product.id)}
                 className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded transition-colors"

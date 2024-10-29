@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Order, Product } from "../Interfaces/interfaces";
 
 interface OrderContextType {
@@ -19,11 +19,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [orders, setOrders] = useState<Order[]>(() => {
-    // Cargar las órdenes desde localStorage al iniciar
-    const storedOrders = localStorage.getItem("orders");
-    return storedOrders ? JSON.parse(storedOrders) : [];
-  });
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const addOrder = (
     product: Product,
@@ -36,24 +32,16 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({
       quantity,
       user,
       roomNumber,
+      date: new Date().toLocaleDateString(), 
     };
-    const updatedOrders = [...orders, newOrder];
-    setOrders(updatedOrders);
-    // Guardar las órdenes actualizadas en localStorage
-    localStorage.setItem("orders", JSON.stringify(updatedOrders));
+    setOrders((prevOrders) => [...prevOrders, newOrder]);
   };
 
   const removeOrder = (id: number) => {
-    const updatedOrders = orders.filter((order) => order.product.id !== id);
-    setOrders(updatedOrders);
-    // Guardar las órdenes actualizadas en localStorage
-    localStorage.setItem("orders", JSON.stringify(updatedOrders));
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order.product.id !== id)
+    );
   };
-
-  useEffect(() => {
-    // Guardar las órdenes en localStorage cada vez que cambien
-    localStorage.setItem("orders", JSON.stringify(orders));
-  }, [orders]);
 
   return (
     <OrderContext.Provider value={{ orders, addOrder, removeOrder }}>

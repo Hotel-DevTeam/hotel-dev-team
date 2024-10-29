@@ -21,6 +21,7 @@ export interface Room {
 export interface Order {
   product: Product;
   quantity: number;
-  user: string;          
-  roomNumber: string;   
+  user: string;
+  roomNumber: string;
+  date: string;
 }
