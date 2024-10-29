@@ -11,11 +11,11 @@ const OrderPage: React.FC = () => {
       {orders.length === 0 ? (
         <p className="text-gray-600">No hay órdenes realizadas.</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {orders.map((order, index) => (
-            <li
+            <div
               key={index}
-              className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+              className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow border border-gray-300"
             >
               <strong>Producto:</strong> {order.product.name} <br />
               <strong>Cantidad:</strong> {order.quantity} <br />
@@ -30,9 +30,9 @@ const OrderPage: React.FC = () => {
               >
                 Eliminar
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useOrderContext } from "../../context/OrderContext";
 import { products, users, rooms } from "../../helpers/helpers";
+import Swal from "sweetalert2";
 
 const CreateOrder: React.FC = () => {
   const { addOrder } = useOrderContext();
@@ -11,12 +12,21 @@ const CreateOrder: React.FC = () => {
   const [user, setUser] = useState<string>("");
   const [roomNumber, setRoomNumber] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const product = products.find((p) => p.id === selectedProductId);
     if (product) {
       addOrder(product, quantity, user, roomNumber);
-      // Reset form fields
+
+    
+      await Swal.fire({
+        title: "Orden Agregada!",
+        text: `Se ha agregado con éxito la orden de ${quantity} unidades de ${product.name}.`,
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
+
+   
       setSelectedProductId(0);
       setQuantity(1);
       setUser("");
