@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateLocationDto {
+
   @ApiProperty({ description: 'Name of the location' })
   @IsNotEmpty()
   @IsString()
@@ -12,3 +13,5 @@ export class CreateLocationDto {
   @IsString()
   address: string;
 }
+
+export class UpdateLocationDto extends PickType(CreateLocationDto, ['name', 'address']) {}

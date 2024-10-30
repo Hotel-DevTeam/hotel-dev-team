@@ -10,6 +10,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ExchangeRateService } from './dollar/dollar.service';
 import { UsersModule } from './modules/Users/users.module';
 import { AuthModule } from './modules/Auth/auth.module';
+import { LocationModule } from './modules/Location/location.module';
+import { RoomModule } from './modules/Rooms/rooms.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { AuthModule } from './modules/Auth/auth.module';
     ReservationModule,
     HttpModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    LocationModule,
+    RoomModule
   ],
   controllers: [AppController,ExchangeRateController],
   providers: [AppService,ExchangeRateService],

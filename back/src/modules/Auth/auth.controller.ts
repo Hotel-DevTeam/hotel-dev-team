@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, UnauthorizedException, Headers} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto, LoginUserDto } from "../Users/dto/userDto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Users } from "../Users/entities/users.entity";
 
 
@@ -12,6 +12,7 @@ export class AuthController{
 
     @Get()
     @ApiBearerAuth()
+    @ApiOperation({summary: 'Traer a todos los usuarios'})
     async getAuth(@Headers('authorization') authHeader: string): Promise<Users>{
         if(!authHeader){
             throw new UnauthorizedException('Autorization header is missing');
@@ -21,6 +22,7 @@ export class AuthController{
     }
 
     @Post('/login')
+    @ApiOperation({summary: 'Iniciar Sesión'})
     async signIn(@Body() credentials: LoginUserDto) {
         const { email, password } = credentials;
 
@@ -29,6 +31,7 @@ export class AuthController{
     
 
     @Post('/register')
+    @ApiOperation({summary: 'Registrarse (Crear un nuevo usuario)'})
     signUp(@Body() user: CreateUserDto){
         return this.AuthService.signUp(user)
     }
