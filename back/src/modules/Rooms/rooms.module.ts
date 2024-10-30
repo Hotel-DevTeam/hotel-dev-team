@@ -7,13 +7,15 @@ import { Room } from './entities/rooms.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Room]),
-  JwtModule.register({
-    secret: process.env.JWT_SECRET,  
-    signOptions: { expiresIn: '3h' },
-  }),],
+  imports: [
+    TypeOrmModule.forFeature([Room]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '3h' },
+    }),
+  ],
   controllers: [RoomController],
   providers: [RoomService, RoomsRepository],
-  exports: [RoomsRepository,RoomService], 
+  exports: [RoomsRepository, RoomService],
 })
 export class RoomModule {}

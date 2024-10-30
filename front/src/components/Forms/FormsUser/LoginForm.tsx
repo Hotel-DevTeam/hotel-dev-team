@@ -1,6 +1,7 @@
 "use client"
 import { fetchLoginUser } from '@/components/Fetchs/UserFetchs/UserFetchs';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
+import { validationLogin } from '@/utils/validationFormLogin';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -13,47 +14,45 @@ export default function LoginForm() {
     });
     const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState("");
-    const [errors, setErrors] = useState({ email: "", password: "" });
+    const [errors, setErrors] = useState({} as { [key: string]: string });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUserData({ ...userData, [name]: value });
+    
+        const { errors } = validationLogin({ ...userData, [name]: value });
+        setErrors(errors);  
     };
-
-  
-
+    
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-       
-        const credentials = {
-            email: userData.email,
-            password: userData.password
-        };
-
-        try {
-            const success = await fetchLoginUser(credentials);
-            if (success) {
-                setNotificationMessage("Has ingresado correctamente");
+        const { formIsValid, errors } = validationLogin(userData);
+    
+        if (formIsValid) {
+            const credentials = { email: userData.email, password: userData.password };
+    
+            try {
+                const success = await fetchLoginUser(credentials);
+                if (success) {
+                    setNotificationMessage("Has ingresado correctamente");
+                    setShowNotification(true);
+                    setTimeout(() => setShowNotification(false), 3000);
+                    router.push("/ubicaciones");
+                } else {
+                    setNotificationMessage("Usuario Inválido");
+                    setShowNotification(true);
+                    setTimeout(() => setShowNotification(false), 3000);
+                }
+            } catch  {
+                setNotificationMessage("Ocurrió un error, intenta de nuevo");
                 setShowNotification(true);
-                setTimeout(() => {
-                    setShowNotification(false);
-                }, 3000);
-                router.push("/ubicaciones");
-            } else {
-                setNotificationMessage("Usuario Inválido");
-                setShowNotification(true);
-                setTimeout(() => {
-                    setShowNotification(false);
-                }, 3000);
+                setTimeout(() => setShowNotification(false), 3000);
             }
-        } catch (error) {
-            setNotificationMessage("Ocurrió un error, intenta de nuevo");
-            setShowNotification(true);
-            setTimeout(() => {
-                setShowNotification(false);
-            }, 3000);
+        } else {
+            setErrors(errors);
         }
     };
+    
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-16 sm:px-6 lg:px-8">
@@ -65,13 +64,14 @@ export default function LoginForm() {
 
                 <form onSubmit={onSubmit} className="mt-8 py-20 space-y-6 rounded-lg border border-gray-300 bg-white p-8 shadow-xl">
                     <div>
+                    <label htmlFor="email" className="sr-only"></label>
                         <div className="relative">
                             <input
                                 type="email"
                                 name="email"
                                 value={userData.email}
                                 onChange={handleChange}
-                                className={`w-full rounded-lg border border-gray-300 py-5 px-4 pr-12 text-sm shadow-sm focus:outline-none transition duration-300 ${errors.email ? 'border-red-500' : ''}`}
+                                className={`w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 pr-12 text-sm shadow-sm focus:outline-none transition duration-300`}
                                 placeholder="Email"
                             />
                             <span className="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -84,21 +84,16 @@ export default function LoginForm() {
                     </div>
 
                     <div>
+                    <label htmlFor="password" className="sr-only"></label>
                         <div className="relative">
                             <input
                                 type="password"
                                 name="password"
                                 value={userData.password}
                                 onChange={handleChange}
-                                className={`w-full rounded-lg border border-gray-300 py-5 px-4 pr-12 text-sm shadow-sm focus:outline-none transition duration-300 ${errors.password ? 'border-red-500' : ''}`}
+                                className={`w-full rounded-lg border border-gray-300 py-5 px-4 pr-12 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300`}
                                 placeholder="Contraseña"
                             />
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </span>
                         </div>
                         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                     </div>
@@ -113,7 +108,7 @@ export default function LoginForm() {
                     </div>
 
                     <div className="flex justify-center">
-                        <Link href="register" className="text-center text-sm text-gray-500 hover:cursor-pointer hover:font-bold">
+                        <Link href="/register" className="text-center text-sm text-gray-500 hover:cursor-pointer hover:font-bold">
                             ¿No posees cuenta? Haz clic para registrarte
                         </Link>
                     </div>

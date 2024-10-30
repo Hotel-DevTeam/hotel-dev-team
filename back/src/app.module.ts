@@ -29,9 +29,9 @@ import { ProductsModule } from './modules/products/products.module';
     UsersModule,
     AuthModule,
     LocationModule,
-    RoomModule
+    RoomModule,
   ],
-  controllers: [AppController,ExchangeRateController],
-  providers: [AppService,ExchangeRateService],
+  controllers: [AppController, ExchangeRateController],
+  providers: [AppService, ExchangeRateService],
 })
 export class AppModule {}

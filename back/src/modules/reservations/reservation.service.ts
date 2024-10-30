@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  Reservation } from './entities/reservation.entity';
+import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
 
@@ -15,7 +19,8 @@ export class ReservationService {
   ) {}
   async getReservations(page: number, limit: number, completed?: boolean) {
     try {
-      const query = this.reservationsRepository.createQueryBuilder('reservation');
+      const query =
+        this.reservationsRepository.createQueryBuilder('reservation');
       if (completed !== undefined) {
         query.where('reservation.completed = :completed', { completed });
       }
@@ -42,14 +47,16 @@ export class ReservationService {
       const reservation = await this.reservationsRepository.findOne({
         where: {
           pax: {
-            email, 
+            email,
           },
         },
-        relations: ['pax'], 
+        relations: ['pax'],
       });
       console.log('Reserva encontrada:', reservation);
       if (!reservation) {
-        throw new NotFoundException(`Reserva no encontrada para el email: ${email}`);
+        throw new NotFoundException(
+          `Reserva no encontrada para el email: ${email}`,
+        );
       }
       return reservation;
     } catch (error) {
@@ -60,25 +67,22 @@ export class ReservationService {
   async getReservationById(id: string): Promise<Partial<Reservation>> {
     try {
       const reservation = await this.reservationsRepository.findOne({
-        where: { id }        
+        where: { id },
       });
       if (!reservation) {
         throw new NotFoundException('Reserva no encontrada');
       }
       return reservation;
     } catch (error) {
-      throw new NotFoundException(
-        'Error al buscar la reserva por ID',
-      );
+      throw new NotFoundException('Error al buscar la reserva por ID');
     }
   }
 
   async createReservation(createReservationDto: CreateReservationDto) {
-   let visitor = await this.paxRepository.findOne({
+    let visitor = await this.paxRepository.findOne({
       where: { email: createReservationDto.pax.email },
     });
 
-    
     if (!visitor) {
       visitor = this.paxRepository.create({
         name: createReservationDto.pax.name,
@@ -90,10 +94,10 @@ export class ReservationService {
       });
       await this.paxRepository.save(visitor);
     }
-    
+
     const reservation = this.reservationsRepository.create({
       ...createReservationDto,
-      pax: visitor, 
+      pax: visitor,
     });
     return await this.reservationsRepository.save(reservation);
   }

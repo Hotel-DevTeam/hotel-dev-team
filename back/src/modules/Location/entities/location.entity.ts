@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
 import { Room } from '../../Rooms/entities/rooms.entity';
 
@@ -17,5 +23,5 @@ export class Location {
   admin: Users;
 
   @OneToMany(() => Room, (room) => room.location)
-   rooms: Room[];
+  rooms: Room[];
 }

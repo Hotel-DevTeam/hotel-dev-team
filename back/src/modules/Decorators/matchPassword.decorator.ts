@@ -1,21 +1,24 @@
-import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-
+import {
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator';
 
 @ValidatorConstraint({
-    name: 'MatchPassword', 
-    async: false,
+  name: 'MatchPassword',
+  async: false,
 })
-export class MatchPassword implements ValidatorConstraintInterface{
+export class MatchPassword implements ValidatorConstraintInterface {
+  validate(
+    password: any,
+    args?: ValidationArguments,
+  ): Promise<boolean> | boolean {
+    if (password !== (args.object as any)[args.constraints[0]]) return false;
 
-    validate(password: any, args?: ValidationArguments): Promise<boolean> | boolean {
+    return true;
+  }
 
-        if(password !== (args.object as any) [args.constraints[0]]) return false;
-
-        return true
-        
-    }
-
-    defaultMessage(args?: ValidationArguments): string {
-        return 'Password and password confirmation dont match'
-    }
+  defaultMessage(args?: ValidationArguments): string {
+    return 'Password and password confirmation dont match';
+  }
 }

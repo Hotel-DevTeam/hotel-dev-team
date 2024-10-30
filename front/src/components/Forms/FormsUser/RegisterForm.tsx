@@ -1,0 +1,192 @@
+"use client";
+import { fetchLoginUser, fetchRegisterUser } from '@/components/Fetchs/UserFetchs/UserFetchs';
+import { IUserRegister, Role } from '@/components/Interfaces/IUser';
+import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
+import { validationRegister } from '@/utils/validationFormRegister';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+
+
+export default function RegisterForm() {
+    const router = useRouter();
+    const [userRegister, setUserRegister] = useState<IUserRegister>({
+        email: '',
+        name: '',
+        password: '',
+        confirmPassword: '',
+        role: Role.Recep 
+    });
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState('');
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [showErrorNotification, setShowErrorNotification] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
+        const updatedUser = { ...userRegister, [name]: value };
+        setUserRegister(updatedUser);
+        setErrors(validationRegister(updatedUser));
+    };
+
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const user: IUserRegister = { ...userRegister };
+
+        try {
+            const isRegistered = await fetchRegisterUser(user);
+            if (isRegistered) {
+                setNotificationMessage("Registro exitoso");
+                setShowNotification(true);
+                setTimeout(async () => {
+                    await fetchLoginUser({ email: user.email, password: user.password });
+                    router.push("/ubicaciones");
+                }, 2000);
+            } else {
+                setErrors({ ...errors, general: "Registro inválido. Por favor, revisa los datos ingresados." });
+            }
+        } catch (error) {
+            setErrorMessage(error instanceof Error ? error.message : "Error desconocido.");
+            setShowErrorNotification(true);
+            setTimeout(() => setShowErrorNotification(false), 3000);
+        }
+    };
+
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8 sm:py-16 sm:px-6 lg:px-8">
+            <div className="w-full max-w-lg p-4">
+                <div className="text-center mb-6">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                        ¡Bienvenido a HotelDev!
+                    </h1>
+                    <p className="mt-2 text-gray-500">
+                        Crea tu cuenta para realizar reservas
+                    </p>
+                </div>
+
+                <form
+                    onSubmit={onSubmit}
+                    className="space-y-6 rounded-lg border border-gray-300 bg-white p-6 shadow-lg"
+                >
+                    <div>
+                        <label htmlFor="email" className="sr-only"></label>
+                        <div className="relative">
+                            <input
+                                type="email"
+                                name="email"
+                                value={userRegister.email}
+                                onChange={handleChange}
+                                className={`w-full rounded-lg border py-4 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300`}
+                                placeholder="Email"
+                            />
+                            <span className="absolute inset-y-0 right-4 flex items-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5 text-gray-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                                    />
+                                </svg>
+                            </span>
+                        </div>
+                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="name" className="sr-only"></label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={userRegister.name}
+                            onChange={handleChange}
+                            className={`w-full rounded-lg border py-4 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300`}
+                            placeholder="Nombre"
+                        />
+                        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-700"></label>
+                        <select
+                            name="role"
+                            value={userRegister.role}
+                            onChange={handleChange}
+                            className="w-full rounded-lg border py-4 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300"
+                        >
+                            <option value={Role.Admin}>Admin</option>
+                            <option value={Role.Recep}>Recepcionista</option>
+                            <option value={Role.Emplo}>Empleado</option>
+                        </select>
+                        {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role}</p>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="sr-only"></label>
+                        <div className="relative">
+                            <input
+                                type="password"
+                                name="password"
+                                value={userRegister.password}
+                                onChange={handleChange}
+                                className="w-full rounded-lg border border-gray-300 py-5 px-4 pr-12 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300"
+                                placeholder="Contraseña"
+                            />
+                        </div>
+                        {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="confirmPassword" className="sr-only"></label>
+                        <div className="relative text-gray-500">
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={userRegister.confirmPassword}
+                                onChange={handleChange}
+                                className={`w-full rounded-lg border border-gray-300 py-5 px-4 pr-12 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300`}
+                                placeholder="Confirmar Contraseña"
+                            />
+                        </div>
+                        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+                    </div>
+
+                    <div className="flex justify-center">
+                        <button
+                            type="submit"
+                            className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                        >
+                            Registrarme
+                        </button>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <Link href="/login" className="text-sm text-gray-500 hover:underline">
+                            ¿Ya posees cuenta? Haz clic para ingresar
+                        </Link>
+                    </div>
+
+                    {showNotification && (
+                        <div className="absolute top-12 left-0 right-0 mx-auto w-max">
+                            <NotificationsForms message={notificationMessage} />
+                        </div>
+                    )}
+                    {showErrorNotification && (
+                        <div className="absolute top-20 left-0 right-0 mx-auto w-max bg-red-500 text-white py-2 px-4 rounded">
+                            {errorMessage}
+                        </div>
+                    )}
+                </form>
+            </div>
+        </div>
+    );
+}

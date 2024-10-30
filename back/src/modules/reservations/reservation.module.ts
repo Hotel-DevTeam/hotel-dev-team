@@ -6,7 +6,7 @@ import { Reservation } from './entities/reservation.entity';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reservation,Pax])],
+  imports: [TypeOrmModule.forFeature([Reservation, Pax])],
   controllers: [ReservationsController],
   providers: [ReservationService],
 })

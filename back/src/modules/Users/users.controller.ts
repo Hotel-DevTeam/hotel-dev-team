@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, ParseUUIDPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  ParseUUIDPipe,
+  Patch,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../Auth/guards/auth.guard';
 import { Roles } from '../Decorators/roles.decorator';
@@ -36,7 +48,10 @@ export class UsersController {
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiBody({ type: UpdateUserDto })
-  async updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() user: Partial<Users>) {
+  async updateUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() user: Partial<Users>,
+  ) {
     return this.usersService.updateUser(id, user);
   }
 
@@ -48,8 +63,10 @@ export class UsersController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  async convertUser(@Param('id', ParseUUIDPipe) id: string, @Body() user: Partial<Users>) {
+  async convertUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() user: Partial<Users>,
+  ) {
     return this.usersService.updateUser(id, user);
   }
 }
-

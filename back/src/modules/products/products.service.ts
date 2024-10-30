@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,7 +13,7 @@ import { Repository } from 'typeorm';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private readonly productsRepository: Repository<Product>
+    private readonly productsRepository: Repository<Product>,
   ) {}
 
   async createProduct(createProductDto: CreateProductDto) {
@@ -25,7 +29,9 @@ export class ProductsService {
     try {
       return await this.productsRepository.find();
     } catch (error) {
-      throw new InternalServerErrorException('Error al obtener la lista de productos');
+      throw new InternalServerErrorException(
+        'Error al obtener la lista de productos',
+      );
     }
   }
 
@@ -41,31 +47,37 @@ export class ProductsService {
       return product;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al buscar el producto con id ${id}`);
+      throw new InternalServerErrorException(
+        `Error al buscar el producto con id ${id}`,
+      );
     }
   }
 
   async updateProduct(id: string, updateProductDto: UpdateProductDto) {
     try {
-      const product = await this.findOneById(id); 
+      const product = await this.findOneById(id);
 
       Object.assign(product, updateProductDto);
       return await this.productsRepository.save(product);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al actualizar el producto con id ${id}`);
+      throw new InternalServerErrorException(
+        `Error al actualizar el producto con id ${id}`,
+      );
     }
   }
 
   async removeProduct(id: string) {
     try {
-      const product = await this.findOneById(id); 
+      const product = await this.findOneById(id);
 
       product.Activo = false;
       return await this.productsRepository.save(product);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al eliminar el producto con id ${id}`);
+      throw new InternalServerErrorException(
+        `Error al eliminar el producto con id ${id}`,
+      );
     }
   }
 }
