@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreatePaxDto } from 'src/pax/dto/create-pax.dto';
+import { CreatePaxDto } from 'src/modules/pax/dto/create-pax.dto';
 
 export class CreateReservationDto {
   @ApiProperty({ description: 'Indica si el huésped ingresó al hotel', example: true })
