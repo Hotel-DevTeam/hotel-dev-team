@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { INotificationProps } from '../Interfaces/IUser';
+import { INotificationProps } from '../../Interfaces/IUser';
 
 export const NotificationsForms: React.FC<INotificationProps> = ({ message }) => {
   return (

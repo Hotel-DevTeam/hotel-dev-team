@@ -1,8 +1,10 @@
-import { ILoginUser, IUserRegister } from "@/components/Interfaces/IUser";
+import { ILoginUser,IUserRegister } from "@/Interfaces/IUser";
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchLoginUser = async (credentials: ILoginUser) => {
+
     const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {

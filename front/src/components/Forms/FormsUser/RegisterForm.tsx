@@ -1,6 +1,6 @@
 "use client";
 import { fetchLoginUser, fetchRegisterUser } from '@/components/Fetchs/UserFetchs/UserFetchs';
-import { IUserRegister, Role } from '@/components/Interfaces/IUser';
+import { IUserRegister,Role } from '@/Interfaces/IUser';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import { validationRegister } from '@/utils/validationFormRegister';
 import Link from 'next/link';
