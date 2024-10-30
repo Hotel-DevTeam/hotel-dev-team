@@ -18,3 +18,5 @@ export const rooms: Room[] = [
   { id: 3, roomNumber: "303", type: "suite" },
 ];
 
+////////////////////////
+

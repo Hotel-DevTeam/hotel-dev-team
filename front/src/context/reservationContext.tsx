@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { Reservation, Room } from "../interfaces/interfaces";
+import { Reservation, Room } from "../Interfaces/IReservation";
 
 interface ReservationContextType {
   reservations: Reservation[];

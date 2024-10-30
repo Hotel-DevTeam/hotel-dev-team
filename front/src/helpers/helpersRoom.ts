@@ -1,4 +1,4 @@
-import { Room } from "../interfaces/interfaces";
+import { Room } from "../Interfaces/IReservation";
 
 export const rooms: Room[] = [
   {
