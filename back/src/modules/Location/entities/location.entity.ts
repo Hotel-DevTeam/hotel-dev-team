@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
 import { Room } from '../../Rooms/entities/rooms.entity';
+import { Caja } from 'src/modules/caja/entities/caja.entity';
 
 @Entity('location')
 export class Location {
@@ -18,4 +19,7 @@ export class Location {
 
   @OneToMany(() => Room, (room) => room.location)
    rooms: Room[];
+
+   @OneToMany(() => Caja, (caja) => caja.ubicacion)
+    caja: Caja[];
 }

@@ -11,6 +11,7 @@ import { ExchangeRateService } from './modules/dollar/dollar.service';
 import { UsersModule } from './modules/Users/users.module';
 import { AuthModule } from './modules/Auth/auth.module';
 import { ProductsModule } from './modules/products/products.module';
+import { CajaModule } from './modules/caja/caja.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProductsModule } from './modules/products/products.module';
     HttpModule,
     UsersModule,
     AuthModule,
-    ProductsModule
+    ProductsModule,
+    CajaModule
   ],
   controllers: [AppController,ExchangeRateController],
   providers: [AppService,ExchangeRateService],

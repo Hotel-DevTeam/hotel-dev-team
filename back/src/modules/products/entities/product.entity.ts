@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Tipo } from "../products.enum";
 import { IsEnum, IsUrl } from "class-validator";
+import { Caja } from "src/modules/caja/entities/caja.entity";
 
 @Entity({ name: 'products' })
 export class Product {
@@ -26,6 +27,10 @@ export class Product {
     @Column()
     @IsUrl()
     foto:string
+
+    @OneToOne(() => Caja, caja => caja.id)
+    caja: Caja
+
 
     //location
 

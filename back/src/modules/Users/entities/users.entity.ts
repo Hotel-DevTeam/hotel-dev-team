@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Role } from '../roles.enum';
+import { Caja } from 'src/modules/caja/entities/caja.entity';
 
 @Entity({ name: 'Users' })
 export class Users {
@@ -39,5 +40,9 @@ export class Users {
   get isAdmin(): boolean {
     return this.role === Role.Admin;
   }
+
+  @OneToMany(() => Caja, (caja) => caja.usuario)
+  caja: Caja[];
+  
 }
 
