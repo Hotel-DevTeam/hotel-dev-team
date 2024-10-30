@@ -20,7 +20,6 @@ export const ReservationProvider: React.FC<{
   rooms: Room[];
 }> = ({ children, rooms }) => {
   const [reservations, setReservations] = useState<Reservation[]>(() => {
-    // Cargar reservas desde localStorage al iniciar
     const savedReservations = localStorage.getItem("reservations");
     return savedReservations ? JSON.parse(savedReservations) : [];
   });
@@ -28,25 +27,24 @@ export const ReservationProvider: React.FC<{
   const addReservation = (reservation: Reservation) => {
     const newReservations = [...reservations, reservation];
     setReservations(newReservations);
-    localStorage.setItem("reservations", JSON.stringify(newReservations)); // Guardar en localStorage
+    localStorage.setItem("reservations", JSON.stringify(newReservations));
   };
 
   const removeReservation = (index: number) => {
     const newReservations = reservations.filter((_, i) => i !== index);
     setReservations(newReservations);
-    localStorage.setItem("reservations", JSON.stringify(newReservations)); // Guardar en localStorage
+    localStorage.setItem("reservations", JSON.stringify(newReservations));
   };
 
   const finalizeReservation = (reservation: Reservation) => {
     const newReservations = reservations.map((res) =>
-      res === reservation ? { ...res, finalized: true } : res
+      res.id === reservation.id ? { ...res, finalized: true } : res
     );
     setReservations(newReservations);
-    localStorage.setItem("reservations", JSON.stringify(newReservations)); // Guardar en localStorage
+    localStorage.setItem("reservations", JSON.stringify(newReservations));
   };
 
   useEffect(() => {
-    // Sincronizar reservas con localStorage
     localStorage.setItem("reservations", JSON.stringify(reservations));
   }, [reservations]);
 

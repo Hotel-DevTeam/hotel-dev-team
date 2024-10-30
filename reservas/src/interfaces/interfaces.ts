@@ -1,10 +1,11 @@
 export interface Reservation {
+  id: string; 
   checkInDate: string;
   checkOutDate: string;
   roomId: number | null;
   passengers: string;
   passengerCount: number;
-  passengerType: string;
+  passengerType?: string; 
   reservationMethod: string;
   breakfastIncluded: boolean;
   totalPrice: number;
@@ -20,8 +21,8 @@ export interface Room {
   id: number;
   roomNumber: string;
   description: string;
-  capacity: number; 
-  price: number; 
-  priceUSD: number; 
-  breakfastIncluded: boolean; 
+  capacity: number;
+  price: number;
+  priceUSD: number;
+  breakfastIncluded: boolean;
 }

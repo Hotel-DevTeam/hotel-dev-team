@@ -6,8 +6,8 @@ export const rooms: Room[] = [
     roomNumber: "101",
     description: "Habitación estándar con cama doble.",
     capacity: 2,
-    price: 100, // Precio por noche en la moneda local
-    priceUSD: 20, // Precio por noche en USD
+    price: 100, 
+    priceUSD: 20,
     breakfastIncluded: false,
   },
   {

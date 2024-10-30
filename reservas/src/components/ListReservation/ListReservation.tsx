@@ -23,8 +23,8 @@ const ListReservation: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.map((reservation: Reservation, index: number) => (
-              <tr key={index}>
+            {reservations.map((reservation: Reservation) => (
+              <tr key={reservation.id}>
                 <td className="border px-4 py-2">{reservation.checkInDate}</td>
                 <td className="border px-4 py-2">{reservation.checkOutDate}</td>
                 <td className="border px-4 py-2">{reservation.roomId}</td>
