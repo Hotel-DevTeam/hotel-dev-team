@@ -1,12 +1,13 @@
 "use client"
-import { fetchLoginUser } from '@/components/Fetchs/UserFetchs/UserFetchs';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
+import { UserContext } from '@/context/UserContext';
 import { validationLogin } from '@/utils/validationFormLogin';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 export default function LoginForm() {
+    const {signIn} = useContext(UserContext);
     const router = useRouter();
     const [userData, setUserData] = useState({
         email: "",
@@ -32,12 +33,12 @@ export default function LoginForm() {
             const credentials = { email: userData.email, password: userData.password };
     
             try {
-                const success = await fetchLoginUser(credentials);
+                const success = await signIn(credentials);
                 if (success) {
                     setNotificationMessage("Has ingresado correctamente");
                     setShowNotification(true);
                     setTimeout(() => setShowNotification(false), 3000);
-                    router.push("/ubicaciones");
+                    router.push("/location");
                 } else {
                     setNotificationMessage("Usuario Inválido");
                     setShowNotification(true);

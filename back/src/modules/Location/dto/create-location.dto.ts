@@ -12,9 +12,9 @@ export class CreateLocationDto {
   @IsString()
   address: string;
 
-  @ApiProperty({description: 'img Url'})
+  @ApiProperty({ description: 'img Url' })
   @IsString()
-  imgUrl:string;
+  imgUrl: string;
 }
 
 export class UpdateLocationDto extends PickType(CreateLocationDto, [

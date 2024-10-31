@@ -23,11 +23,10 @@ export class LocationService {
   async getAllLocationsByAdmin(adminId: string): Promise<Location[]> {
     return this.locationRepository.findAllLocationsByAdmin(adminId);
   }
-  
+
   async getLocationById(locationId: string): Promise<Location> {
     return this.locationRepository.findLocationById(locationId);
   }
-  
 
   async updateLocation(
     locationId: string,
