@@ -21,6 +21,17 @@ export class LocationRepository {
     return await this.locationRepository.save(location);
   }
 
+  async findAllLocationsByAdmin(adminId: string): Promise<Location[]> {
+    return await this.locationRepository.find({
+      where: { admin: { id: adminId } },
+    });
+  }
+  
+  async findLocationById(locationId: string): Promise<Location> {
+    return await this.locationRepository.findOne({ where: { id: locationId } });
+  }
+  
+
   async updateLocation(
     locationId: string,
     data: Partial<Location>,

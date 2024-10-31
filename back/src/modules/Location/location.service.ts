@@ -20,6 +20,15 @@ export class LocationService {
     return this.locationRepository.createLocation(data, adminId);
   }
 
+  async getAllLocationsByAdmin(adminId: string): Promise<Location[]> {
+    return this.locationRepository.findAllLocationsByAdmin(adminId);
+  }
+  
+  async getLocationById(locationId: string): Promise<Location> {
+    return this.locationRepository.findLocationById(locationId);
+  }
+  
+
   async updateLocation(
     locationId: string,
     data: Partial<Location>,

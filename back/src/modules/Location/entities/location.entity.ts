@@ -19,6 +19,9 @@ export class Location {
   @Column()
   address: string;
 
+  @Column()
+  imgUrl:string;
+
   @ManyToOne(() => Users, (user) => user.location)
   admin: Users;
 
