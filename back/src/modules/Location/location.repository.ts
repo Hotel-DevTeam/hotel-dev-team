@@ -26,11 +26,10 @@ export class LocationRepository {
       where: { admin: { id: adminId } },
     });
   }
-  
+
   async findLocationById(locationId: string): Promise<Location> {
     return await this.locationRepository.findOne({ where: { id: locationId } });
   }
-  
 
   async updateLocation(
     locationId: string,

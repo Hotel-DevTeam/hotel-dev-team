@@ -4,10 +4,11 @@ export interface ILoginUser {
 }
 
 export enum Role {
-    Admin = 'admin',
-    Recep = 'receptionist',
-    Emplo = 'employee',
-  }
+  Admin = 'admin',
+  Recep = 'receptionist',
+  Emplo = 'employee',
+}
+
 export interface IUserRegister {
     email:string;
     name:string;
@@ -40,5 +41,15 @@ export interface IUserContextType {
   }
 
   export interface ILoginResponse {
+    message: string;
     token: string;
   }
+  
+
+  export interface ILocation {
+    id?:string;
+    name:string;
+    address:string;
+    imgUrl:string;
+  }
+  

@@ -9,7 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:3001', // Origen permitido
     methods: 'GET,POST,PUT,DELETE,OPTIONS', // Métodos permitidos
-    credentials: true, // Permitir envío de cookies/sesiones
+    credentials: true,
   });
 
   // Configuración de Swagger

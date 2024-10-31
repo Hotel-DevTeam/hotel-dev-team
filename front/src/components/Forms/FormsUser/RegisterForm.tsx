@@ -1,14 +1,15 @@
 "use client";
-import { fetchLoginUser, fetchRegisterUser } from '@/components/Fetchs/UserFetchs/UserFetchs';
 import { IUserRegister,Role } from '@/Interfaces/IUser';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import { validationRegister } from '@/utils/validationFormRegister';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { UserContext } from '@/context/UserContext';
 
 
 export default function RegisterForm() {
+    const {signUp} = useContext(UserContext);
     const router = useRouter();
     const [userRegister, setUserRegister] = useState<IUserRegister>({
         email: '',
@@ -37,13 +38,12 @@ export default function RegisterForm() {
         const user: IUserRegister = { ...userRegister };
 
         try {
-            const isRegistered = await fetchRegisterUser(user);
+            const isRegistered = await signUp(user);
             if (isRegistered) {
                 setNotificationMessage("Registro exitoso");
                 setShowNotification(true);
                 setTimeout(async () => {
-                    await fetchLoginUser({ email: user.email, password: user.password });
-                    router.push("/ubicaciones");
+                    router.push("/location");
                 }, 2000);
             } else {
                 setErrors({ ...errors, general: "Registro inválido. Por favor, revisa los datos ingresados." });
@@ -117,15 +117,11 @@ export default function RegisterForm() {
 
                     <div>
                         <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-700"></label>
-                        <select
-                            name="role"
-                            value={userRegister.role}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border py-4 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300"
+                        <select name="role" value={userRegister.role} onChange={handleChange} className="w-full rounded-lg border py-4 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300"
                         >
-                            <option value={Role.Admin}>Admin</option>
-                            <option value={Role.Recep}>Recepcionista</option>
-                            <option value={Role.Emplo}>Empleado</option>
+                         <option value={Role.Admin}>Admin</option>
+                         <option value={Role.Recep}>Recepcionista</option>
+                         <option value={Role.Emplo}>Empleado</option>
                         </select>
                         {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role}</p>}
                     </div>

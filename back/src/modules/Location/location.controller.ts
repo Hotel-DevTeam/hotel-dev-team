@@ -55,22 +55,26 @@ export class LocationController {
   }
 
   @Get(':locationId')
-   @Roles(Role.Admin)  
-   @ApiOperation({ summary: 'Obtener una ubicación por ID' })
-   @ApiResponse({ status: 200, description: 'Ubicación encontrada.' })
-   @ApiResponse({ status: 404, description: 'Ubicación no encontrada.' })
-  async getLocationById(@Param('locationId') locationId: string): Promise<Location> {
-  return await this.locationService.getLocationById(locationId);
+  @Roles(Role.Admin)
+  @ApiOperation({ summary: 'Obtener una ubicación por ID' })
+  @ApiResponse({ status: 200, description: 'Ubicación encontrada.' })
+  @ApiResponse({ status: 404, description: 'Ubicación no encontrada.' })
+  async getLocationById(
+    @Param('locationId') locationId: string,
+  ): Promise<Location> {
+    return await this.locationService.getLocationById(locationId);
   }
 
-
   @Get('admin/locations')
-  @Roles(Role.Admin)  
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Obtener todas las ubicaciones del administrador' })
-  @ApiResponse({ status: 200, description: 'Ubicaciones del administrador obtenidas.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Ubicaciones del administrador obtenidas.',
+  })
   async getAllLocationsByAdmin(@Request() req): Promise<Location[]> {
-  return await this.locationService.getAllLocationsByAdmin(req.user.id);
- }
+    return await this.locationService.getAllLocationsByAdmin(req.user.id);
+  }
 
   @Put(':locationId')
   @ApiBearerAuth()

@@ -1,6 +1,6 @@
 "use client";
-import { ILoginResponse, IUserRegister,IUserResponse, ILoginUser } from "@/components/Interfaces/IUser";
-import { IUserContextType } from "@/components/Interfaces/IUser";
+import { ILoginResponse,IUserRegister,ILoginUser,IUserResponse } from "@/Interfaces/IUser";
+import { IUserContextType } from "@/Interfaces/IUser";
 import { fetchLoginUser, fetchRegisterUser } from "@/components/Fetchs/UserFetchs/UserFetchs";
 import { createContext, useEffect, useState } from "react";
 
@@ -28,54 +28,44 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signIn = async (credentials: ILoginUser): Promise<boolean> => {
     try {
-      const data: ILoginResponse = await fetchLoginUser(credentials);
-      if (data) {
-        if (typeof window !== "undefined") {
-          const userData = {
-            token: data.token,
-          };
-          localStorage.setItem("authData", JSON.stringify(userData));
-  
-          setUser({
-            token: data.token,
-          });
-  
-          setToken(data.token);
-          setIsLogged(true);
-  
-         
-  
-          return true; 
+        const data: ILoginResponse = await fetchLoginUser(credentials);
+        
+        if (data?.token) {  
+          if (typeof window !== "undefined") {
+              localStorage.setItem("token", data.token); 
+                setUser({ token: data.token });
+                setToken(data.token);
+                setIsLogged(true);
+                
+                console.log(data.message); 
+                return true;
+            }
+        } else {
+            console.error("Login failed. User may not exist.");
+            return false;
         }
-        console.error("Window object is not available");
-        return false; 
-      } else {
-        console.error("Login failed. User may not exist.");
-        return false; 
-      }
     } catch (error) {
-      console.error("Error during sign in:", error);
-      return false;
+        console.error("Error during sign in:", error);
+        return false;
     }
     return false;
-  };
+};
   
-
-  const signUp = async (user: IUserRegister): Promise<boolean> => {
-    try {
+const signUp = async (user: IUserRegister): Promise<boolean> => {
+  try {
       const data = await fetchRegisterUser(user);
       if (data) {
-        await signIn({ email: user.email, password: user.password });
-        return true;
+          await signIn({ email: user.email, password: user.password });
+          return true; 
       }
       console.error(`Registration failed: ${JSON.stringify(data)}`);
-      return false;
-    } catch (error) {
+      return false; 
+  } catch (error) {
       console.error(`Error during sign up: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      throw new Error(error instanceof Error ? error.message : 'Error desconocido');
+      throw new Error(error instanceof Error ? error.message : 'Error desconocido'); 
+  }
+};
 
-    }
-  };
 
 
   useEffect(() => {

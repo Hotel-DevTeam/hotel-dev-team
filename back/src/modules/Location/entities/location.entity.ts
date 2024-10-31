@@ -20,7 +20,7 @@ export class Location {
   address: string;
 
   @Column()
-  imgUrl:string;
+  imgUrl: string;
 
   @ManyToOne(() => Users, (user) => user.location)
   admin: Users;
