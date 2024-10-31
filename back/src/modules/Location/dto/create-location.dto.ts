@@ -11,6 +11,10 @@ export class CreateLocationDto {
   @IsNotEmpty()
   @IsString()
   address: string;
+
+  @ApiProperty({description: 'img Url'})
+  @IsString()
+  imgUrl:string;
 }
 
 export class UpdateLocationDto extends PickType(CreateLocationDto, [
