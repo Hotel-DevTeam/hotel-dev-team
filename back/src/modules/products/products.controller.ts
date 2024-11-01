@@ -3,9 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -36,7 +36,7 @@ export class ProductsController {
     return this.productsService.findOneById(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar un producto existente' })
   @ApiParam({ name: 'id', description: 'ID del producto' })
   updateProduct(
