@@ -26,7 +26,7 @@ export class UsersService {
     return this.usersRepository.deleteUser(id);
   }
 
-  async findOneById(id:string){
-    return await this.usersRepository.findOneById(id)
-}
+  async findOneById(id: string) {
+    return await this.usersRepository.findOneById(id);
+  }
 }

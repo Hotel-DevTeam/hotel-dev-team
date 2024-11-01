@@ -10,20 +10,32 @@ export class LocationRepository {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  async createLocation(data: Partial<Location>, adminId: string): Promise<Location> {
-    const location = this.locationRepository.create({ ...data, admin: { id: adminId } });
+  async createLocation(
+    data: Partial<Location>,
+    adminId: string,
+  ): Promise<Location> {
+    const location = this.locationRepository.create({
+      ...data,
+      admin: { id: adminId },
+    });
     return await this.locationRepository.save(location);
   }
 
-  async updateLocation(locationId: string, data: Partial<Location>): Promise<Location> {
+  async findAllLocationsByAdmin(adminId: string): Promise<Location[]> {
+    return await this.locationRepository.find({
+      where: { admin: { id: adminId } },
+    });
+  }
+
+  async findLocationById(locationId: string): Promise<Location> {
+    return await this.locationRepository.findOne({ where: { id: locationId } });
+  }
+
+  async updateLocation(
+    locationId: string,
+    data: Partial<Location>,
+  ): Promise<Location> {
     await this.locationRepository.update(locationId, data);
     return this.locationRepository.findOne({ where: { id: locationId } });
   }
 }
-
-
-
-
-
-
-

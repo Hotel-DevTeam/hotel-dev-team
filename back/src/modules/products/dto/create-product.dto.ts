@@ -1,20 +1,33 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Tipo } from "../products.enum";
+import { ApiProperty } from '@nestjs/swagger';
+import { Tipo } from '../products.enum';
 
 export class CreateProductDto {
+  @ApiProperty({
+    description: 'Tipo de producto',
+    example: 'Consumible/Servicio',
+  })
+  tipo: Tipo;
 
-    @ApiProperty({ description: 'Tipo de producto', example: 'Consumible/Servicio' })
-    tipo: Tipo;
+  @ApiProperty({ description: 'Nombre del producto', example: 'Coca Cola' })
+  nombre: string;
 
-    @ApiProperty({ description: 'Nombre del producto', example: 'Coca Cola' })
-    nombre: string;
+  @ApiProperty({
+    description: 'Indica si el producto está activo',
+    example: true,
+    default: true,
+  })
+  Activo: boolean;
 
-    @ApiProperty({ description: 'Indica si el producto está activo', example: true, default: true })
-    Activo: boolean;
+  @ApiProperty({
+    description: 'URL de la imagen del producto',
+    example: 'https://www.example.com/image.jpg',
+  })
+  foto: string;
 
-    @ApiProperty({ description: 'URL de la imagen del producto', example: 'https://www.example.com/image.jpg' })
+  @ApiProperty({ description: 'URL de la imagen del producto', example: 'https://www.example.com/image.jpg' })
     foto: string;
 
-    @ApiProperty({ description: 'Ubicación del producto', example: 'Hotel Villa Rosarito' })
+  @ApiProperty({ description: 'Ubicación del producto', example: 'Hotel Villa Rosarito' })
     ubicacion: string;
+
 }

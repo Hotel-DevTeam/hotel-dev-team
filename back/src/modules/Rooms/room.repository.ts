@@ -11,7 +11,10 @@ export class RoomsRepository {
   ) {}
 
   async createRoom(locationId: string, data: Partial<Room>): Promise<Room> {
-    const room = this.roomRepository.create({ ...data, location: { id: locationId } });
+    const room = this.roomRepository.create({
+      ...data,
+      location: { id: locationId },
+    });
     return await this.roomRepository.save(room);
   }
 
@@ -27,5 +30,3 @@ export class RoomsRepository {
     });
   }
 }
-
-

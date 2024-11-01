@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
 import { Room } from '../../Rooms/entities/rooms.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -13,6 +19,9 @@ export class Location {
 
   @Column()
   address: string;
+
+  @Column()
+  imgUrl: string;
 
   @ManyToOne(() => Users, (user) => user.location)
   admin: Users;

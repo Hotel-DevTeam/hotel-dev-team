@@ -1,4 +1,4 @@
 export enum Tipo {
-    Consumible = 'Consumible',
-    Servicio = 'Servicio',
-  }
+  Consumible = 'Consumible',
+  Servicio = 'Servicio',
+}
