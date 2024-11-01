@@ -9,9 +9,6 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @PrimaryGeneratedColumn('uuid')
-    id: string;
-
   @Column({
       type: 'enum',
       enum: Tipo,
