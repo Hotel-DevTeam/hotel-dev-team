@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
 import { Room } from '../../Rooms/entities/rooms.entity';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Entity('location')
 export class Location {
@@ -26,5 +27,9 @@ export class Location {
   admin: Users;
 
   @OneToMany(() => Room, (room) => room.location)
-  rooms: Room[];
+   rooms: Room[];
+
+   @OneToMany(() => Product, (product) => product.ubicacion)
+   products: Product[]; 
+
 }

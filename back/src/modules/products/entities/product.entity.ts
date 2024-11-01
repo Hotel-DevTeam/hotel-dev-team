@@ -1,37 +1,39 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Tipo } from '../products.enum';
-import { IsEnum, IsUrl } from 'class-validator';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Tipo } from "../products.enum";
+import { IsEnum, IsUrl } from "class-validator";
+import { Location } from "src/modules/Location/entities/location.entity";
+
 
 @Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @PrimaryGeneratedColumn('uuid')
+    id: string;
+
   @Column({
-    type: 'enum',
-    enum: Tipo,
-  })
+      type: 'enum',
+      enum: Tipo,
+    })
   @IsEnum(Tipo)
-  tipo: Tipo;
+   tipo:Tipo
 
   @Column()
-  nombre: string;
+   nombre: string
 
   @Column({
-    default: true,
-  })
-  Activo: boolean;
+      default:true
+         })
+   Activo: boolean
 
   @Column()
   @IsUrl()
-  foto: string;
+   foto:string
 
-  //location
+ @ManyToOne(() => Location, (location) => location.products)
+  ubicacion: Location;
+
 }
 
-/* -Tipo: Selección (Consumible, servicio)
--Nombre
--Activo: Buleano (defecto True)
--Foto: Char, para un URL
--Ubicación: Apunta a ubicación
-*/
+
