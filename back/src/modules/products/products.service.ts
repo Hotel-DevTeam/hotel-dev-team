@@ -20,7 +20,7 @@ export class ProductsService {
     try {
       const newProduct = this.productsRepository.create(createProductDto);
       return await this.productsRepository.save(newProduct);
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Error al crear el producto');
     }
   }
@@ -28,7 +28,7 @@ export class ProductsService {
   async findAll() {
     try {
       return await this.productsRepository.find();
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException(
         'Error al obtener la lista de productos',
       );

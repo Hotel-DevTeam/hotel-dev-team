@@ -27,9 +27,8 @@ export class Location {
   admin: Users;
 
   @OneToMany(() => Room, (room) => room.location)
-   rooms: Room[];
+  rooms: Room[];
 
-   @OneToMany(() => Product, (product) => product.ubicacion)
-   products: Product[]; 
-
+  @OneToMany(() => Product, (product) => product.ubicacion)
+  products: Product[];
 }

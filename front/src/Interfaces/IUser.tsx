@@ -53,3 +53,27 @@ export interface IUserContextType {
     imgUrl:string;
   }
   
+export enum Tipo {
+  Consumible = 'Consumible',
+  Servicio = 'Servicio'
+}
+
+export interface IProduct {
+  id:string;
+  tipo: Tipo;
+  nombre:string;
+  Activo:boolean;
+  foto:string;
+  ubicacion:ILocation;
+}
+
+export interface IProductsPageProps {
+  products: IProduct[];
+}
+
+
+export interface ICardProductProps {
+  product: IProduct;
+  onToggleStatus: (id: string) => void; 
+  onEdit: (id: string) => void;       
+}
