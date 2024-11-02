@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ICardProductProps } from '@/Interfaces/IUser';
 import Image from 'next/image';
 
+
 const CardProduct: React.FC<ICardProductProps> = ({ product, onToggleStatus, onEdit }) => {
     return (
         <div className="border rounded-lg p-4 shadow">

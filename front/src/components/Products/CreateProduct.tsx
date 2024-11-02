@@ -1,7 +1,7 @@
 "use client"; 
 import { fetchUploadProduct } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import React, { useState } from 'react';
-import ImageUpload from '@/components/Cloudinary/imageUpload';
+import ImageUpload from '../Cloudinary/ImageUpload';
 import { IProduct, Tipo } from '@/Interfaces/IUser'; 
 import { NotificationsForms } from '../Notifications/NotificationsForms';
 
@@ -72,7 +72,7 @@ const UploadProductComponent = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <span>{error}</span>} {/* Muestra el mensaje de error si existe */}
+      {error && <span>{error}</span>}
       {successMessage && <NotificationsForms message={successMessage} />}
       
       <select name="tipo" value={product.tipo} onChange={handleInputChange}>
