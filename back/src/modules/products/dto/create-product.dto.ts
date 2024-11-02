@@ -18,10 +18,15 @@ export class CreateProductDto {
   })
   Activo: boolean;
 
-  @ApiProperty({ description: 'URL de la imagen del producto', example: 'https://www.example.com/image.jpg' })
-    foto: string;
+  @ApiProperty({
+    description: 'URL de la imagen del producto',
+    example: 'https://www.example.com/image.jpg',
+  })
+  foto: string;
 
-  @ApiProperty({ description: 'Ubicación del producto', example: 'Hotel Villa Rosarito' })
-    ubicacion: string;
-
+  @ApiProperty({
+    description: 'Ubicación del producto',
+    example: 'Hotel Villa Rosarito',
+  })
+  ubicacion: string;
 }
