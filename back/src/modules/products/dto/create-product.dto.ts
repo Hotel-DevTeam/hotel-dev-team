@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Tipo } from '../products.enum';
+import { Location } from 'src/modules/Location/entities/location.entity';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -28,5 +29,5 @@ export class CreateProductDto {
     description: 'Ubicación del producto',
     example: 'Hotel Villa Rosarito',
   })
-  ubicacion: string;
+  ubicacion: Location;
 }
