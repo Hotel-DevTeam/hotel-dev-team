@@ -8,7 +8,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('products')
 @Injectable()
 export class ProductsService {
   constructor(
@@ -16,6 +18,9 @@ export class ProductsService {
     private readonly productsRepository: Repository<Product>,
   ) {}
 
+  @ApiOperation({ summary: 'Crear un nuevo producto' })
+  @ApiResponse({ status: 201, description: 'El producto ha sido creado.' })
+  @ApiResponse({ status: 500, description: 'Error al crear el producto.' })
   async createProduct(createProductDto: CreateProductDto) {
     try {
       const newProduct = this.productsRepository.create(createProductDto);
@@ -25,6 +30,9 @@ export class ProductsService {
     }
   }
 
+  @ApiOperation({ summary: 'Obtener todos los productos' })
+  @ApiResponse({ status: 200, description: 'Lista de productos.' })
+  @ApiResponse({ status: 500, description: 'Error al obtener la lista de productos.' })
   async findAll() {
     try {
       return await this.productsRepository.find();
@@ -35,6 +43,10 @@ export class ProductsService {
     }
   }
 
+  @ApiOperation({ summary: 'Obtener un producto por ID' })
+  @ApiResponse({ status: 200, description: 'Producto encontrado.' })
+  @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error al buscar el producto.' })
   async findOneById(id: string): Promise<Product> {
     try {
       console.log(`Buscando producto id ${id}`);
@@ -53,6 +65,10 @@ export class ProductsService {
     }
   }
 
+  @ApiOperation({ summary: 'Actualizar un producto' })
+  @ApiResponse({ status: 200, description: 'Producto actualizado.' })
+  @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error al actualizar el producto.' })
   async updateProduct(id: string, updateProductDto: UpdateProductDto) {
     try {
       const product = await this.findOneById(id);
@@ -67,6 +83,10 @@ export class ProductsService {
     }
   }
 
+  @ApiOperation({ summary: 'Eliminar un producto' })
+  @ApiResponse({ status: 200, description: 'Producto eliminado.' })
+  @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error al eliminar el producto.' })
   async removeProduct(id: string) {
     try {
       const product = await this.findOneById(id);
