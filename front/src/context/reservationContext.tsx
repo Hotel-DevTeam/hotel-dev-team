@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { Reservation, Room } from "../Interfaces/IReservation";
+import { rooms } from "@/helpers/helpersRoom"; 
 
 interface ReservationContextType {
   reservations: Reservation[];
@@ -17,8 +18,7 @@ const ReservationContext = createContext<ReservationContextType | undefined>(
 
 export const ReservationProvider: React.FC<{
   children: React.ReactNode;
-  rooms: Room[];
-}> = ({ children, rooms }) => {
+}> = ({ children }) => {
   const [reservations, setReservations] = useState<Reservation[]>(() => {
     const savedReservations = localStorage.getItem("reservations");
     return savedReservations ? JSON.parse(savedReservations) : [];

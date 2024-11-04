@@ -1,6 +1,6 @@
 "use client";
 
-import { useReservationContext } from "../../../../reservas/src/context/reservationContext";
+import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 
 const ListReservation: React.FC = () => {
