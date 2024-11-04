@@ -15,6 +15,7 @@ import { RoomModule } from './modules/Rooms/rooms.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SalesOrderModule } from './modules/SalesOrder/salesOrder.module';
 import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.module';
+import { CajaModule } from './modules/caja/caja.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.mo
     RoomModule,
     ProductsModule,
     SalesOrderModule,
-    SalesOrderLineModule
+    SalesOrderLineModule,
+    CajaModule
   ],
   controllers: [AppController, ExchangeRateController],
   providers: [AppService, ExchangeRateService],
