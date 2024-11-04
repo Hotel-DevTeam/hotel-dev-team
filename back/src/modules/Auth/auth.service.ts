@@ -56,6 +56,7 @@ export class AuthService {
     return {
       message: 'Logged-in User',
       token,
+      role: user.role, 
     };
   }
 
@@ -81,7 +82,7 @@ export class AuthService {
     const payload = {
       id: newUser.id,
       email: newUser.email,
-      role: newUser.isAdmin ? Role.Admin : newUser.role,
+      role: newUser.role,
     };
 
     const token = this.jwtService.sign(payload);
@@ -89,6 +90,8 @@ export class AuthService {
     return {
       message: 'User Registered',
       token,
+      role: newUser.role, 
     };
   }
 }
+

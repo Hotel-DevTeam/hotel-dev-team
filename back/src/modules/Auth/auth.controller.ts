@@ -21,7 +21,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Traer a todos los usuarios' })
   async getAuth(@Headers('authorization') authHeader: string): Promise<Users> {
     if (!authHeader) {
-      throw new UnauthorizedException('Autorization header is missing');
+      throw new UnauthorizedException('Authorization header is missing');
     }
     const token = authHeader.split(' ')[1];
     return this.AuthService.getAuth(token);
@@ -31,7 +31,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Iniciar Sesión' })
   async signIn(@Body() credentials: LoginUserDto) {
     const { email, password } = credentials;
-
     return await this.AuthService.signIn(email, password);
   }
 
