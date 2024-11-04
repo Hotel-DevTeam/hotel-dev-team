@@ -18,7 +18,9 @@ export default function Productspage() {
     if (!isAdmin) {
       setNotificationMessage("Debes ser administrador para ver los productos");
       setShowNotification(true);
-      router.push("/");
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } else {
       setLoading(false);
     }
@@ -37,4 +39,5 @@ export default function Productspage() {
       {showNotification && <NotificationsForms message={notificationMessage} />}
     </>
   );
+
 }

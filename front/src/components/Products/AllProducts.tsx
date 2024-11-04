@@ -1,4 +1,3 @@
-"use client"
 import React, { useEffect, useState, useContext } from "react";
 import { fetchGetProducts } from "../Fetchs/ProductsFetchs/ProductsFetchs";
 import CardProduct from "./cardProduct";
@@ -32,21 +31,20 @@ export default function AllProducts() {
     }, [token]); 
 
     const handleToggleStatus = (id: string) => {
-     
         console.log("Toggle status for product ID:", id);
     };
 
     const handleEdit = (id: string) => {
-     
         console.log("Edit product ID:", id);
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>; // Muestra un indicador de carga
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Productos</h1>
             {products.map(product => (
                 <CardProduct 
                     key={product.id} 

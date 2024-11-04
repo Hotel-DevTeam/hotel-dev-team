@@ -30,7 +30,7 @@ import { ProductsModule } from './modules/products/products.module';
     AuthModule,
     LocationModule,
     RoomModule,
-    ProductsModule
+    ProductsModule,
   ],
   controllers: [AppController, ExchangeRateController],
   providers: [AppService, ExchangeRateService],

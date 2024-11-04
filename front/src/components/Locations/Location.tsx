@@ -26,9 +26,9 @@ export default function Location() {
       <h1 className="text-3xl mt-20 font-bold text-center mb-8">Nuestros hoteles</h1>
       <div className="flex flex-col mt-20 sm:flex-col md:flex-row lg:flex-row justify-center flex-wrap">
         {ubicaciones.map((ubicacion) => (
-          <section
+       <section
             key={ubicacion.id}
-            className="relative overflow-hidden rounded-lg border-b border-r border-gray-300 shadow-lg m-2 w-80 h-64 sm:h-72 md:h-80 lg:h-96 transition-transform duration-300 hover:scale-105"
+            className="relative overflow-hidden rounded-lg border-b border-r border-gray-300 bg-white  shadow-lg m-2 w-80 h-64 sm:h-72 md:h-80 lg:h-96 transition-transform duration-300 hover:scale-105"
           >
             <Link href="#" className="cursor-pointer">
               <Image
