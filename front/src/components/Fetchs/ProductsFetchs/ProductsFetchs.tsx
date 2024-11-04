@@ -4,7 +4,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 //Ver todos los productos
 export const fetchGetProducts = async (token:string) => {
-    const response = await fetch(`${apiUrl}/admin/products`, {
+    const response = await fetch(`${apiUrl}/products`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -49,7 +49,7 @@ export const fetchProductById = async (id:string) => {
 
   //Cargar  productos
 export const fetchUploadProduct = async (product:IProduct) => {
-    const response = await fetch(`${apiUrl}/products/`, {
+    const response = await fetch(`${apiUrl}/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
