@@ -34,18 +34,13 @@ export class AuthGuard implements CanActivate {
       const secret = process.env.JWT_SECRET;
       const payload = this.jwtService.verify(token, { secret });
 
-      // Verificar si el token ha expirado
-      if (Date.now() >= payload.exp * 1000) {
-        throw new UnauthorizedException('Token has expired');
-      }
-
-      // Asignar directamente el rol basado en el payload
+      
       if (!payload.role || !Object.values(Role).includes(payload.role)) {
         throw new ForbiddenException('User does not have a valid role');
       }
 
-      // Adjuntar la información del usuario al request
-      request.user = payload; // payload contiene { id, email, role }
+      
+      request.user = payload;
 
       return true;
     } catch (error) {
@@ -59,3 +54,4 @@ export class AuthGuard implements CanActivate {
     }
   }
 }
+
