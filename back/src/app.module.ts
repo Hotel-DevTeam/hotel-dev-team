@@ -13,6 +13,8 @@ import { AuthModule } from './modules/Auth/auth.module';
 import { LocationModule } from './modules/Location/location.module';
 import { RoomModule } from './modules/Rooms/rooms.module';
 import { ProductsModule } from './modules/products/products.module';
+import { SalesOrderModule } from './modules/SalesOrder/salesOrder.module';
+import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.module';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { ProductsModule } from './modules/products/products.module';
     AuthModule,
     LocationModule,
     RoomModule,
-    ProductsModule
+    ProductsModule,
+    SalesOrderModule,
+    SalesOrderLineModule
   ],
   controllers: [AppController, ExchangeRateController],
   providers: [AppService, ExchangeRateService],
