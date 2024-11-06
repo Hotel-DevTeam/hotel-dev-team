@@ -26,7 +26,7 @@ const Home = () => {
               className="w-80 h-60 object-cover rounded-lg transition-transform duration-300 ease-in-out transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-[#264653] bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out flex items-center justify-center text-white text-lg font-bold">
-              Ir a Departamento
+              Ir a Hotel
             </div>
           </div>
         </Link>
@@ -42,7 +42,7 @@ const Home = () => {
               className="w-80 h-60 object-cover rounded-lg transition-transform duration-300 ease-in-out transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-[#264653] bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out flex items-center justify-center text-white text-lg font-bold">
-              Ir a Hotel
+              Ir a Departamento
             </div>
           </div>
         </Link>
