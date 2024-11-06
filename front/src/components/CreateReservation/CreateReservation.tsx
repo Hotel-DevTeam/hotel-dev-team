@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useReservationContext } from "../../context/reservationContext";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Room, Reservation } from "../../Interfaces/IReservation";
 
 const CreateReservation: React.FC = () => {
@@ -20,13 +21,13 @@ const CreateReservation: React.FC = () => {
   const [depositUSD, setDepositUSD] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
-  const [finalized, setFinalized] = useState<boolean>(false); 
+  const [finalized, setFinalized] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newReservation: Reservation = {
-      id: new Date().toISOString(), 
+      id: new Date().toISOString(),
       checkInDate,
       checkOutDate,
       roomId,
@@ -69,14 +70,14 @@ const CreateReservation: React.FC = () => {
       onSubmit={handleSubmit}
       className="max-w-lg mx-auto bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
     >
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+      <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">
         Crear Reserva
       </h2>
 
       <div className="space-y-4">
         {/* Check-in and Check-out Dates */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Check-in:
           </label>
           <input
@@ -84,12 +85,12 @@ const CreateReservation: React.FC = () => {
             value={checkInDate}
             onChange={(e) => setCheckInDate(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Check-out:
           </label>
           <input
@@ -97,19 +98,19 @@ const CreateReservation: React.FC = () => {
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
           />
         </div>
 
         {/* Room Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Habitación:
           </label>
           <select
             value={roomId ?? ""}
             onChange={(e) => setRoomId(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
             required
           >
             <option value="">Seleccione una habitación</option>
@@ -123,7 +124,7 @@ const CreateReservation: React.FC = () => {
 
         {/* Passenger Details */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Adultos:
           </label>
           <input
@@ -131,12 +132,12 @@ const CreateReservation: React.FC = () => {
             value={adultCount}
             onChange={(e) => setAdultCount(Number(e.target.value))}
             min={1}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Niños:
           </label>
           <input
@@ -144,18 +145,18 @@ const CreateReservation: React.FC = () => {
             value={childCount}
             onChange={(e) => setChildCount(Number(e.target.value))}
             min={0}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
           />
         </div>
 
         {/* Additional Fields */}
         <div>
-          <label className="inline-flex items-center text-sm font-medium text-gray-600">
+          <label className="inline-flex items-center text-sm font-medium text-[#264653]">
             <input
               type="checkbox"
               checked={finalized}
               onChange={(e) => setFinalized(e.target.checked)}
-              className="form-checkbox text-blue-500"
+              className="form-checkbox text-[#2A9D8F]"
             />
             <span className="ml-2">Reserva Finalizada</span>
           </label>
@@ -163,47 +164,47 @@ const CreateReservation: React.FC = () => {
 
         {/* Additional Pricing Fields */}
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Precio total USD:
           </label>
           <input
             type="number"
             value={totalPriceUSD}
             onChange={(e) => setTotalPriceUSD(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Depósito USD:
           </label>
           <input
             type="number"
             value={depositUSD}
             onChange={(e) => setDepositUSD(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-[#264653] mb-1">
             Balance Pendiente:
           </label>
           <input
             type="number"
             value={remainingBalance}
             onChange={(e) => setRemainingBalance(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
             required
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full bg-[#F4A261] hover:bg-[#E9C46A] text-white font-semibold py-3 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
         >
           Crear Reserva
         </button>

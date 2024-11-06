@@ -33,6 +33,7 @@ const CreateOrder: React.FC = () => {
   };
 
   const totalPrice = selectedProductId
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     ? products.find((p) => p.id === selectedProductId)?.price! * quantity
     : 0;
 
@@ -41,11 +42,12 @@ const CreateOrder: React.FC = () => {
       onSubmit={handleSubmit}
       className="bg-white shadow-md rounded px-8 py-6 mb-4"
     >
-      <h2 className="text-lg font-semibold mb-4">Crear Orden</h2>
+      <h2 className="text-lg font-semibold text-[#264653] mb-4">Crear Orden</h2>
+
       <div className="mb-4">
         <label
           htmlFor="product"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="block text-[#264653] text-sm font-bold mb-2"
         >
           Producto:
         </label>
@@ -53,7 +55,7 @@ const CreateOrder: React.FC = () => {
           id="product"
           value={selectedProductId}
           onChange={(e) => setSelectedProductId(Number(e.target.value))}
-          className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
+          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
         >
           <option value={0}>Seleccione un producto</option>
           {products.map((product) => (
@@ -63,10 +65,11 @@ const CreateOrder: React.FC = () => {
           ))}
         </select>
       </div>
+
       <div className="mb-4">
         <label
           htmlFor="quantity"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="block text-[#264653] text-sm font-bold mb-2"
         >
           Cantidad:
         </label>
@@ -76,13 +79,14 @@ const CreateOrder: React.FC = () => {
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
           min={1}
-          className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
+          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
         />
       </div>
+
       <div className="mb-4">
         <label
           htmlFor="user"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="block text-[#264653] text-sm font-bold mb-2"
         >
           Usuario:
         </label>
@@ -91,7 +95,7 @@ const CreateOrder: React.FC = () => {
           value={user}
           onChange={(e) => setUser(e.target.value)}
           required
-          className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
+          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
         >
           <option value="">Seleccione un usuario</option>
           {users.map((user) => (
@@ -101,10 +105,11 @@ const CreateOrder: React.FC = () => {
           ))}
         </select>
       </div>
+
       <div className="mb-4">
         <label
           htmlFor="roomNumber"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="block text-[#264653] text-sm font-bold mb-2"
         >
           Número de Habitación:
         </label>
@@ -113,7 +118,7 @@ const CreateOrder: React.FC = () => {
           value={roomNumber}
           onChange={(e) => setRoomNumber(e.target.value)}
           required
-          className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
+          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
         >
           <option value="">Seleccione una habitación</option>
           {rooms.map((room) => (
@@ -123,20 +128,22 @@ const CreateOrder: React.FC = () => {
           ))}
         </select>
       </div>
+
       <div className="mb-4">
-        <p className="text-gray-700 text-sm font-bold">
+        <p className="text-[#264653] text-sm font-bold">
           Precio por unidad: $
           {selectedProductId
             ? products.find((p) => p.id === selectedProductId)?.price
             : 0}
         </p>
-        <p className="text-gray-700 text-sm font-bold">
+        <p className="text-[#264653] text-sm font-bold">
           Precio total: ${totalPrice}
         </p>
       </div>
+
       <button
         type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors"
+        className="bg-[#F4A261] hover:bg-[#E9C46A] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors"
       >
         Agregar Orden
       </button>
