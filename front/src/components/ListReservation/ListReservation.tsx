@@ -25,6 +25,8 @@ const ListReservation: React.FC = () => {
           <tbody>
             {reservations.map((reservation: Reservation) => (
               <tr key={reservation.id}>
+                {" "}
+                {/* Asegúrate de que reservation.id es único */}
                 <td className="border px-4 py-2">{reservation.checkInDate}</td>
                 <td className="border px-4 py-2">{reservation.checkOutDate}</td>
                 <td className="border px-4 py-2">{reservation.roomId}</td>
