@@ -37,12 +37,15 @@ export interface IUserContextType {
   }
   
   export interface IUserResponse {
+    message: string;
     token: string;
-  }
+    role:Role
+     }
 
   export interface ILoginResponse {
     message: string;
     token: string;
+    role:Role
   }
   
 

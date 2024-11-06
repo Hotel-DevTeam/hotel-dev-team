@@ -28,28 +28,38 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signIn = async (credentials: ILoginUser): Promise<boolean> => {
     try {
-        const data: ILoginResponse = await fetchLoginUser(credentials);
-        
-        if (data?.token) {  
-          if (typeof window !== "undefined") {
-              localStorage.setItem("token", data.token); 
-                setUser({ token: data.token });
-                setToken(data.token);
-                setIsLogged(true);
-                
-                console.log(data.message); 
-                return true;
-            }
-        } else {
-            console.error("Login failed. User may not exist.");
-            return false;
+      const data: ILoginResponse = await fetchLoginUser(credentials);
+  
+      if (data?.token) {  
+        console.log("Token set:", data.token);
+        if (typeof window !== "undefined") {
+          const authData = {
+            token: data.token,
+            role: data.role,
+            message: data.message  // Asegúrate de incluir "message"
+          };
+          localStorage.setItem("authData", JSON.stringify(authData));
+  
+          setUser(authData);  // Incluye "message" aquí
+          setToken(data.token);
+          setIsLogged(true);
+          setIsAdmin(data.role === "admin");
+  
+          console.log("Response data from login:", data);
+          return true;
         }
-    } catch (error) {
-        console.error("Error during sign in:", error);
+      } else {
+        console.error("Login failed. User may not exist.");
         return false;
+      }
+    } catch (error) {
+      console.error("Error during sign in:", error);
+      return false;
     }
     return false;
-};
+  };
+  
+  
   
 const signUp = async (user: IUserRegister): Promise<boolean> => {
   try {
@@ -66,33 +76,32 @@ const signUp = async (user: IUserRegister): Promise<boolean> => {
   }
 };
 
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const storedAuthData = localStorage.getItem("authData");
 
+    if (storedAuthData) {
+      try {
+        const parsedSession = JSON.parse(storedAuthData);
+        const { token, role } = parsedSession;
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedAuthData = localStorage.getItem("authData");
+        setUser(parsedSession); // Establece todos los datos del usuario
+        setToken(token);
+        setIsLogged(Boolean(token));
+        setIsAdmin(role === "admin");
 
-      if (storedAuthData) {
-        try {
-          const parsedSession = JSON.parse(storedAuthData);
-          const { token, user } = parsedSession;
-
-          if (user) {
-            setUser(user);
-            setToken(token);
-            setIsLogged(Boolean(token));
-            setIsAdmin(user.isAdmin);
-          }
-        } catch (error) {
-          console.error("Error al parsear authData:", error);
-          setUser(null);
-          setToken(null);
-          setIsLogged(false);
-          setIsAdmin(false);
-        }
+      } catch (error) {
+        console.error("Error al parsear authData:", error);
+        setUser(null);
+        setToken(null);
+        setIsLogged(false);
+        setIsAdmin(false);
       }
     }
-  }, []);
+  }
+}, []);
+
+
 
   const logOut = () => {
     if (typeof window !== "undefined") {

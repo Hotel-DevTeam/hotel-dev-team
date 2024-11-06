@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CreateLocationDto } from 'src/modules/Location/dto/create-location.dto';
 import { CreatePaxDto } from 'src/modules/pax/dto/create-pax.dto';
+import { CreateRoomDto } from 'src/modules/Rooms/dto/create-room.dto';
 
 export class CreateReservationDto {
   @ApiProperty({
@@ -31,6 +33,12 @@ export class CreateReservationDto {
     example: 'Booking.com',
   })
   bookingPlatform: string;
+
+  @ApiProperty({ description: 'Ubicación', type: CreateLocationDto })
+  ubicacion: CreateLocationDto;
+
+  @ApiProperty({ description: 'Tipo de habitación', type: CreateRoomDto })
+  roomType: CreateRoomDto;
 
   @ApiProperty({ description: 'Indica si incluye desayuno', example: true })
   breakfast: boolean;

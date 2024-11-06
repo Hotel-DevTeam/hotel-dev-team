@@ -7,7 +7,9 @@ import { UserContext } from "@/context/UserContext";
 export default function AllProducts() {
     const [products, setProducts] = useState<IProduct[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const { token } = useContext(UserContext); 
+    const { token } = useContext(UserContext);
+console.log("Current token de All Products:", token);  // Agrega este log
+
 
     useEffect(() => {
         const getProducts = async () => {

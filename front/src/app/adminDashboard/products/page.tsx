@@ -1,4 +1,17 @@
 "use client"
+import React from "react"; 
+import AllProducts from '@/components/Products/AllProducts';
+
+export default function Productspage() {
+  return (
+    <>
+      <AllProducts />
+      
+    </>
+  );
+
+}
+/*
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import AllProducts from '@/components/Products/AllProducts';
 import { UserContext } from '@/context/UserContext';
@@ -40,4 +53,4 @@ export default function Productspage() {
     </>
   );
 
-}
+}*/

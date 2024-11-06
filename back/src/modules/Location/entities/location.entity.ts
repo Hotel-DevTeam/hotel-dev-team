@@ -8,6 +8,7 @@ import {
 import { Users } from '../../Users/entities/users.entity';
 import { Room } from '../../Rooms/entities/rooms.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { Caja } from 'src/modules/caja/entities/caja.entity';
 
 @Entity('location')
 export class Location {
@@ -31,4 +32,7 @@ export class Location {
 
   @OneToMany(() => Product, (product) => product.ubicacion)
   products: Product[];
+
+  @OneToMany(() => Caja, (caja) => caja.ubicacion)
+  caja: Caja[];
 }

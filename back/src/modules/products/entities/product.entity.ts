@@ -1,7 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Tipo } from '../products.enum';
 import { IsEnum, IsUrl } from 'class-validator';
 import { Location } from 'src/modules/Location/entities/location.entity';
+import { Caja } from 'src/modules/caja/entities/caja.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -26,6 +33,9 @@ export class Product {
   @Column()
   @IsUrl()
   foto: string;
+
+  @OneToOne(() => Caja, (caja) => caja.id)
+  caja: Caja;
 
   @ManyToOne(() => Location, (location) => location.products)
   ubicacion: Location;

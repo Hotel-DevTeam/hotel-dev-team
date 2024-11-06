@@ -13,6 +13,9 @@ import { AuthModule } from './modules/Auth/auth.module';
 import { LocationModule } from './modules/Location/location.module';
 import { RoomModule } from './modules/Rooms/rooms.module';
 import { ProductsModule } from './modules/products/products.module';
+import { SalesOrderModule } from './modules/SalesOrder/salesOrder.module';
+import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.module';
+import { CajaModule } from './modules/caja/caja.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { ProductsModule } from './modules/products/products.module';
     LocationModule,
     RoomModule,
     ProductsModule,
+    SalesOrderModule,
+    SalesOrderLineModule,
+    CajaModule,
   ],
   controllers: [AppController, ExchangeRateController],
   providers: [AppService, ExchangeRateService],
