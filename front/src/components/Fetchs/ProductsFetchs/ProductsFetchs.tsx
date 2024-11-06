@@ -2,7 +2,7 @@ import { IProduct } from "@/Interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-//Ver todos los productos
+
 export const fetchGetProducts = async (token:string) => {
     const response = await fetch(`${apiUrl}/products`, {
       method: 'GET',
@@ -19,7 +19,7 @@ export const fetchGetProducts = async (token:string) => {
     return data;
   };
 
-   //Obtener producto por id
+  
 export const fetchProductById = async (id:string) => {
     const response = await fetch(`${apiUrl}/products/${id}`);
     if (!response.ok) {
@@ -30,7 +30,7 @@ export const fetchProductById = async (id:string) => {
   
 
   
-  //Modificar producto
+  
   export const fetchUpdateProduct = async(id:string, product:IProduct) => {
     const response = await fetch(`${apiUrl}/products/${id}`, {
       method: "PUT",
@@ -47,7 +47,7 @@ export const fetchProductById = async (id:string) => {
   return response.json();
   };
 
-  //Cargar  productos
+
 export const fetchUploadProduct = async (product:IProduct) => {
     const response = await fetch(`${apiUrl}/products`, {
         method: "POST",

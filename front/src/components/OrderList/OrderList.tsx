@@ -1,6 +1,6 @@
 "use client";
 
-import { useOrderContext } from "../../../../hotel/src/context/OrderContext";
+import { useOrderContext } from "../../context/OrderContext";
 
 const OrderPage: React.FC = () => {
   const { orders, removeOrder } = useOrderContext();

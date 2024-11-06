@@ -1,13 +1,13 @@
 "use client";
 
-import { useReservationContext } from "../../../../reservas/src/context/reservationContext";
+import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 
 const ListReservation: React.FC = () => {
   const { reservations, finalizeReservation } = useReservationContext();
 
   return (
-    <div className="bg-white shadow-md rounded px-8 py-6 mb-4">
+    <div className="bg-white text-black shadow-md rounded px-8 py-6 mb-4">
       <h2 className="text-lg font-semibold mb-4">Reservas</h2>
       {reservations.length === 0 ? (
         <p>No hay reservas registradas.</p>
@@ -25,6 +25,7 @@ const ListReservation: React.FC = () => {
           <tbody>
             {reservations.map((reservation: Reservation) => (
               <tr key={reservation.id}>
+                {/* Asegúrate de que reservation.id es único */}
                 <td className="border px-4 py-2">{reservation.checkInDate}</td>
                 <td className="border px-4 py-2">{reservation.checkOutDate}</td>
                 <td className="border px-4 py-2">{reservation.roomId}</td>
@@ -33,7 +34,7 @@ const ListReservation: React.FC = () => {
                 </td>
                 <td className="border px-4 py-2">
                   <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded transition"
                     onClick={() => finalizeReservation(reservation)}
                   >
                     Marcar como finalizada
