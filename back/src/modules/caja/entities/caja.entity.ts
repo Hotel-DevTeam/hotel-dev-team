@@ -11,7 +11,7 @@ export class Caja {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => Users, user => user.id, { nullable: false })
+    @ManyToOne(() => Users, user => user.caja, { nullable: false })
     usuario: Users;
 
     @Column('decimal', { precision: 10, scale: 2 })
