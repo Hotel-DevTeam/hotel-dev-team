@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SeedService } from './seeds/seed.service'; // Importa el SeedService
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +25,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  // Ejecutar el seeder si se pasa el argumento "seed"
+  const args = process.argv.slice(2);
+  if (args.includes('seed')) {
+    const seedService = app.get(SeedService);
+    await seedService.run(); // Ejecuta el seeder
+    console.log('Database seeding completed');
+    await app.close(); // Cierra la aplicación después de sembrar
+  } else {
+    await app.listen(3000); // Inicia la aplicación normalmente
+  }
 }
 bootstrap();
