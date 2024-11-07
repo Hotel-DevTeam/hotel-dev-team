@@ -7,6 +7,7 @@ import Link from "next/link";
 const Navbar = () => {
   const [isOrderMenuOpen, setOrderMenuOpen] = useState(false);
   const [isReservationMenuOpen, setReservationMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const orderMenuRef = useRef<HTMLUListElement | null>(null);
   const reservationMenuRef = useRef<HTMLUListElement | null>(null);
@@ -56,6 +57,28 @@ const Navbar = () => {
         </Link>
       </div>
 
+      {/* Mobile Menu Toggle */}
+      <button
+        className="md:hidden ml-auto"
+        onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6 text-[#264653]"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      {/* Desktop Menu */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
         <li
           className="relative"
@@ -153,6 +176,95 @@ const Navbar = () => {
           </li>
         ))}
       </ul>
+
+      {/* Mobile Menu (Toggle on small screens) */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-0 right-0 mt-12 bg-white w-full shadow-lg z-50">
+          <ul className="space-y-4 p-4">
+            <li>
+              <Link
+                href="/ReservationCreate"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Crear Reserva
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ReservationList"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Lista de Reservas
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/Reservations"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Todas las Reservas
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/OrderPage"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Página de Órdenes
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/CreateOrder"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Crear Orden
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/adminDashboard"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Panel de Administración
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/location"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Ubicación
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/login"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Iniciar Sesión
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className="block text-[#264653] hover:bg-[#E9C46A] p-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Registrarse
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 };

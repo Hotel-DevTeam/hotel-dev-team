@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState } from "react";
 import { useReservationContext } from "../../context/reservationContext";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Room, Reservation } from "../../Interfaces/IReservation";
 
 const CreateReservation: React.FC = () => {
@@ -21,7 +21,6 @@ const CreateReservation: React.FC = () => {
   const [depositUSD, setDepositUSD] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
-  const [finalized, setFinalized] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +46,7 @@ const CreateReservation: React.FC = () => {
 
     addReservation(newReservation);
 
-    // Restablecer campos del formulario
+    // Reset form fields after submission
     setCheckInDate("");
     setCheckOutDate("");
     setRoomId(null);
@@ -62,7 +61,6 @@ const CreateReservation: React.FC = () => {
     setDepositUSD(0);
     setRemainingBalance(0);
     setComments("");
-    setFinalized(false); // Reiniciar campo 'finalized'
   };
 
   return (
@@ -75,7 +73,6 @@ const CreateReservation: React.FC = () => {
       </h2>
 
       <div className="space-y-4">
-        {/* Check-in and Check-out Dates */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Check-in:
@@ -102,7 +99,6 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Room Selection */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Habitación:
@@ -122,7 +118,6 @@ const CreateReservation: React.FC = () => {
           </select>
         </div>
 
-        {/* Passenger Details */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Adultos:
@@ -149,62 +144,9 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Additional Fields */}
-        <div>
-          <label className="inline-flex items-center text-sm font-medium text-[#264653]">
-            <input
-              type="checkbox"
-              checked={finalized}
-              onChange={(e) => setFinalized(e.target.checked)}
-              className="form-checkbox text-[#2A9D8F]"
-            />
-            <span className="ml-2">Reserva Finalizada</span>
-          </label>
-        </div>
-
-        {/* Additional Pricing Fields */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio total USD:
-          </label>
-          <input
-            type="number"
-            value={totalPriceUSD}
-            onChange={(e) => setTotalPriceUSD(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito USD:
-          </label>
-          <input
-            type="number"
-            value={depositUSD}
-            onChange={(e) => setDepositUSD(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Balance Pendiente:
-          </label>
-          <input
-            type="number"
-            value={remainingBalance}
-            onChange={(e) => setRemainingBalance(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
-            required
-          />
-        </div>
-
         <button
           type="submit"
-          className="w-full bg-[#F4A261] hover:bg-[#E9C46A] text-white font-semibold py-3 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]"
+          className="bg-pink-500 text-white px-4 py-2 rounded"
         >
           Crear Reserva
         </button>
