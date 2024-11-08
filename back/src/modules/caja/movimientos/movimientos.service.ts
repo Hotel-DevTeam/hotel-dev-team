@@ -1,37 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
-import { UpdateMovimientoDto } from './dto/update-movimiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Movimiento } from './entities/movimiento.entity';
+import { Estado } from '../caja/caja.enum';
 
 @Injectable()
 export class MovimientosService {
-  constructor( 
-     @InjectRepository(Movimiento) private readonly movRepository:Repository<Movimiento>) {}
+  constructor(
+    @InjectRepository(Movimiento)
+    private readonly movRepository: Repository<Movimiento>,
+  ) {}
 
-
-  create(createMovimientoDto: CreateMovimientoDto) {
-    return 'This action adds a new movimiento';
+  async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
+    try {
+      const newMov = this.movRepository.create({ ...createMovimientoDto, usuario: { id: userId } });
+      return await this.movRepository.save(newMov);
+    } catch (error) {
+      throw new InternalServerErrorException('Error al crear el movimiento');
+    }
   }
 
-  findAll() {
-    return this.movRepository.find();
+  async findAll() {
+    try {
+      return await this.movRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Error al obtener la lista de movimientos');
+    }
   }
 
-  findOneById(id: string) {
-    return this.movRepository.findOne({where:{id}});
+  async findOneById(id: string) {
+    try {
+      const movimiento = await this.movRepository.findOne({ where: { id } });
+      if (!movimiento) {
+        throw new NotFoundException(`Movimiento con id ${id} no encontrado`);
+      }
+      return movimiento;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException(`Error al buscar el movimiento con id ${id}`);
+    }
   }
 
-  findOneByDate(fecha: Date) {
-    return this.movRepository.findOne({where:{fecha}});
+  async findOneByDate(fecha: Date) {
+    try {
+      const movimiento = await this.movRepository.findOne({ where: { fecha } });
+      if (!movimiento) {
+        throw new NotFoundException(`Movimiento con fecha ${fecha} no encontrado`);
+      }
+      return movimiento;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException(`Error al buscar el movimiento con fecha ${fecha}`);
+    }
   }
 
-  update(id: number, updateMovimientoDto: UpdateMovimientoDto) {
-    return `This action updates a #${id} movimiento`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} movimiento`;
+  async remove(id: string) {
+    try {
+      const movimiento = await this.findOneById(id);
+      if (!movimiento) {
+        throw new NotFoundException(`Movimiento con id ${id} no encontrado`);
+      }
+      movimiento.estado = Estado.Cancelado
+      return await this.movRepository.save(movimiento);
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException(`Error al eliminar el movimiento con id ${id}`);
+    }
   }
 }

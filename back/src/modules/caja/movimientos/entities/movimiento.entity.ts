@@ -27,7 +27,7 @@ export class Movimiento {
         type: 'enum',
         enum: Estado,       
     })
-    Estado: Estado;
+    estado: Estado;
 
     @OneToOne(() => Product, product => product.id, { nullable: true })
     producto: Product;
