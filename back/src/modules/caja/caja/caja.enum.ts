@@ -3,7 +3,7 @@ export enum Estado {
     Cancelado = 'Cancelado',
   }
 
-  export enum Movimiento {
+  export enum TipoMovimiento {
     Ingreso = 'Ingreso',
     Egreso = 'Egreso',
   }

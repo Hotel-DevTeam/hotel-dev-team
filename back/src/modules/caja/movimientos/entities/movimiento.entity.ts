@@ -1,17 +1,19 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
-import { Estado, Movimiento } from "../caja.enum";
 import { Users } from "src/modules/Users/entities/users.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Estado, TipoMovimiento } from "../../caja/caja.enum";
 import { Product } from "src/modules/products/entities/product.entity";
 import { Location } from "src/modules/Location/entities/location.entity";
 
-
-@Entity('Caja')
-export class Caja {
-
+@Entity('Movimiento')
+export class Movimiento {
+    
     @PrimaryGeneratedColumn('uuid')
     id: string;
+    
+    @CreateDateColumn({ type: 'timestamp' })
+    fecha: Date;
 
-    @ManyToOne(() => Users, user => user.caja, { nullable: false })
+    @ManyToOne(() => Users, user => user.movimiento, { nullable: false })
     usuario: Users;
 
     @Column('decimal', { precision: 10, scale: 2 })
@@ -21,6 +23,7 @@ export class Caja {
     descripcion: string;
 
     @Column({
+        default:'Hecho',
         type: 'enum',
         enum: Estado,       
     })
@@ -34,11 +37,10 @@ export class Caja {
 
     @Column({
         type: 'enum',
-        enum: Movimiento,        
+        enum: TipoMovimiento,        
     })
-    tipoMovimiento: Movimiento;
+    tipoMovimiento: TipoMovimiento;
 
 
-    @CreateDateColumn({ type: 'timestamp' })
-    fecha: Date;
 }
+
