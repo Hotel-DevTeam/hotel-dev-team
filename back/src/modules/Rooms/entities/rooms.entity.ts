@@ -14,13 +14,19 @@ export class Room {
   id: string;
 
   @Column()
+  name: string;
+
+  @Column()
   number: string;
 
   @Column()
-  type: string; // ej single, double, suite
+  capacity: number;
 
   @Column()
   price: number;
+
+  @Column()
+  type: string; // ej single, double, suite
 
   @ManyToOne(() => Location, (location) => location.rooms)
   location: Location;

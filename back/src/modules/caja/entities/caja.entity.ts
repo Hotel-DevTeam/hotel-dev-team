@@ -19,8 +19,8 @@ export class Caja {
   @ManyToOne(() => Users, (user) => user.id, { nullable: false })
   usuario: Users;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  monto: number;
+  @ManyToOne(() => Users, (user) => user.caja, { nullable: false })
+  usuario: Users;
 
   @Column()
   descripcion: string;

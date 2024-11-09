@@ -1,5 +1,11 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateRoomDto {
   @ApiProperty({
@@ -7,7 +13,6 @@ export class CreateRoomDto {
     example: '512',
   })
   @IsNotEmpty()
-  @IsNumber()
   number: string;
 
   @ApiProperty({
@@ -19,7 +24,7 @@ export class CreateRoomDto {
 
   @ApiProperty({
     description: 'Para cuantas personas',
-    example: '2',
+    example: 2,
   })
   @IsNotEmpty()
   @IsNumber()
@@ -27,10 +32,27 @@ export class CreateRoomDto {
 
   @ApiProperty({
     description: 'Precio de la habitación',
-    example: '$15.000',
+    example: 15000,
   })
   @IsNotEmpty()
+  @IsNumber()
   price: number;
+
+  @ApiProperty({
+    description: 'Tipo de habitación',
+    example: 'single',
+  })
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+
+  @ApiProperty({
+    description: 'Room ID associated with the location',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  locationId?: string;
 }
 
 export class UpdateRoomDto extends PickType(CreateRoomDto, [
