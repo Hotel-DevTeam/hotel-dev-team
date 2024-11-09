@@ -49,9 +49,16 @@ export const fetchRegisterUser = async (user: IUserRegister) => {
 
 
  // Obtener todas las ubicaciones
-export const fetchLocations = async (): Promise<ILocation[]> => {
+ export const fetchLocations = async (): Promise<ILocation[]> => {
+ 
+  const storedUser = localStorage.getItem('user');
   
-  const token = localStorage.getItem('token'); 
+  const token = storedUser ? JSON.parse(storedUser).token : null;
+
+  
+  if (!token) {
+    throw new Error('Token no encontrado. Por favor, inicia sesión.');
+  }
 
   const response = await fetch(`${apiUrl}/location/admin/locations`, {
     method: 'GET',
@@ -70,9 +77,17 @@ export const fetchLocations = async (): Promise<ILocation[]> => {
   return data;
 };
 
+
  //Formulario crear location
  export const fetchCreateLocation = async (location: ILocation) => {
-  const token = localStorage.getItem('token');  
+  const storedUser = localStorage.getItem('user');
+  
+  const token = storedUser ? JSON.parse(storedUser).token : null;
+
+  
+  if (!token) {
+    throw new Error('Token no encontrado. Por favor, inicia sesión.');
+  } 
 
   console.log('Datos del usuario a enviar:', location);
 

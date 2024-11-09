@@ -8,5 +8,3 @@ Configurar variables
 
  npx prettier --write .
 
- coty---necesito que el back devuelva el rol, ademas del token
-como manejamos los productos segun la locacion

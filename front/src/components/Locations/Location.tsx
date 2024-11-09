@@ -50,6 +50,17 @@ export default function Location() {
           </section>
         ))}
       </div>
+      <div className="relative">
+  <div className="absolute top-0 right-0 mb-4 mr-4">
+    <a
+      href="/location/create"
+      className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+    >
+      Crear nueva ubicación
+    </a>
+  </div>
+</div>
+
     </div>
   );
 };

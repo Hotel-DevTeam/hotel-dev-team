@@ -37,7 +37,7 @@ export default function CreateLocation() {
       setErrorMessage("Por favor, proporciona una URL de imagen válida (jpg, jpeg, png, webp, gif o bmp).");
       setShowErrorNotification(true);
       setTimeout(() => setShowErrorNotification(false), 3000);
-      return; // No proceder si la URL de la imagen no es válida
+      return; 
     }
 
     try {

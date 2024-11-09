@@ -2,7 +2,6 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateRoomDto {
-
   @ApiProperty({
     description: 'Número de habitación',
     example: '512',

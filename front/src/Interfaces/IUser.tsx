@@ -67,7 +67,11 @@ export interface IProduct {
   nombre:string;
   Activo:boolean;
   foto:string;
-  ubicacion:ILocation;
+  ubicacion:ILocationPrueba;
+}
+
+export interface ILocationPrueba {
+  name:string;
 }
 
 export interface IProductsPageProps {
@@ -79,4 +83,8 @@ export interface ICardProductProps {
   product: IProduct;
   onToggleStatus: (id: string) => void; 
   onEdit: (id: string) => void;       
+}
+
+export interface ILoginClientProps {
+  setToken: (token: string | null) => void;
 }

@@ -25,37 +25,37 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
-
+  
   const signIn = async (credentials: ILoginUser): Promise<boolean> => {
     try {
       const data: ILoginResponse = await fetchLoginUser(credentials);
   
-      if (data?.token) {  
+      if (data && data.token && data.role) {  
         console.log("Token set:", data.token);
+  
         if (typeof window !== "undefined") {
-          const authData = {
+          const user = {
             token: data.token,
             role: data.role,
-            message: data.message  // Asegúrate de incluir "message"
+            message: data.message  
           };
-          localStorage.setItem("authData", JSON.stringify(authData));
+          localStorage.setItem("user", JSON.stringify(user));
   
-          setUser(authData);  // Incluye "message" aquí
+          setUser(user);  
           setToken(data.token);
           setIsLogged(true);
-          setIsAdmin(data.role === "admin");
-  
+          setIsAdmin(data.role === "admin"); 
+          
           console.log("Response data from login:", data);
           return true;
         }
       } else {
-        console.error("Login failed. User may not exist.");
-        return false;
+        console.error("Login failed. User data may be incomplete or user may not exist.");
       }
     } catch (error) {
       console.error("Error during sign in:", error);
-      return false;
     }
+  
     return false;
   };
   
@@ -75,42 +75,43 @@ const signUp = async (user: IUserRegister): Promise<boolean> => {
       throw new Error(error instanceof Error ? error.message : 'Error desconocido'); 
   }
 };
-
 useEffect(() => {
   if (typeof window !== "undefined") {
-    const storedAuthData = localStorage.getItem("authData");
+    const storedAuthData = localStorage.getItem("user");
 
     if (storedAuthData) {
       try {
         const parsedSession = JSON.parse(storedAuthData);
         const { token, role } = parsedSession;
 
-        setUser(parsedSession); // Establece todos los datos del usuario
         setToken(token);
         setIsLogged(Boolean(token));
-        setIsAdmin(role === "admin");
-
+        setIsAdmin(role === "admin");  // Establece el rol correctamente
       } catch (error) {
         console.error("Error al parsear authData:", error);
-        setUser(null);
-        setToken(null);
         setIsLogged(false);
         setIsAdmin(false);
       }
+    } else {
+      setIsLogged(false);
+      setIsAdmin(false);
     }
   }
 }, []);
 
 
 
-  const logOut = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authData");
-      setUser(null);
-      setToken(null);
-      setIsLogged(false);
-    }
-  };
+
+const logOut = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("user"); 
+    setUser(null);
+    setToken(null);
+    setIsLogged(false);
+    setIsAdmin(false);
+  }
+};
+
 
   return (
     <UserContext.Provider
