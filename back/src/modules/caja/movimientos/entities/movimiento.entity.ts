@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGenerated
 import { Estado, TipoMovimiento } from "../../caja/caja.enum";
 import { Product } from "src/modules/products/entities/product.entity";
 import { Location } from "src/modules/Location/entities/location.entity";
+import { Tipo } from "src/modules/products/products.enum";
 
 @Entity('Movimiento')
 export class Movimiento {
@@ -37,7 +38,7 @@ export class Movimiento {
 
   @Column({
     type: 'enum',
-    enum: Movimiento,
+    enum: TipoMovimiento,
   })
   tipoMovimiento: Movimiento;
 
