@@ -16,11 +16,14 @@ export class Movimiento {
     @ManyToOne(() => Users, user => user.movimiento, { nullable: false })
     usuario: Users;
 
-    @Column('decimal', { precision: 10, scale: 2 })
-    monto: number;
+  @Column()
+  descripcion: string;
 
-    @Column()
-    descripcion: string;
+  @Column({
+    type: 'enum',
+    enum: Estado,
+  })
+  Estado: Estado;
 
     @Column({
         default:'Hecho',
@@ -29,11 +32,14 @@ export class Movimiento {
     })
     estado: Estado;
 
-    @OneToOne(() => Product, product => product.id, { nullable: true })
-    producto: Product;
+  @ManyToOne(() => Location, (location) => location.id, { nullable: false })
+  ubicacion: Location;
 
-    @ManyToOne(() => Location, location => location.id, { nullable: false })
-    ubicacion: Location;
+  @Column({
+    type: 'enum',
+    enum: Movimiento,
+  })
+  tipoMovimiento: Movimiento;
 
     @Column({
         type: 'enum',

@@ -2,6 +2,16 @@ import { IProduct } from "@/Interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+<<<<<<< HEAD
+//Ver todos los productos
+export const fetchGetProducts = async (token: string) => {
+  const response = await fetch(`${apiUrl}/products`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`, 
+    },
+  });
+=======
 
 export const fetchGetProducts = async (token:string) => {
     const response = await fetch(`${apiUrl}/products`, {
@@ -14,10 +24,12 @@ export const fetchGetProducts = async (token:string) => {
     if (!response.ok) {
       throw new Error('Failed to fetch users');
     }
+>>>>>>> 380183242469fbd8cc85b09fb30b979a7375a48c
   
-    const data = await response.json();
-    return data;
-  };
+  const data = await response.json();
+  return data;
+};
+
 
   
 export const fetchProductById = async (id:string) => {
@@ -47,7 +59,11 @@ export const fetchProductById = async (id:string) => {
   return response.json();
   };
 
+<<<<<<< HEAD
+  //Crear productos
+=======
 
+>>>>>>> 380183242469fbd8cc85b09fb30b979a7375a48c
 export const fetchUploadProduct = async (product:IProduct) => {
     const response = await fetch(`${apiUrl}/products`, {
         method: "POST",

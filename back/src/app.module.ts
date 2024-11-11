@@ -33,7 +33,7 @@ import { MovimientosModule } from './modules/caja/movimientos/movimientos.module
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm'),
     }),
-    TypeOrmModule.forFeature([Location, Room, Users]), 
+    TypeOrmModule.forFeature([Location, Room, Users]),
     ReservationModule,
     HttpModule,
     UsersModule,
@@ -47,7 +47,6 @@ import { MovimientosModule } from './modules/caja/movimientos/movimientos.module
     MovimientosModule
   ],
   controllers: [AppController, ExchangeRateController],
-  providers: [AppService, ExchangeRateService, SeedService, UserSeedService], 
+  providers: [AppService, ExchangeRateService, SeedService, UserSeedService],
 })
 export class AppModule {}
-

@@ -14,7 +14,7 @@ export class Room {
   id: string;
 
   @Column()
-  name:string;
+  name: string;
 
   @Column()
   number: string;
@@ -25,10 +25,8 @@ export class Room {
   @Column()
   price: number;
 
-  
   @Column()
   type: string; // ej single, double, suite
-
 
   @ManyToOne(() => Location, (location) => location.rooms)
   location: Location;

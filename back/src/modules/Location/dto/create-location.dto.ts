@@ -16,11 +16,12 @@ export class CreateLocationDto {
   @IsString()
   imgUrl: string;
 
-
-  @ApiProperty({ description: 'Room ID associated with the admin', required: false })
-  @IsUUID()  
+  @ApiProperty({
+    description: 'Room ID associated with the admin',
+    required: false,
+  })
+  @IsUUID()
   adminId?: string;
-
 }
 
 export class UpdateLocationDto extends PickType(CreateLocationDto, [

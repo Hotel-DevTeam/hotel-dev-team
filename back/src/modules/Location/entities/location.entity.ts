@@ -33,7 +33,7 @@ export class Location {
 
   @OneToMany(() => Product, (product) => product.ubicacion)
   products: Product[];
- 
+
   @OneToMany(() => Caja, (caja) => caja.ubicacion)
-    caja: Caja[];
+  caja: Caja[];
 }

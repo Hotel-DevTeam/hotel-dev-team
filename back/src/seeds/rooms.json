@@ -1,19 +1,18 @@
 [
-    {
-      "number": "101",
-      "name": "Habitación Flores",
-      "capacity": 2,
-      "price": 20000,
-      "type": "single",
-      "locationId": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be"
-    },
-    {
-      "number": "102",
-      "name": "Habitación 1913",
-      "capacity": 2,
-      "price": 40000,
-      "type": "suite",
-      "locationId": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be"
-    }
-  ]
-  
+  {
+    "number": "101",
+    "name": "Habitación Flores",
+    "capacity": 2,
+    "price": 20000,
+    "type": "single",
+    "locationId": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be"
+  },
+  {
+    "number": "102",
+    "name": "Habitación 1913",
+    "capacity": 2,
+    "price": 40000,
+    "type": "suite",
+    "locationId": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be"
+  }
+]

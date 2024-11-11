@@ -28,8 +28,6 @@ export class CajaController {
   update(@Param('id') id: string, @Body() updateCajaDto: UpdateCajaDto) {
     return this.cajaService.updateCaja(id, updateCajaDto);
   }
-
-
 }
 /*Rutas:
 Creación

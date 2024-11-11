@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { fetchCreateLocation } from '../Fetchs/UserFetchs/UserFetchs';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,12 @@ export default function CreateLocation() {
     imgUrl: '',
   });
 
+  // Validar la URL de la imagen
+  const isImageUrlValid = (url: string) => {
+    const allowedExtensions = /\.(jpg|jpeg|png|webp|gif|bmp)$/i;
+    return allowedExtensions.test(url);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -26,6 +32,13 @@ export default function CreateLocation() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isImageUrlValid(formData.imgUrl)) {
+      setErrorMessage("Por favor, proporciona una URL de imagen válida (jpg, jpeg, png, webp, gif o bmp).");
+      setShowErrorNotification(true);
+      setTimeout(() => setShowErrorNotification(false), 3000);
+      return; 
+    }
 
     try {
       const locationData = await fetchCreateLocation(formData);

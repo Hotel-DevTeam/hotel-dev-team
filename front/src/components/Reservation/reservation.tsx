@@ -3,38 +3,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  generateReservations,
-  filterReservations,
-} from "../../helpers/reservation";
+import React, { useEffect, useState } from "react";
+import { useReservationContext } from "../../context/reservationContext";
+import { Reservation } from "../../Interfaces/IReservation";
 
 const ReservationsList: React.FC = () => {
-  const [reservations, setReservations] = useState<any[]>([]);
-  const [filteredReservations, setFilteredReservations] = useState<any[]>([]);
-  const [filter, setFilter] = useState<"all" | "completed" | "notCompleted">(
+  const { reservations } = useReservationContext();
+  const [filteredReservations, setFilteredReservations] = useState<
+    Reservation[]
+  >([]);
+  const [filter, setFilter] = useState<"all" | "finalized" | "notFinalized">(
     "all"
   );
 
   useEffect(() => {
-    const generatedReservations = generateReservations(10);
-    setReservations(generatedReservations);
-    setFilteredReservations(generatedReservations);
-  }, []);
-
-  useEffect(() => {
-    const updatedFilteredReservations = filterReservations();
-    setFilteredReservations(updatedFilteredReservations);
+    filterReservations();
   }, [filter, reservations]);
 
   const filterReservations = () => {
     switch (filter) {
-      case "completed":
-        return reservations.filter((reservation) => reservation.completed);
-      case "notCompleted":
-        return reservations.filter((reservation) => !reservation.completed);
+      case "finalized":
+        setFilteredReservations(
+          reservations.filter((reservation) => reservation.finalized)
+        );
+        break;
+      case "notFinalized":
+        setFilteredReservations(
+          reservations.filter((reservation) => !reservation.finalized)
+        );
+        break;
       default:
-        return reservations;
+        setFilteredReservations(reservations);
+        break;
     }
   };
 
@@ -54,17 +54,17 @@ const ReservationsList: React.FC = () => {
           Todas
         </button>
         <button
-          onClick={() => setFilter("completed")}
+          onClick={() => setFilter("finalized")}
           className={`px-4 py-2 rounded-md font-medium text-sm transition ${
-            filter === "completed" ? "bg-pink-500 text-white" : "bg-pink-200"
+            filter === "finalized" ? "bg-pink-500 text-white" : "bg-pink-200"
           } hover:bg-pink-300`}
         >
           Finalizadas
         </button>
         <button
-          onClick={() => setFilter("notCompleted")}
+          onClick={() => setFilter("notFinalized")}
           className={`px-4 py-2 rounded-md font-medium text-sm transition ${
-            filter === "notCompleted" ? "bg-pink-500 text-white" : "bg-pink-200"
+            filter === "notFinalized" ? "bg-pink-500 text-white" : "bg-pink-200"
           } hover:bg-pink-300`}
         >
           No Finalizadas
@@ -72,18 +72,18 @@ const ReservationsList: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredReservations.map((reservation, index) => (
+        {filteredReservations.map((reservation) => (
           <div
-            key={index}
+            key={reservation.id}
             className="bg-green-100 shadow-lg rounded-lg p-6 hover:bg-green-200 transition duration-300"
           >
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Check-in:</strong>{" "}
-              <span>{reservation.checkIn.toLocaleDateString()}</span>
+              <span>{reservation.checkInDate}</span>
             </div>
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Check-out:</strong>{" "}
-              <span>{reservation.checkOut.toLocaleDateString()}</span>
+              <span>{reservation.checkOutDate}</span>
             </div>
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Habitación ID:</strong>{" "}
@@ -101,7 +101,7 @@ const ReservationsList: React.FC = () => {
             </div>
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Reserva:</strong>{" "}
-              <span>{reservation.bookingSource}</span>
+              <span>{reservation.reservationMethod}</span>
             </div>
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Desayuno:</strong>{" "}
@@ -113,7 +113,7 @@ const ReservationsList: React.FC = () => {
             </div>
             <div className="mb-4">
               <strong className="text-sm text-gray-700">Finalizada:</strong>{" "}
-              <span>{reservation.completed ? "Sí" : "No"}</span>
+              <span>{reservation.finalized ? "Sí" : "No"}</span>
             </div>
           </div>
         ))}

@@ -1,11 +1,11 @@
 export interface Reservation {
-  id: string; 
+  id: string;
   checkInDate: string;
   checkOutDate: string;
   roomId: number | null;
   passengers: string;
   passengerCount: number;
-  passengerType?: string; 
+  passengerType?: string;
   reservationMethod: string;
   breakfastIncluded: boolean;
   totalPrice: number;

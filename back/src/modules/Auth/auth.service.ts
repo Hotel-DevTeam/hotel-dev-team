@@ -56,7 +56,7 @@ export class AuthService {
     return {
       message: 'Logged-in User',
       token,
-      role: user.role, 
+      role: user.role,
     };
   }
 
@@ -90,8 +90,7 @@ export class AuthService {
     return {
       message: 'User Registered',
       token,
-      role: newUser.role, 
+      role: newUser.role,
     };
   }
 }
-

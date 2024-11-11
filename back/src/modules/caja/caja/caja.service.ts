@@ -9,12 +9,11 @@ import { Repository } from 'typeorm';
 export class CajaService {
   constructor(
     @InjectRepository(Caja)
-    private readonly cajaRepository:Repository<Caja>
-  ){}
-
+    private readonly cajaRepository: Repository<Caja>,
+  ) {}
 
   createCaja(createCajaDto: CreateCajaDto) {
-    const newCaja =  this.cajaRepository.create(createCajaDto);
+    const newCaja = this.cajaRepository.create(createCajaDto);
     return this.cajaRepository.save(newCaja);
   }
 
@@ -23,17 +22,15 @@ export class CajaService {
   }
 
   async findOneById(id: string) {
-    return this.cajaRepository.findOne({where:{id}});
+    return this.cajaRepository.findOne({ where: { id } });
   }
 
   async updateCaja(id: string, updateCajaDto: UpdateCajaDto) {
-    const caja = await this.cajaRepository.findOne({where:{id}});
-    if(!caja){
+    const caja = await this.cajaRepository.findOne({ where: { id } });
+    if (!caja) {
       throw new NotFoundException(`Caja #${id} no encontrada`);
     }
-    const updatedCaja = Object.assign(caja,updateCajaDto)
+    const updatedCaja = Object.assign(caja, updateCajaDto);
     return this.cajaRepository.save(updatedCaja);
   }
-
-  
 }

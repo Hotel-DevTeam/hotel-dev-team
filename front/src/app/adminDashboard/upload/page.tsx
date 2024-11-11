@@ -1,5 +1,9 @@
 "use client"
-import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
+import React from 'react';
+import CreateProduct from '@/components/Products/CreateProduct';
+
+
+/* import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import CreateProduct from '@/components/Products/CreateProduct';
 import { UserContext } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
@@ -23,7 +27,7 @@ export default function UploadProducts() {
 
       setTimeout(() => {
         setShowNotification(false);
-        router.push("/home");
+        router.push("/login");
                 }, 2000);
      } else {
       setLoading(false); 
@@ -43,4 +47,12 @@ export default function UploadProducts() {
        {showNotification && <NotificationsForms message={notificationMessage} />}
              </>
     );
-  }
+  }*/
+
+    export default function UploadProducts() {
+      return (
+        <>
+      <CreateProduct />
+               </>
+      );
+    }

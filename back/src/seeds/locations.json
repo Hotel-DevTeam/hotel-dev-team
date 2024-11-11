@@ -1,11 +1,10 @@
 [
-    {
-      "id": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be",
-      "name": "Hotel Boutique Villa Rosarito",
-      "address": "San Martín 1536, 5236 Villa del Totoral, Córdoba Argentina",
-      "phone": "0381 201-1682",
-      "imgUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Fvectores%2Fhotel-dibujo&psig=AOvVaw3o0d4Oya8ZaPBkErHo40WI&ust=1731007929428000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKjShpm5yIkDFQAAAAAdAAAAABAJ",
-      "adminId": "61672613-e397-420b-92d2-c1fb788be64d"
-    }
-  ]
-  
+  {
+    "id": "1b5c53f1-c61b-4d32-bf9c-fc18814c76be",
+    "name": "Hotel Boutique Villa Rosarito",
+    "address": "San Martín 1536, 5236 Villa del Totoral, Córdoba Argentina",
+    "phone": "0381 201-1682",
+    "imgUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.es%2Fvectores%2Fhotel-dibujo&psig=AOvVaw3o0d4Oya8ZaPBkErHo40WI&ust=1731007929428000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKjShpm5yIkDFQAAAAAdAAAAABAJ",
+    "adminId": "61672613-e397-420b-92d2-c1fb788be64d"
+  }
+]

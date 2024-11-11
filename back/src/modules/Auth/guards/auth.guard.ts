@@ -35,7 +35,6 @@ export class AuthGuard implements CanActivate {
       const secret = process.env.JWT_SECRET;
       const payload = this.jwtService.verify(token, { secret });
 
-      
       if (!payload.role || !Object.values(Role).includes(payload.role)) {
         throw new ForbiddenException('User does not have a valid role');
       }
@@ -58,4 +57,3 @@ export class AuthGuard implements CanActivate {
     }
   }
 }
-
