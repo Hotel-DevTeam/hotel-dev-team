@@ -16,7 +16,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { SalesOrderModule } from './modules/SalesOrder/salesOrder.module';
 import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.module';
 import { CajaModule } from './modules/caja/caja/caja.module';
-import { SeedService } from './seeds/seed.service'; 
+import { SeedService } from './seeds/seed.service';
 import { Location } from './modules/Location/entities/location.entity';
 import { Room } from './modules/Rooms/entities/rooms.entity';
 import { Users } from './modules/Users/entities/users.entity';
@@ -44,7 +44,7 @@ import { MovimientosModule } from './modules/caja/movimientos/movimientos.module
     SalesOrderModule,
     SalesOrderLineModule,
     CajaModule,
-    MovimientosModule
+    MovimientosModule,
   ],
   controllers: [AppController, ExchangeRateController],
   providers: [AppService, ExchangeRateService, SeedService, UserSeedService],

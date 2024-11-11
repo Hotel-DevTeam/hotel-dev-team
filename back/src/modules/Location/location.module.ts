@@ -14,7 +14,7 @@ import { UsersModule } from '../Users/users.module';
     TypeOrmModule.forFeature([Location, RoomsRepository]),
     RoomModule,
     AuthModule,
-    UsersModule
+    UsersModule,
   ],
   controllers: [LocationController],
   providers: [LocationService, LocationRepository],

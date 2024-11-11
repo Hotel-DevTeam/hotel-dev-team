@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,7 +16,7 @@ export class MovimientosService {
     private readonly movRepository: Repository<Movimiento>,
   ) {}
 
-/*   async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
+  /*   async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
     try {
       const newMov = this.movRepository.create({ ...createMovimientoDto, usuario: { id: userId } });
       return await this.movRepository.save(newMov);
@@ -25,7 +29,9 @@ export class MovimientosService {
     try {
       return await this.movRepository.find();
     } catch (error) {
-      throw new InternalServerErrorException('Error al obtener la lista de movimientos');
+      throw new InternalServerErrorException(
+        'Error al obtener la lista de movimientos',
+      );
     }
   }
 
@@ -38,7 +44,9 @@ export class MovimientosService {
       return movimiento;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al buscar el movimiento con id ${id}`);
+      throw new InternalServerErrorException(
+        `Error al buscar el movimiento con id ${id}`,
+      );
     }
   }
 
@@ -46,12 +54,16 @@ export class MovimientosService {
     try {
       const movimiento = await this.movRepository.findOne({ where: { fecha } });
       if (!movimiento) {
-        throw new NotFoundException(`Movimiento con fecha ${fecha} no encontrado`);
+        throw new NotFoundException(
+          `Movimiento con fecha ${fecha} no encontrado`,
+        );
       }
       return movimiento;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al buscar el movimiento con fecha ${fecha}`);
+      throw new InternalServerErrorException(
+        `Error al buscar el movimiento con fecha ${fecha}`,
+      );
     }
   }
 
@@ -61,11 +73,13 @@ export class MovimientosService {
       if (!movimiento) {
         throw new NotFoundException(`Movimiento con id ${id} no encontrado`);
       }
-      movimiento.estado = Estado.Cancelado
+      movimiento.estado = Estado.Cancelado;
       return await this.movRepository.save(movimiento);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(`Error al eliminar el movimiento con id ${id}`);
+      throw new InternalServerErrorException(
+        `Error al eliminar el movimiento con id ${id}`,
+      );
     }
   }
 }

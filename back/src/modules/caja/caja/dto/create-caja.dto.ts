@@ -1,24 +1,21 @@
-import { Users } from "src/modules/Users/entities/users.entity";
-import { Movimiento } from "../../movimientos/entities/movimiento.entity";
-import { Location } from "src/modules/Location/entities/location.entity";
-
+import { Users } from 'src/modules/Users/entities/users.entity';
+import { Movimiento } from '../../movimientos/entities/movimiento.entity';
+import { Location } from 'src/modules/Location/entities/location.entity';
 
 export class CreateCajaDto {
+  saldoInicial: number;
 
-    saldoInicial: number
+  movimiento: Movimiento[];
 
-    movimiento: Movimiento[];
+  ingresoEfectivo: number;
 
-    ingresoEfectivo:number;
+  ingresoTarjeta: number;
 
-    ingresoTarjeta:number;
+  cargoHabitacion: number;
 
-    cargoHabitacion:number;
+  egresos: number;
 
-    egresos:number;
+  usuario: Users; //ver logica para usuario logeado para sacar propiedad del dto
 
-    usuario: Users; //ver logica para usuario logeado para sacar propiedad del dto
-
-    ubicacion: Location; ////ver logica para usuario logeado para sacar propiedad del dto
-
+  ubicacion: Location; ////ver logica para usuario logeado para sacar propiedad del dto
 }

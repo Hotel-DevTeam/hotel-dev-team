@@ -14,7 +14,7 @@ import { UsersModule } from '../Users/users.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '3h' },
     }),
-    UsersModule
+    UsersModule,
   ],
   controllers: [RoomController],
   providers: [RoomService, RoomsRepository],

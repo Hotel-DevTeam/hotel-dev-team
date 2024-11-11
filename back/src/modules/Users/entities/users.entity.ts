@@ -1,11 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Role } from '../roles.enum';
 import { Movimiento } from 'src/modules/caja/movimientos/entities/movimiento.entity';
 import { Caja } from 'src/modules/caja/caja/entities/caja.entity';
-
-
 
 @Entity({ name: 'Users' })
 export class Users {
@@ -53,5 +57,4 @@ export class Users {
   //optional
   @OneToOne(() => Caja, (caja) => caja.usuario)
   caja: Caja;
-  
 }

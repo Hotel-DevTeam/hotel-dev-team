@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Param, Delete, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
 import { MovimientosService } from './movimientos.service';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-
 
 @ApiTags('movimientos')
 @Controller('movimientos')
 export class MovimientosController {
   constructor(private readonly movimientosService: MovimientosService) {}
 
-/*   @ApiOperation({ summary: 'Crear un nuevo movimiento' })
+  /*   @ApiOperation({ summary: 'Crear un nuevo movimiento' })
   @ApiResponse({ status: 201, description: 'El movimiento ha sido creado.' })
   @ApiResponse({ status: 500, description: 'Error al crear el movimiento.' })
   @Post()
@@ -20,7 +27,10 @@ export class MovimientosController {
 
   @ApiOperation({ summary: 'Obtener todos los movimientos' })
   @ApiResponse({ status: 200, description: 'Lista de movimientos.' })
-  @ApiResponse({ status: 500, description: 'Error al obtener la lista de movimientos.' })
+  @ApiResponse({
+    status: 500,
+    description: 'Error al obtener la lista de movimientos.',
+  })
   @Get()
   findAll() {
     return this.movimientosService.findAll();

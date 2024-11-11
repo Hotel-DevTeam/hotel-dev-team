@@ -5,7 +5,7 @@ import { Estado, TipoMovimiento } from '../../caja/caja.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
 
 export class CreateMovimientoDto {
-/*   @ApiProperty({
+  /*   @ApiProperty({
     description: 'Usuario que realiza el movimiento',
     type: () => Users,
   })
@@ -13,7 +13,7 @@ export class CreateMovimientoDto {
 
   @ApiProperty({
     description: 'Monto del movimiento',
-    example: 100.50,
+    example: 100.5,
   })
   monto: number;
 
@@ -31,13 +31,13 @@ export class CreateMovimientoDto {
 
   @ApiProperty({
     description: 'Producto relacionado con el movimiento',
-    })
-    producto: Product;
+  })
+  producto: Product;
 
   @ApiProperty({
     description: 'Ubicación del movimiento',
-    })
-    ubicacion: Location; //ver lógica ubicacion usuario logeado
+  })
+  ubicacion: Location; //ver lógica ubicacion usuario logeado
 
   @ApiProperty({
     description: 'Tipo de movimiento',

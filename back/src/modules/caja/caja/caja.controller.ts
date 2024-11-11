@@ -22,8 +22,6 @@ export class CajaController {
     return this.cajaService.findOneById(id);
   }
 
-  
-
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCajaDto: UpdateCajaDto) {
     return this.cajaService.updateCaja(id, updateCajaDto);

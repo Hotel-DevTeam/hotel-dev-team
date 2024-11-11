@@ -10,7 +10,6 @@ import { Room } from '../../Rooms/entities/rooms.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { Caja } from 'src/modules/caja/caja/entities/caja.entity';
 
-
 @Entity('location')
 export class Location {
   @PrimaryGeneratedColumn('uuid')
