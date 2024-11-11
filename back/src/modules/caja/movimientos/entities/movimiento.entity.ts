@@ -41,12 +41,5 @@ export class Movimiento {
   })
   tipoMovimiento: Movimiento;
 
-    @Column({
-        type: 'enum',
-        enum: TipoMovimiento,        
-    })
-    tipoMovimiento: TipoMovimiento;
-
-
 }
 
