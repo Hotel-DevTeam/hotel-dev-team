@@ -9,14 +9,14 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class MovimientosController {
   constructor(private readonly movimientosService: MovimientosService) {}
 
-  @ApiOperation({ summary: 'Crear un nuevo movimiento' })
+/*   @ApiOperation({ summary: 'Crear un nuevo movimiento' })
   @ApiResponse({ status: 201, description: 'El movimiento ha sido creado.' })
   @ApiResponse({ status: 500, description: 'Error al crear el movimiento.' })
   @Post()
   create(@Body() createMovimientoDto: CreateMovimientoDto, @Req() req) {
     const userId = req.user.id; 
     return this.movimientosService.create(createMovimientoDto, userId); 
-  }
+  } */
 
   @ApiOperation({ summary: 'Obtener todos los movimientos' })
   @ApiResponse({ status: 200, description: 'Lista de movimientos.' })

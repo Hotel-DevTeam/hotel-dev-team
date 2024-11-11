@@ -12,14 +12,14 @@ export class MovimientosService {
     private readonly movRepository: Repository<Movimiento>,
   ) {}
 
-  async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
+/*   async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
     try {
       const newMov = this.movRepository.create({ ...createMovimientoDto, usuario: { id: userId } });
       return await this.movRepository.save(newMov);
     } catch (error) {
       throw new InternalServerErrorException('Error al crear el movimiento');
     }
-  }
+  } */
 
   async findAll() {
     try {
