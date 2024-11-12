@@ -26,11 +26,11 @@ export default function Location() {
       <h1 className="text-3xl mt-20 font-bold text-center mb-8">Nuestros hoteles</h1>
       <div className="flex flex-col mt-20 sm:flex-col md:flex-row lg:flex-row justify-center flex-wrap">
         {ubicaciones.map((ubicacion) => (
-       <section
+          <section
             key={ubicacion.id}
-            className="relative overflow-hidden rounded-lg border-b border-r border-gray-300 bg-white  shadow-lg m-2 w-80 h-64 sm:h-72 md:h-80 lg:h-96 transition-transform duration-300 hover:scale-105"
+            className="relative overflow-hidden rounded-lg border-b border-r border-gray-300 bg-white shadow-lg m-2 w-80 h-64 sm:h-72 md:h-80 lg:h-96 transition-transform duration-300 hover:scale-105"
           >
-            <Link href="#" className="cursor-pointer">
+            <Link href={`/location/${ubicacion.id}`} className="cursor-pointer">
               <Image
                 alt={ubicacion.name}
                 src={ubicacion.imgUrl}  
@@ -51,17 +51,15 @@ export default function Location() {
         ))}
       </div>
       <div className="relative">
-  <div className="absolute top-0 right-0 mb-4 mr-4">
-    <a
-      href="/location/create"
-      className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-    >
-      Crear nueva ubicación
-    </a>
-  </div>
-</div>
-
+        <div className="absolute top-0 right-0 mb-4 mr-4">
+          <a
+            href="/location/create"
+            className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+          >
+            Crear nueva ubicación
+          </a>
+        </div>
+      </div>
     </div>
   );
-};
- 
+}
