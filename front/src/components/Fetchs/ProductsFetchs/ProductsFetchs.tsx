@@ -1,4 +1,4 @@
-import { IProduct } from "@/Interfaces/IUser";
+import { IProduct, IProductView } from "@/Interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -32,8 +32,8 @@ export const fetchProductById = async (id:string) => {
   
 
   
-  
-  export const fetchUpdateProduct = async(id:string, product:IProduct) => {
+  //Modificar producto
+  export const fetchUpdateProduct = async(id:string, product:IProductView) => {
     const response = await fetch(`${apiUrl}/products/${id}`, {
       method: "PUT",
       headers: {
@@ -67,3 +67,7 @@ export const fetchUploadProduct = async (product:IProduct) => {
 
   return response.json();
 };
+
+export const fetchDeleteProduct = async (id:string) => {
+console.log(id)
+}

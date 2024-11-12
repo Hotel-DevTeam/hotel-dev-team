@@ -1,9 +1,10 @@
 "use client";
+
 import React, { useContext, useEffect, useState } from "react";
 import { IProductView } from "@/Interfaces/IUser";
 import CardProduct from "./cardProduct";
 import { UserContext } from "@/context/UserContext";
-import { fetchGetProducts } from "../Fetchs/ProductsFetchs/ProductsFetchs";
+import { fetchGetProducts, fetchUpdateProduct } from "../Fetchs/ProductsFetchs/ProductsFetchs";
 
 export default function AllProducts() {
     const [products, setProducts] = useState<IProductView[]>([]);
@@ -11,6 +12,7 @@ export default function AllProducts() {
     const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
     const [filteredProducts, setFilteredProducts] = useState<IProductView[]>([]);
     const [selectedType, setSelectedType] = useState<string>('');
+    const [editingProduct, setEditingProduct] = useState<IProductView | null>(null);
     const { token } = useContext(UserContext);
 
     useEffect(() => {
@@ -46,14 +48,12 @@ export default function AllProducts() {
 
     useEffect(() => {
         let filtered = [...products];
-    
         if (selectedType !== '') {
             filtered = filtered.filter((product) => product.tipo === selectedType);
         }
-    
         setFilteredProducts(filtered);
-    }, [products, selectedType]); 
-    
+    }, [products, selectedType]);
+
     const toggleProductStatus = (id: string) => {
         setProducts((prevProducts) =>
             prevProducts.map((product) =>
@@ -63,18 +63,35 @@ export default function AllProducts() {
             )
         );
     };
-    
-    const editProduct = (id: string) => {
-        if (id) {
-            console.log("Edit product with ID:", id);
+
+    const handleEdit = (id: string) => {
+        const productToEdit = products.find((product) => product.id === id);
+        if (productToEdit) {
+            setEditingProduct(productToEdit);
         } else {
             console.error("Invalid product ID");
         }
     };
-    
-    const handleDelete = (id:string) => {
-            console.log("Product to delete", id)
-    }
+
+    const handleEditSubmit = async (updatedProduct: IProductView) => {
+        if (!token) return;
+
+        try {
+            await fetchUpdateProduct(updatedProduct.id, updatedProduct);
+            setProducts((prevProducts) =>
+                prevProducts.map((product) =>
+                    product.id === updatedProduct.id ? updatedProduct : product
+                )
+            );
+            setEditingProduct(null); // Reset after submission
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
+    };
+
+    const handleDelete = (id: string) => {
+        console.log("Product to delete", id);
+    };
 
     if (loading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -99,15 +116,16 @@ export default function AllProducts() {
                 ))}
             </select>
 
-           
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                 {filteredProducts.map((product) => (
                     <CardProduct
                         key={product.id}
                         product={product}
                         onToggleStatus={() => toggleProductStatus(product.id)}
-                        onEdit={() => editProduct(product.id)}
+                        onEdit={() => handleEdit(product.id)}
                         onDelete={() => handleDelete(product.id)}
+                        isEditing={editingProduct?.id === product.id}
+                        onEditSubmit={handleEditSubmit}
                     />
                 ))}
             </div>
