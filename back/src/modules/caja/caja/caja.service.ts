@@ -1,34 +1,110 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
+import { Caja } from './entities/caja.entity';
+import { Movimiento } from '../movimientos/entities/movimiento.entity';
+import { Users } from 'src/modules/Users/entities/users.entity';
+import { Location } from 'src/modules/Location/entities/location.entity';
 import { CreateCajaDto } from './dto/create-caja.dto';
 import { UpdateCajaDto } from './dto/update-caja.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Caja } from './entities/caja.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class CajaService {
   constructor(
     @InjectRepository(Caja)
     private readonly cajaRepository: Repository<Caja>,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
+    @InjectRepository(Location)
+    private readonly locationRepository: Repository<Location>,
+    @InjectRepository(Movimiento)
+    private readonly movimientoRepository: Repository<Movimiento>,
   ) {}
 
-  createCaja(createCajaDto: CreateCajaDto) {
-    const newCaja = this.cajaRepository.create(createCajaDto);
-    return this.cajaRepository.save(newCaja);
+  async createCaja(createCajaDto: CreateCajaDto) {
+    const { usuarioId, ubicacionId, movimientoIds, ...data } = createCajaDto;
+  
+    try {
+      console.log('Recibiendo datos para crear caja:', createCajaDto);
+  
+      // Buscar usuario
+      const usuario = await this.userRepository.findOne({ where: { id: usuarioId } });
+      if (!usuario) {
+        console.log(`Usuario con ID ${usuarioId} no encontrado`);
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      console.log('Usuario encontrado:', usuario);
+  
+      // Buscar ubicación
+      const ubicacion = await this.locationRepository.findOne({ where: { id: ubicacionId } });
+      if (!ubicacion) {
+        console.log(`Ubicación con ID ${ubicacionId} no encontrada`);
+        throw new NotFoundException('Ubicación no encontrada');
+      }
+      console.log('Ubicación encontrada:', ubicacion);
+  
+      // Buscar movimientos
+      const movimientos = await this.movimientoRepository.findBy({
+        id: In(movimientoIds),
+      });
+      if (!movimientos || movimientos.length === 0) {
+        console.log(`No se encontraron movimientos con los IDs: ${movimientoIds}`);
+        throw new NotFoundException('Movimientos no encontrados');
+      }
+      console.log('Movimientos encontrados:', movimientos);
+  
+      // Crear la nueva caja
+      const newCaja = this.cajaRepository.create({
+        ...data,
+        usuario,
+        ubicacion,
+        movimiento: movimientos,
+      });
+      console.log('Creando nueva caja:', newCaja);
+  
+      // Guardar la caja
+      const savedCaja = await this.cajaRepository.save(newCaja);
+      console.log('Caja creada exitosamente:', savedCaja);
+  
+      // Actualizar los movimientos con la relación con la caja
+      for (const movimiento of movimientos) {
+        movimiento.caja = savedCaja; // Asignar la instancia de caja a cada movimiento
+      }
+  
+      // Guardar los movimientos actualizados
+      await this.movimientoRepository.save(movimientos);
+      console.log('Movimientos actualizados con la caja:', movimientos);
+  
+      return savedCaja;
+  
+    } catch (error) {
+      console.error('Error al crear caja:', error);
+      throw error;
+    }
   }
+  
+  
+  
 
-  findAll() {
-    return this.cajaRepository.find();
+  async findAll() {
+    return await this.cajaRepository.find();
   }
 
   async findOneById(id: string) {
-    return this.cajaRepository.findOne({ where: { id } });
+    const caja = await this.cajaRepository.findOne({ where: { id } });
+    if (!caja) {
+      throw new NotFoundException(`Caja con id ${id} no encontrada`);
+    }
+    return caja;
   }
 
   async updateCaja(id: string, updateCajaDto: UpdateCajaDto) {
     const caja = await this.cajaRepository.findOne({ where: { id } });
     if (!caja) {
-      throw new NotFoundException(`Caja #${id} no encontrada`);
+      throw new NotFoundException(`Caja con id ${id} no encontrada`);
+    }
+    if (Object.keys(updateCajaDto).length === 0) {
+      throw new InternalServerErrorException('No hay valores para actualizar');
     }
     const updatedCaja = Object.assign(caja, updateCajaDto);
     return this.cajaRepository.save(updatedCaja);

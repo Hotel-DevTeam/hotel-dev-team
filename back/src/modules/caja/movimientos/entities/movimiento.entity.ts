@@ -3,14 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Estado, TipoMovimiento } from '../../caja/caja.enum';
-import { Product } from 'src/modules/products/entities/product.entity';
 import { Location } from 'src/modules/Location/entities/location.entity';
-import { Tipo } from 'src/modules/products/products.enum';
+import { Caja } from '../../caja/entities/caja.entity';
+
 
 @Entity('Movimiento')
 export class Movimiento {
@@ -27,17 +28,11 @@ export class Movimiento {
   descripcion: string;
 
   @Column({
-    type: 'enum',
-    enum: Estado,
-  })
-  Estado: Estado;
-
-  @Column({
     default: 'Hecho',
     type: 'enum',
     enum: Estado,
-  })
-  estado: Estado;
+    })
+    estado: Estado;
 
   @ManyToOne(() => Location, (location) => location.id, { nullable: false })
   ubicacion: Location;
@@ -45,6 +40,10 @@ export class Movimiento {
   @Column({
     type: 'enum',
     enum: TipoMovimiento,
-  })
-  tipoMovimiento: Movimiento;
+      })
+     tipoMovimiento: TipoMovimiento
+
+     @ManyToOne(() => Caja, (caja) => caja.movimiento)
+     @JoinColumn({ name: 'cajaId' })  // En caso de tener una columna de relación
+     caja: Caja;
 }

@@ -5,11 +5,11 @@ import { Estado, TipoMovimiento } from '../../caja/caja.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
 
 export class CreateMovimientoDto {
-  /*   @ApiProperty({
+    @ApiProperty({
     description: 'Usuario que realiza el movimiento',
     type: () => Users,
   })
-  usuario: Users; */ //ver lógica usuario logeado para poder sacar del dto
+  usuario: Users; //ver lógica usuario logeado para poder sacar del dto
 
   @ApiProperty({
     description: 'Monto del movimiento',

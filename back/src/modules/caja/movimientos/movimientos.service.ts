@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Movimiento } from './entities/movimiento.entity';
 import { Estado } from '../caja/caja.enum';
+import { Users } from 'src/modules/Users/entities/users.entity';
 
 @Injectable()
 export class MovimientosService {
@@ -16,14 +17,14 @@ export class MovimientosService {
     private readonly movRepository: Repository<Movimiento>,
   ) {}
 
-  /*   async create(createMovimientoDto: CreateMovimientoDto, userId: string) {
+    async create(createMovimientoDto: CreateMovimientoDto) {
     try {
-      const newMov = this.movRepository.create({ ...createMovimientoDto, usuario: { id: userId } });
+      const newMov = this.movRepository.create(createMovimientoDto);
       return await this.movRepository.save(newMov);
     } catch (error) {
       throw new InternalServerErrorException('Error al crear el movimiento');
     }
-  } */
+  }
 
   async findAll() {
     try {
