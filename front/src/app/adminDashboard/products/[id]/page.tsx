@@ -65,6 +65,7 @@ export default function ProductDetail() {
                 onToggleStatus={handleToggleStatus}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                
             />
         </div>
     );
