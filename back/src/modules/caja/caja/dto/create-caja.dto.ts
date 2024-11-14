@@ -1,21 +1,27 @@
-import { Users } from 'src/modules/Users/entities/users.entity';
-import { Movimiento } from '../../movimientos/entities/movimiento.entity';
-import { Location } from 'src/modules/Location/entities/location.entity';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateCajaDto {
+  @ApiProperty({ description: 'Saldo inicial de la caja', example: 1000 })
   saldoInicial: number;
 
-  movimiento: Movimiento[];
+  @ApiProperty({ description: 'IDs de los movimientos asociados a la caja', type: [String] })
+  movimientoIds: string[];
 
+  @ApiProperty({ description: 'Ingreso en efectivo', example: 500 })
   ingresoEfectivo: number;
 
+  @ApiProperty({ description: 'Ingreso con tarjeta', example: 300 })
   ingresoTarjeta: number;
 
+  @ApiProperty({ description: 'Cargo a la habitación', example: 200 })
   cargoHabitacion: number;
 
+  @ApiProperty({ description: 'Egresos de la caja', example: 100 })
   egresos: number;
 
-  usuario: Users; //ver logica para usuario logeado para sacar propiedad del dto
+  @ApiProperty({ description: 'ID del usuario asociado a la caja', example: 'user-id' })
+  usuarioId: string;
 
-  ubicacion: Location; ////ver logica para usuario logeado para sacar propiedad del dto
+  @ApiProperty({ description: 'ID de la ubicación de la caja', example: 'location-id' })
+  ubicacionId: string;
 }
