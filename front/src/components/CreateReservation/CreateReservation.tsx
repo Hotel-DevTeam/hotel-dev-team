@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
-<<<<<<< HEAD
+import { useState } from "react";
 import { useReservationContext } from "@/context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
-=======
-import { useReservationContext } from "../../context/reservationContext";
-import { Room, Reservation } from "../../Interfaces/IReservation";
->>>>>>> 380183242469fbd8cc85b09fb30b979a7375a48c
 
 const CreateReservation: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
