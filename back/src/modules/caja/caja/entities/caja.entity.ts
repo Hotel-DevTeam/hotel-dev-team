@@ -4,7 +4,7 @@ import {
   CreateDateColumn,
   Column,
   OneToMany,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Users } from 'src/modules/Users/entities/users.entity';
@@ -45,11 +45,11 @@ export class Caja {
   @ApiProperty({ description: 'Egresos de la caja', example: 100 })
   egresos: number;
 
-  @OneToOne(() => Users, (users) => users.id)
+  @ManyToOne(() => Users, (user) => user.caja)
   @ApiProperty({ description: 'Usuario asociado a la caja', type: Users })
   usuario: Users;
 
-  @OneToOne(() => Location, (location) => location.name)
+  @ManyToOne(() => Location, (location) => location.caja)
   @ApiProperty({ description: 'Ubicación asociada a la caja', type: Location })
   ubicacion: Location;
 }
