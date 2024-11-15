@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { useReservationContext } from "../../context/reservationContext";
-import {  Reservation } from "../../Interfaces/IReservation";
+import { useState } from "react";
+import { useReservationContext } from "@/context/reservationContext";
+import { Reservation } from "../../Interfaces/IReservation";
 
 const CreateReservation: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();

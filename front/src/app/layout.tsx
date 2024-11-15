@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
-import Navbar from "@/components/NavBar/NavBar";
 import { OrderProvider } from "@/context/OrderContext";
 import { ReservationProvider } from "@/context/reservationContext";
-import { LocationProvider } from "@/context/LocationContext";
+import Navbar from "@/components/NavBar/NavBar";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,15 +34,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <LocationProvider>
-          <ReservationProvider>
-          <OrderProvider>
-            <Navbar />
-            {children}
-          </OrderProvider>
+            <ReservationProvider>
+            <OrderProvider>
+              <Navbar />
+              {children}
+            </OrderProvider>
           </ReservationProvider>
-          </LocationProvider>
-        </UserProvider>
+          </UserProvider>
       </body>
     </html>
   );

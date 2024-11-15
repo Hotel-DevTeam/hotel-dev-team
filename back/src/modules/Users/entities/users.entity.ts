@@ -3,7 +3,6 @@ import {
   Column,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
@@ -54,7 +53,6 @@ export class Users {
   @OneToMany(() => Movimiento, (movimiento) => movimiento.usuario)
   movimiento: Movimiento[];
 
-  //optional
-  @OneToOne(() => Caja, (caja) => caja.usuario)
-  caja: Caja;
+  @OneToMany(() => Caja, (caja) => caja.usuario)
+  caja: Caja[];
 }
