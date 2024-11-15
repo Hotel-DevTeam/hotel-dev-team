@@ -1,27 +1,34 @@
 "use client";
-import { fetchProductById } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
-import { IProduct } from "@/Interfaces/IUser";
 import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";  
+import { fetchProductById } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
+import { IProductView } from "@/Interfaces/IUser";
 import CardProduct from "@/components/Products/cardProduct";
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
-    const [product, setProduct] = useState<IProduct | null>(null);
+export default function ProductDetail() {
+    const { id } = useParams();  
+    const [product, setProduct] = useState<IProductView | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const getProductDetail = async () => {
-            try {
-                const data = await fetchProductById(params.id);
-                setProduct(data);
-            } catch (error) {
-                console.error("Error fetching product details:", error);
-            } finally {
+            if (typeof id === "string") {
+                try {
+                    const data = await fetchProductById(id);
+                    setProduct(data);
+                } catch (error) {
+                    console.error("Error fetching product details:", error);
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                console.error("Invalid product ID");
                 setLoading(false);
             }
         };
 
         getProductDetail();
-    }, [params.id]);
+    }, [id]);
 
     if (loading) {
         return (
@@ -35,22 +42,30 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
         return <div>No se encontró el producto.</div>;
     }
 
-    const handleToggleStatus = (id: string) => {
-        // Lógica para activar/desactivar el producto
-        console.log("Toggle status for product ID:", id);
+    const handleToggleStatus = () => {
+        if (product) {
+            const updatedProduct = { ...product, Activo: !product.Activo };
+            setProduct(updatedProduct);
+            console.log("Producto actualizado:", updatedProduct);
+        }
     };
 
-    const handleEdit = (id: string) => {
-        // Lógica para editar el producto
-        console.log("Edit product ID:", id);
+    const handleEdit = () => {
+        console.log("Editando el producto", product?.id);
+    };
+ 
+    const handleDelete = () => {
+        console.log("Eliminando el producto", product?.id);
     };
 
     return (
         <div className="mt-28 mb-24">
-            <CardProduct 
-                product={product} 
-                onToggleStatus={handleToggleStatus} 
-                onEdit={handleEdit} 
+            <CardProduct
+                product={product}
+                onToggleStatus={handleToggleStatus}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                
             />
         </div>
     );

@@ -7,12 +7,14 @@ import { RoomModule } from '../Rooms/rooms.module';
 import { LocationRepository } from './location.repository';
 import { RoomsRepository } from '../Rooms/room.repository';
 import { AuthModule } from '../Auth/auth.module';
+import { UsersModule } from '../Users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Location, RoomsRepository]),
     RoomModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [LocationController],
   providers: [LocationService, LocationRepository],

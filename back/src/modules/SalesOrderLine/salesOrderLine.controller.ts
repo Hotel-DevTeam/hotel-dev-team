@@ -10,7 +10,11 @@ export class SalesOrderLineController {
   constructor(private salesOrderLineService: SalesOrderLineService) {}
 
   @Post()
-  createSalesOrderLine(@Body() createSalesOrderLineDto: CreateSalesOrderLineDto) {
-    return this.salesOrderLineService.createSalesOrderLine(createSalesOrderLineDto);
+  createSalesOrderLine(
+    @Body() createSalesOrderLineDto: CreateSalesOrderLineDto,
+  ) {
+    return this.salesOrderLineService.createSalesOrderLine(
+      createSalesOrderLineDto,
+    );
   }
 }

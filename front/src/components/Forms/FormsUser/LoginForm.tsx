@@ -1,12 +1,13 @@
 "use client"
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import { UserContext } from '@/context/UserContext';
+import { ILoginClientProps } from '@/Interfaces/IUser';
 import { validationLogin } from '@/utils/validationFormLogin';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useState } from 'react';
 
-export default function LoginForm() {
+export default function LoginForm({ setToken }: ILoginClientProps) {
     const {signIn} = useContext(UserContext);
     const router = useRouter();
     const [userData, setUserData] = useState({
@@ -35,16 +36,20 @@ export default function LoginForm() {
             try {
                 const success = await signIn(credentials);
                 if (success) {
-                    setNotificationMessage("Has ingresado correctamente");
-                    setShowNotification(true);
-                    setTimeout(() => setShowNotification(false), 3000);
-                    router.push("/location");
-                } else {
-                    setNotificationMessage("Usuario Inválido");
-                    setShowNotification(true);
-                    setTimeout(() => setShowNotification(false), 3000);
-                }
-            } catch  {
+                    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+                    if (token) {
+                        setToken(token); 
+                        setNotificationMessage("Has ingresado correctamente");
+                        setShowNotification(true);
+                        setTimeout(() => setShowNotification(false), 3000);
+                        router.push("/location");
+                    } else {
+                        setNotificationMessage("Usuario Inválido");
+                        setShowNotification(true);
+                        setTimeout(() => setShowNotification(false), 3000);
+                    }
+                } 
+            } catch  { 
                 setNotificationMessage("Ocurrió un error, intenta de nuevo");
                 setShowNotification(true);
                 setTimeout(() => setShowNotification(false), 3000);
@@ -53,6 +58,7 @@ export default function LoginForm() {
             setErrors(errors);
         }
     };
+    
     
 
     return (

@@ -32,7 +32,10 @@ export class ProductsService {
 
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({ status: 200, description: 'Lista de productos.' })
-  @ApiResponse({ status: 500, description: 'Error al obtener la lista de productos.' })
+  @ApiResponse({
+    status: 500,
+    description: 'Error al obtener la lista de productos.',
+  })
   async findAll() {
     try {
       return await this.productsRepository.find();

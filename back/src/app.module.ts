@@ -15,12 +15,13 @@ import { RoomModule } from './modules/Rooms/rooms.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SalesOrderModule } from './modules/SalesOrder/salesOrder.module';
 import { SalesOrderLineModule } from './modules/SalesOrderLine/salesOrderLine.module';
-import { CajaModule } from './modules/caja/caja.module';
-import { SeedService } from './seeds/seed.service'; 
+import { CajaModule } from './modules/caja/caja/caja.module';
+import { SeedService } from './seeds/seed.service';
 import { Location } from './modules/Location/entities/location.entity';
 import { Room } from './modules/Rooms/entities/rooms.entity';
 import { Users } from './modules/Users/entities/users.entity';
 import { UserSeedService } from './seeds/user-seed.service';
+import { MovimientosModule } from './modules/caja/movimientos/movimientos.module';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { UserSeedService } from './seeds/user-seed.service';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm'),
     }),
-    TypeOrmModule.forFeature([Location, Room, Users]), 
+    TypeOrmModule.forFeature([Location, Room, Users]),
     ReservationModule,
     HttpModule,
     UsersModule,
@@ -43,9 +44,9 @@ import { UserSeedService } from './seeds/user-seed.service';
     SalesOrderModule,
     SalesOrderLineModule,
     CajaModule,
+    MovimientosModule,
   ],
   controllers: [AppController, ExchangeRateController],
-  providers: [AppService, ExchangeRateService, SeedService, UserSeedService], 
+  providers: [AppService, ExchangeRateService, SeedService, UserSeedService],
 })
 export class AppModule {}
-

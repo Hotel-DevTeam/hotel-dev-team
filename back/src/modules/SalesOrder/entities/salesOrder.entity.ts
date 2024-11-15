@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
 import { SalesOrderLine } from '../../SalesOrderLine/entities/salesOrderLine.entity';
 import { Location } from '../../Location/entities/location.entity';
@@ -24,7 +31,9 @@ export class SalesOrder {
   @Column({ type: 'enum', enum: SaleStatus, default: SaleStatus.CONFIRMED })
   status: SaleStatus;
 
-  @OneToMany(() => SalesOrderLine, (salesOrderLine) => salesOrderLine.order, { cascade: true })
+  @OneToMany(() => SalesOrderLine, (salesOrderLine) => salesOrderLine.order, {
+    cascade: true,
+  })
   orderLines: SalesOrderLine[];
 
   @CreateDateColumn()
@@ -33,4 +42,3 @@ export class SalesOrder {
   @ManyToOne(() => Location, (location) => location.id)
   location: Location;
 }
-

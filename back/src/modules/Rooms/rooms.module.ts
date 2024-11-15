@@ -5,6 +5,7 @@ import { RoomController } from './rooms.controller';
 import { RoomsRepository } from './room.repository';
 import { Room } from './entities/rooms.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { UsersModule } from '../Users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '3h' },
     }),
+    UsersModule,
   ],
   controllers: [RoomController],
   providers: [RoomService, RoomsRepository],

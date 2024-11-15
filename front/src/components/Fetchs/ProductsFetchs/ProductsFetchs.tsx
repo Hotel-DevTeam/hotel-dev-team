@@ -1,8 +1,9 @@
-import { IProduct } from "@/Interfaces/IUser";
+import { IProduct, IProductView } from "@/Interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
+//Ver todos los productos
 export const fetchGetProducts = async (token:string) => {
     const response = await fetch(`${apiUrl}/products`, {
       method: 'GET',
@@ -15,9 +16,10 @@ export const fetchGetProducts = async (token:string) => {
       throw new Error('Failed to fetch users');
     }
   
-    const data = await response.json();
-    return data;
-  };
+  const data = await response.json();
+  return data;
+};
+
 
   
 export const fetchProductById = async (id:string) => {
@@ -30,8 +32,8 @@ export const fetchProductById = async (id:string) => {
   
 
   
-  
-  export const fetchUpdateProduct = async(id:string, product:IProduct) => {
+  //Modificar producto
+  export const fetchUpdateProduct = async(id:string, product:IProductView) => {
     const response = await fetch(`${apiUrl}/products/${id}`, {
       method: "PUT",
       headers: {
@@ -48,6 +50,8 @@ export const fetchProductById = async (id:string) => {
   };
 
 
+  //Crear productos
+
 export const fetchUploadProduct = async (product:IProduct) => {
     const response = await fetch(`${apiUrl}/products`, {
         method: "POST",
@@ -63,3 +67,7 @@ export const fetchUploadProduct = async (product:IProduct) => {
 
   return response.json();
 };
+
+export const fetchDeleteProduct = async (id:string) => {
+console.log(id)
+}

@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
-import { Caja } from 'src/modules/caja/entities/caja.entity';
+import { Caja } from 'src/modules/caja/caja/entities/caja.entity';
+import { Movimiento } from 'src/modules/caja/movimientos/entities/movimiento.entity';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -23,7 +24,7 @@ const config: DataSourceOptions = {
   dropSchema:false,
   logging: true,
   synchronize: true,
-  entities: [Location,Room,Users,Caja,Product,Reservation,SalesOrder,SalesOrderLine,Pax],
+  entities: [Location,Room,Users,Caja,Product,Reservation,SalesOrder,SalesOrderLine,Pax, Movimiento],
   migrations: ['dist/migrations/*{.ts,.js}'],
 };
 

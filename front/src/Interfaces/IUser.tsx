@@ -37,17 +37,20 @@ export interface IUserContextType {
   }
   
   export interface IUserResponse {
+    message: string;
     token: string;
-  }
+    role:Role
+     }
 
   export interface ILoginResponse {
     message: string;
     token: string;
+    role:Role
   }
   
 
   export interface ILocation {
-    id?:string;
+    id:string;
     name:string;
     address:string;
     imgUrl:string;
@@ -59,13 +62,23 @@ export enum Tipo {
 }
 
 export interface IProduct {
+  id?:string;
+  tipo: Tipo;
+  nombre:string;
+  Activo:boolean;
+  foto:string;
+  ubicacion:{id:string};
+}
+
+export interface IProductView {
   id:string;
   tipo: Tipo;
   nombre:string;
   Activo:boolean;
   foto:string;
-  ubicacion:ILocation;
 }
+
+
 
 export interface IProductsPageProps {
   products: IProduct[];
@@ -76,4 +89,8 @@ export interface ICardProductProps {
   product: IProduct;
   onToggleStatus: (id: string) => void; 
   onEdit: (id: string) => void;       
+}
+
+export interface ILoginClientProps {
+  setToken: (token: string | null) => void;
 }

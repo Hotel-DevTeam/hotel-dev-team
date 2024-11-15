@@ -1,8 +1,14 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Tipo } from '../products.enum';
 import { IsEnum, IsUrl } from 'class-validator';
 import { Location } from 'src/modules/Location/entities/location.entity';
-import { Caja } from 'src/modules/caja/entities/caja.entity';
+import { Caja } from 'src/modules/caja/caja/entities/caja.entity';
 
 @Entity({ name: 'products' })
 export class Product {

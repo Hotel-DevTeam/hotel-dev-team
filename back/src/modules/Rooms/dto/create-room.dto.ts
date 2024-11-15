@@ -1,8 +1,13 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateRoomDto {
-
   @ApiProperty({
     description: 'Número de habitación',
     example: '512',
@@ -41,9 +46,12 @@ export class CreateRoomDto {
   @IsString()
   type: string;
 
-  @ApiProperty({ description: 'Room ID associated with the location', required: false })
+  @ApiProperty({
+    description: 'Room ID associated with the location',
+    required: false,
+  })
   @IsOptional()
-  @IsUUID()  
+  @IsUUID()
   locationId?: string;
 }
 

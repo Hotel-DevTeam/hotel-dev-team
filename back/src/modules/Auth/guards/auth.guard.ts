@@ -8,14 +8,16 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { Role } from '../../Users/roles.enum';
+import { UsersService } from 'src/modules/Users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
@@ -34,13 +36,15 @@ export class AuthGuard implements CanActivate {
       const secret = process.env.JWT_SECRET;
       const payload = this.jwtService.verify(token, { secret });
 
-      
       if (!payload.role || !Object.values(Role).includes(payload.role)) {
         throw new ForbiddenException('User does not have a valid role');
       }
 
-      
-      request.user = payload;
+      const user = await this.usersService.findOneById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      request.user = user;
 
       return true;
     } catch (error) {
@@ -54,4 +58,3 @@ export class AuthGuard implements CanActivate {
     }
   }
 }
-

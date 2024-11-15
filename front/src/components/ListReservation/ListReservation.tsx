@@ -1,52 +1,56 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
+import React, { useState } from "react";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 
-const ListReservation: React.FC = () => {
+const ReservationsList: React.FC = () => {
   const { reservations, finalizeReservation } = useReservationContext();
+  const [filter, setFilter] = useState<"all" | "finalized" | "unfinalized">(
+    "all"
+  );
+
+  const filteredReservations = reservations.filter((reservation) => {
+    if (filter === "finalized") return reservation.finalized;
+    if (filter === "unfinalized") return !reservation.finalized;
+    return true;
+  });
 
   return (
-    <div className="bg-white text-black shadow-md rounded px-8 py-6 mb-4">
-      <h2 className="text-lg font-semibold mb-4">Reservas</h2>
-      {reservations.length === 0 ? (
-        <p>No hay reservas registradas.</p>
-      ) : (
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Check-in</th>
-              <th className="border px-4 py-2">Check-out</th>
-              <th className="border px-4 py-2">Habitación</th>
-              <th className="border px-4 py-2">Pasajeros</th>
-              <th className="border px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations.map((reservation: Reservation) => (
-              <tr key={reservation.id}>
-                {/* Asegúrate de que reservation.id es único */}
-                <td className="border px-4 py-2">{reservation.checkInDate}</td>
-                <td className="border px-4 py-2">{reservation.checkOutDate}</td>
-                <td className="border px-4 py-2">{reservation.roomId}</td>
-                <td className="border px-4 py-2">
-                  {reservation.passengerCount}
-                </td>
-                <td className="border px-4 py-2">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded transition"
-                    onClick={() => finalizeReservation(reservation)}
-                  >
-                    Marcar como finalizada
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold mb-4">Lista de Reservas</h2>
+      <select
+        value={filter}
+        onChange={(e) =>
+          setFilter(e.target.value as "all" | "finalized" | "unfinalized")
+        }
+        className="border border-gray-300 rounded-lg w-full px-3 py-2"
+      >
+        <option value="all">Todas</option>
+        <option value="finalized">Finalizadas</option>
+        <option value="unfinalized">No Finalizadas</option>
+      </select>
+
+      <ul>
+        {filteredReservations.map((reservation, index) => (
+          <li key={reservation.id} className="bg-gray-100 p-4 rounded-lg">
+            <div>Check-in: {reservation.checkInDate}</div>
+            <div>Check-out: {reservation.checkOutDate}</div>
+            <div>Pasajeros: {reservation.passengers}</div>
+            <div>Precio Total: ${reservation.totalPrice}</div>
+            <button
+              onClick={() => finalizeReservation(reservation)}
+              disabled={reservation.finalized}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              {reservation.finalized ? "Finalizado" : "Finalizar Reserva"}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default ListReservation;
+export default ReservationsList;
