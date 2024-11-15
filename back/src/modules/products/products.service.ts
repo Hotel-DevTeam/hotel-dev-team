@@ -38,13 +38,16 @@ export class ProductsService {
   })
   async findAll() {
     try {
-      return await this.productsRepository.find();
+      return await this.productsRepository.find({
+        relations: ['ubicacion'], 
+      });
     } catch {
       throw new InternalServerErrorException(
         'Error al obtener la lista de productos',
       );
     }
   }
+  
 
   @ApiOperation({ summary: 'Obtener un producto por ID' })
   @ApiResponse({ status: 200, description: 'Producto encontrado.' })
@@ -53,8 +56,11 @@ export class ProductsService {
   async findOneById(id: string): Promise<Product> {
     try {
       console.log(`Buscando producto id ${id}`);
-      const product = await this.productsRepository.findOne({ where: { id } });
-
+      const product = await this.productsRepository.findOne({
+        where: { id },
+        relations: ['ubicacion'], 
+      });
+  
       if (!product) {
         console.log(`Producto id ${id} no encontrado`);
         throw new NotFoundException(`Producto id ${id} no encontrado`);
@@ -67,6 +73,8 @@ export class ProductsService {
       );
     }
   }
+  
+  
 
   @ApiOperation({ summary: 'Actualizar un producto' })
   @ApiResponse({ status: 200, description: 'Producto actualizado.' })
