@@ -1,16 +1,16 @@
-import { IProductView } from "@/Interfaces/IUser";
+import { IProduct } from "@/Interfaces/IUser";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaTrashAlt } from 'react-icons/fa';  
 
 interface CardProductProps {
-    product: IProductView;
+    product: IProduct;
     onToggleStatus: () => void;
     onEdit: () => void;
     onDelete: () => void; 
     isEditing: boolean;
-    onEditSubmit: (updatedProduct: IProductView) => void;
+    onEditSubmit: (updatedProduct: IProduct) => void;
 }
 
 const CardProduct: React.FC<CardProductProps> = ({ 
@@ -21,7 +21,7 @@ const CardProduct: React.FC<CardProductProps> = ({
     isEditing, 
     onEditSubmit 
 }) => {
-    const [editedProduct, setEditedProduct] = useState<IProductView>(product);
+    const [editedProduct, setEditedProduct] = useState<IProduct>(product);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -36,6 +36,7 @@ const CardProduct: React.FC<CardProductProps> = ({
         <div className="border m-4 rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
             <Link href={`/adminDashboard/products/${product.id}`}>
                 <div className="w-full h-48 relative cursor-pointer overflow-hidden rounded-t-xl flex justify-center items-center">
+                   <h2>{product.ubicacion.id}</h2>
                     <Image
                         src={product.foto}
                         alt={product.nombre}
@@ -45,6 +46,7 @@ const CardProduct: React.FC<CardProductProps> = ({
                         className="object-contain transform transition-transform duration-300 hover:scale-110"
                     />
                 </div>
+                <h2>{product.ubicacion.id}</h2>
             </Link>
             <div className="flex flex-col items-center text-center mt-3">
                 {isEditing ? (
@@ -57,6 +59,7 @@ const CardProduct: React.FC<CardProductProps> = ({
                     />
                 ) : (
                     <h2 className="text-xl font-semibold text-gray-800">{product.nombre}</h2>
+                    
                 )}
                 
                 {isEditing ? (

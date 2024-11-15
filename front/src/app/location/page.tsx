@@ -19,7 +19,7 @@ export default function Page() {
     if (isAdmin === false) {
       setNotificationMessage("Debes ser administrador para ver ubicaciones");
       setShowNotification(true);
-      router.push("/login");
+      router.push("/");
     } else {
       setLoading(false);
     }

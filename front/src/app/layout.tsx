@@ -5,6 +5,7 @@ import { UserProvider } from "@/context/UserContext";
 import Navbar from "@/components/NavBar/NavBar";
 import { OrderProvider } from "@/context/OrderContext";
 import { ReservationProvider } from "@/context/reservationContext";
+import { LocationProvider } from "@/context/LocationContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,12 +34,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
+          <LocationProvider>
           <ReservationProvider>
           <OrderProvider>
             <Navbar />
             {children}
           </OrderProvider>
           </ReservationProvider>
+          </LocationProvider>
         </UserProvider>
       </body>
     </html>

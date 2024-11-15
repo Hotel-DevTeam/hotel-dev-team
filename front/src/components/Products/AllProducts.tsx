@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { IProductView } from "@/Interfaces/IUser";
+import { IProduct} from "@/Interfaces/IUser";
 import CardProduct from "./cardProduct";
 import { UserContext } from "@/context/UserContext";
 import { fetchGetProducts, fetchUpdateProduct } from "../Fetchs/ProductsFetchs/ProductsFetchs";
 
 export default function AllProducts() {
-    const [products, setProducts] = useState<IProductView[]>([]);
+    const [products, setProducts] = useState<IProduct[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isTokenLoaded, setIsTokenLoaded] = useState<boolean>(false);
-    const [filteredProducts, setFilteredProducts] = useState<IProductView[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
     const [selectedType, setSelectedType] = useState<string>('');
-    const [editingProduct, setEditingProduct] = useState<IProductView | null>(null);
+    const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
     const { token } = useContext(UserContext);
 
     useEffect(() => {
@@ -73,7 +73,7 @@ export default function AllProducts() {
         }
     };
 
-    const handleEditSubmit = async (updatedProduct: IProductView) => {
+    const handleEditSubmit = async (updatedProduct: IProduct) => {
         if (!token) return;
 
         try {

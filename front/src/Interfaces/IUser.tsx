@@ -62,20 +62,12 @@ export enum Tipo {
 }
 
 export interface IProduct {
-  id?:string;
-  tipo: Tipo;
-  nombre:string;
-  Activo:boolean;
-  foto:string;
-  ubicacion:{id:string};
-}
-
-export interface IProductView {
   id:string;
   tipo: Tipo;
   nombre:string;
   Activo:boolean;
   foto:string;
+  ubicacion:{id:string};
 }
 
 
