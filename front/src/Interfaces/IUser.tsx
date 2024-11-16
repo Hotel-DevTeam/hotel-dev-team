@@ -67,7 +67,7 @@ export interface IProduct {
   nombre:string;
   Activo:boolean;
   foto:string;
-  ubicacion:{id:string};
+  ubicacion:ILocation;
 }
 
 

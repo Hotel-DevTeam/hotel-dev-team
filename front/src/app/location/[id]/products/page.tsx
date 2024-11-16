@@ -1,46 +1,17 @@
-"use client";
-
-import React, { useEffect, useState, useContext } from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { IProduct } from "@/Interfaces/IUser"; // Ajusta la ruta de tu interfaz
+import { IProduct } from "@/Interfaces/IUser"; 
 import CardProduct from "@/components/Products/cardProduct";
-import { UserContext } from "@/context/UserContext";
-import { fetchGetProducts } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
+import { useProducts } from "@/components/Products/useProduct";
 
 export default function LocationProducts() {
-  const { token } = useContext(UserContext);
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const { products, loading, toggleProductStatus, handleEditSubmit } = useProducts(); // Aquí ya tienes handleEditSubmit
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Estado para indicar si está cargando
+  const [isEditing, setIsEditing] = useState<string | null>(null); // Para saber qué producto está en edición
   const params = useParams();
   const locationId = params?.id;
-  console.log("productos en el componente", products)
-  // Obtener productos al montar el componente
-  useEffect(() => {
-    const getProducts = async () => {
-      if (!token) {
-        console.error("No token found");
-        setIsLoading(false); // Finaliza la carga si no hay token
-        return;
-      }
-      try {
-        const data = await fetchGetProducts(token);
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false); // Finaliza la carga después de obtener los datos
-      }
-    };
 
-    if (token) {
-      getProducts();
-    } else {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  // Filtrar productos por ubicación
   useEffect(() => {
     if (locationId && products.length > 0) {
       const filtered = products.filter(
@@ -50,13 +21,22 @@ export default function LocationProducts() {
     }
   }, [products, locationId]);
 
-  if (isLoading) {
+  if (loading) {
     return <p>Cargando productos...</p>;
   }
 
   if (!filteredProducts.length) {
     return <p>No se encontraron productos para esta ubicación.</p>;
   }
+
+  const handleEdit = (productId: string) => {
+    setIsEditing(productId); // Marca el producto como en edición
+  };
+
+  const handleSaveEdit = (updatedProduct: IProduct) => {
+    handleEditSubmit(updatedProduct); // Guardar el producto actualizado
+    setIsEditing(null); // Salir del modo de edición
+  };
 
   return (
     <div>
@@ -66,7 +46,14 @@ export default function LocationProducts() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {filteredProducts.map((product) => (
-          <CardProduct key={product.id} product={product} />
+          <CardProduct
+            key={product.id}
+            product={product}
+            onToggleStatus={() => toggleProductStatus(product.id)}
+            onEdit={() => handleEdit(product.id)} 
+            isEditing={isEditing === product.id} 
+            onEditSubmit={handleSaveEdit} 
+          />
         ))}
       </div>
     </div>

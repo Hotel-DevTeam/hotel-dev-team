@@ -1,4 +1,4 @@
-import { IProduct, IProductView } from "@/Interfaces/IUser";
+import { IProduct } from "@/Interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -33,7 +33,7 @@ export const fetchProductById = async (id:string) => {
 
   
   //Modificar producto
-  export const fetchUpdateProduct = async(id:string, product:IProductView) => {
+  export const fetchUpdateProduct = async(id:string, product:IProduct) => {
     const response = await fetch(`${apiUrl}/products/${id}`, {
       method: "PUT",
       headers: {
@@ -71,3 +71,17 @@ export const fetchUploadProduct = async (product:IProduct) => {
 export const fetchDeleteProduct = async (id:string) => {
 console.log(id)
 }
+// Cambiar el estado de un producto (usando DELETE)
+export const fetchToggleProductStatus = async (id: string) => {
+  const response = await fetch(`${apiUrl}/products/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al cambiar el estado del producto');
+  }
+
+  const data = await response.json(); 
+  return data;
+};
+

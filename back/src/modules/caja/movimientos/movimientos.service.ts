@@ -17,7 +17,7 @@ export class MovimientosService {
     private readonly movRepository: Repository<Movimiento>,
   ) {}
 
-    async create(createMovimientoDto: CreateMovimientoDto) {
+  async create(createMovimientoDto: CreateMovimientoDto) {
     try {
       const newMov = this.movRepository.create(createMovimientoDto);
       return await this.movRepository.save(newMov);

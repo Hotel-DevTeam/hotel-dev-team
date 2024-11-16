@@ -18,7 +18,10 @@ export class Caja {
   id: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  @ApiProperty({ description: 'Fecha de creación de la caja', example: '2024-11-12T07:00:00Z' })
+  @ApiProperty({
+    description: 'Fecha de creación de la caja',
+    example: '2024-11-12T07:00:00Z',
+  })
   fecha: Date;
 
   @Column()
@@ -26,7 +29,10 @@ export class Caja {
   saldoInicial: number;
 
   @OneToMany(() => Movimiento, (movimiento) => movimiento.caja)
-  @ApiProperty({ description: 'Lista de movimientos asociados a la caja', type: [Movimiento] })
+  @ApiProperty({
+    description: 'Lista de movimientos asociados a la caja',
+    type: [Movimiento],
+  })
   movimiento: Movimiento[];
 
   @Column()
