@@ -38,7 +38,9 @@ export class ProductsService {
   })
   async findAll() {
     try {
-      return await this.productsRepository.find();
+      return await this.productsRepository.find({
+        relations: ['ubicacion'],
+      });
     } catch {
       throw new InternalServerErrorException(
         'Error al obtener la lista de productos',
@@ -53,7 +55,10 @@ export class ProductsService {
   async findOneById(id: string): Promise<Product> {
     try {
       console.log(`Buscando producto id ${id}`);
-      const product = await this.productsRepository.findOne({ where: { id } });
+      const product = await this.productsRepository.findOne({
+        where: { id },
+        relations: ['ubicacion'],
+      });
 
       if (!product) {
         console.log(`Producto id ${id} no encontrado`);

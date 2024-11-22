@@ -22,9 +22,12 @@ export default function Location() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl mt-20 font-bold text-center mb-8">Nuestros hoteles</h1>
-      <div className="flex flex-col mt-20 sm:flex-col md:flex-row lg:flex-row justify-center flex-wrap">
+    <div className='bg-[bisque] font-sans'>
+    <h1 className="text-2xl sm:text-2xl md:text-2xl lg:text-4xl font-bold text-black text-shadow-md mb-8 mt-20 uppercase tracking-widest text-center">
+  Nuestros alojamientos
+</h1>
+
+      <div className="flex flex-col mt-8 sm:flex-col md:flex-row lg:flex-row justify-center flex-wrap">
         {ubicaciones.map((ubicacion) => (
           <section
             key={ubicacion.id}
@@ -42,8 +45,8 @@ export default function Location() {
               />
               <div className="relative bg-gradient-to-t from-gray-900/50 to-gray-900/25 h-full flex flex-col justify-end">
                 <div className="p-4 sm:p-6">
-                  <h3 className="mt-0.5 text-lg text-white">{ubicacion.name}</h3>
-                  <h3 className="mt-0.5 text-lg text-white">{ubicacion.address}</h3> 
+                  <h3 className="mt-1.5 inline-block bg-black bg-opacity-75 px-3 py-2 text-xs font-medium uppercase tracking-wide text-white">{ubicacion.name}</h3>
+                  
                 </div>
               </div>
             </Link>
@@ -54,7 +57,7 @@ export default function Location() {
         <div className="absolute top-0 right-0 mb-4 mr-4">
           <a
             href="/location/create"
-            className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+            className="inline-block mx-auto mb-6 px-4 py-2 border bg-teal-500 text-white font-semibold rounded-md shadow-md hover:bg-teal-600 transition"
           >
             Crear nueva ubicación
           </a>

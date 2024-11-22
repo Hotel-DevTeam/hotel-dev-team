@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Role } from '../roles.enum';
 import { Movimiento } from 'src/modules/caja/movimientos/entities/movimiento.entity';

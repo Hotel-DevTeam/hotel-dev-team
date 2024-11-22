@@ -22,7 +22,9 @@ const ReservationsList: React.FC = () => {
       <h2 className="text-xl font-semibold mb-4">Lista de Reservas</h2>
       <select
         value={filter}
-        onChange={(e) => setFilter(e.target.value as any)}
+        onChange={(e) =>
+          setFilter(e.target.value as "all" | "finalized" | "unfinalized")
+        }
         className="border border-gray-300 rounded-lg w-full px-3 py-2"
       >
         <option value="all">Todas</option>

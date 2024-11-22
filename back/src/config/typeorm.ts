@@ -24,7 +24,18 @@ const config: DataSourceOptions = {
   dropSchema: false,
   logging: true,
   synchronize: true,
-  entities: [Location,Room,Users,Caja,Product,Reservation,SalesOrder,SalesOrderLine,Pax, Movimiento],
+  entities: [
+    Location,
+    Room,
+    Users,
+    Caja,
+    Product,
+    Reservation,
+    SalesOrder,
+    SalesOrderLine,
+    Pax,
+    Movimiento,
+  ],
   migrations: ['dist/migrations/*{.ts,.js}'],
 };
 
