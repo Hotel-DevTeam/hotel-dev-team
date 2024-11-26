@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
 import React, { useState } from "react";
@@ -11,6 +12,7 @@ const CreateOrder: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [user, setUser] = useState<string>("");
   const [roomNumber, setRoomNumber] = useState<string>("");
+  const [paidAmount, setPaidAmount] = useState<number>(0); // Aquí se define el estado de 'paidAmount'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,15 +31,16 @@ const CreateOrder: React.FC = () => {
       setQuantity(1);
       setUser("");
       setRoomNumber("");
+      setPaidAmount(0); // Resetea el monto pagado después de enviar la orden
     }
   };
 
   const totalPrice = selectedProductId
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     ? products.find((p) => p.id === selectedProductId)?.price! * quantity
     : 0;
 
   return (
+    // Asegúrate de envolver todo en un 'return'
     <form
       onSubmit={handleSubmit}
       className="bg-white shadow-md rounded px-8 py-6 mb-4"
@@ -55,7 +58,7 @@ const CreateOrder: React.FC = () => {
           id="product"
           value={selectedProductId}
           onChange={(e) => setSelectedProductId(Number(e.target.value))}
-          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
         >
           <option value={0}>Seleccione un producto</option>
           {products.map((product) => (
@@ -79,7 +82,7 @@ const CreateOrder: React.FC = () => {
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
           min={1}
-          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
         />
       </div>
 
@@ -95,7 +98,7 @@ const CreateOrder: React.FC = () => {
           value={user}
           onChange={(e) => setUser(e.target.value)}
           required
-          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
         >
           <option value="">Seleccione un usuario</option>
           {users.map((user) => (
@@ -118,7 +121,7 @@ const CreateOrder: React.FC = () => {
           value={roomNumber}
           onChange={(e) => setRoomNumber(e.target.value)}
           required
-          className="border border-gray-300 rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#2A9D8F]"
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
         >
           <option value="">Seleccione una habitación</option>
           {rooms.map((room) => (
@@ -130,22 +133,43 @@ const CreateOrder: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <p className="text-[#264653] text-sm font-bold">
-          Precio por unidad: $
-          {selectedProductId
-            ? products.find((p) => p.id === selectedProductId)?.price
-            : 0}
-        </p>
-        <p className="text-[#264653] text-sm font-bold">
-          Precio total: ${totalPrice}
-        </p>
+        <label
+          htmlFor="totalPrice"
+          className="block text-[#264653] text-sm font-bold mb-2"
+        >
+          Precio Total:
+        </label>
+        <input
+          type="number"
+          id="totalPrice"
+          value={totalPrice}
+          disabled
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label
+          htmlFor="paidAmount"
+          className="block text-[#264653] text-sm font-bold mb-2"
+        >
+          Monto Pagado:
+        </label>
+        <input
+          type="number"
+          id="paidAmount"
+          value={paidAmount}
+          onChange={(e) => setPaidAmount(Number(e.target.value))}
+          min={0}
+          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
+        />
       </div>
 
       <button
         type="submit"
-        className="bg-[#F4A261] hover:bg-[#E9C46A] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors"
+        className="bg-[#CD9C8A] text-white w-full py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
       >
-        Agregar Orden
+        Crear Orden
       </button>
     </form>
   );
