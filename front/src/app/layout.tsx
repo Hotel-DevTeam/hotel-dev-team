@@ -6,6 +6,7 @@ import { OrderProvider } from "@/context/OrderContext";
 import { ReservationProvider } from "@/context/reservationContext";
 import Navbar from "@/components/NavBar/NavBar";
 
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -33,13 +34,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <ReservationProvider>
+            <ReservationProvider>
             <OrderProvider>
               <Navbar />
               {children}
             </OrderProvider>
           </ReservationProvider>
-        </UserProvider>
+          </UserProvider>
       </body>
     </html>
   );

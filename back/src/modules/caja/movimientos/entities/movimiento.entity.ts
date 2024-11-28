@@ -12,7 +12,6 @@ import { Estado, TipoMovimiento } from '../../caja/caja.enum';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Caja } from '../../caja/entities/caja.entity';
 
-
 @Entity('Movimiento')
 export class Movimiento {
   @PrimaryGeneratedColumn('uuid')
@@ -31,8 +30,8 @@ export class Movimiento {
     default: 'Hecho',
     type: 'enum',
     enum: Estado,
-    })
-    estado: Estado;
+  })
+  estado: Estado;
 
   @ManyToOne(() => Location, (location) => location.id, { nullable: false })
   ubicacion: Location;
@@ -40,10 +39,10 @@ export class Movimiento {
   @Column({
     type: 'enum',
     enum: TipoMovimiento,
-      })
-     tipoMovimiento: TipoMovimiento
+  })
+  tipoMovimiento: TipoMovimiento;
 
-     @ManyToOne(() => Caja, (caja) => caja.movimiento)
-     @JoinColumn({ name: 'cajaId' })  // En caso de tener una columna de relación
-     caja: Caja;
+  @ManyToOne(() => Caja, (caja) => caja.movimiento)
+  @JoinColumn({ name: 'cajaId' }) // En caso de tener una columna de relación
+  caja: Caja;
 }

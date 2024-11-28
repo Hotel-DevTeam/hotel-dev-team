@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Caja } from './entities/caja.entity';
@@ -23,36 +27,42 @@ export class CajaService {
 
   async createCaja(createCajaDto: CreateCajaDto) {
     const { usuarioId, ubicacionId, movimientoIds, ...data } = createCajaDto;
-  
+
     try {
       console.log('Recibiendo datos para crear caja:', createCajaDto);
-  
+
       // Buscar usuario
-      const usuario = await this.userRepository.findOne({ where: { id: usuarioId } });
+      const usuario = await this.userRepository.findOne({
+        where: { id: usuarioId },
+      });
       if (!usuario) {
         console.log(`Usuario con ID ${usuarioId} no encontrado`);
         throw new NotFoundException('Usuario no encontrado');
       }
       console.log('Usuario encontrado:', usuario);
-  
+
       // Buscar ubicación
-      const ubicacion = await this.locationRepository.findOne({ where: { id: ubicacionId } });
+      const ubicacion = await this.locationRepository.findOne({
+        where: { id: ubicacionId },
+      });
       if (!ubicacion) {
         console.log(`Ubicación con ID ${ubicacionId} no encontrada`);
         throw new NotFoundException('Ubicación no encontrada');
       }
       console.log('Ubicación encontrada:', ubicacion);
-  
+
       // Buscar movimientos
       const movimientos = await this.movimientoRepository.findBy({
         id: In(movimientoIds),
       });
       if (!movimientos || movimientos.length === 0) {
-        console.log(`No se encontraron movimientos con los IDs: ${movimientoIds}`);
+        console.log(
+          `No se encontraron movimientos con los IDs: ${movimientoIds}`,
+        );
         throw new NotFoundException('Movimientos no encontrados');
       }
       console.log('Movimientos encontrados:', movimientos);
-  
+
       // Crear la nueva caja
       const newCaja = this.cajaRepository.create({
         ...data,
@@ -61,30 +71,26 @@ export class CajaService {
         movimiento: movimientos,
       });
       console.log('Creando nueva caja:', newCaja);
-  
+
       // Guardar la caja
       const savedCaja = await this.cajaRepository.save(newCaja);
       console.log('Caja creada exitosamente:', savedCaja);
-  
+
       // Actualizar los movimientos con la relación con la caja
       for (const movimiento of movimientos) {
         movimiento.caja = savedCaja; // Asignar la instancia de caja a cada movimiento
       }
-  
+
       // Guardar los movimientos actualizados
       await this.movimientoRepository.save(movimientos);
       console.log('Movimientos actualizados con la caja:', movimientos);
-  
+
       return savedCaja;
-  
     } catch (error) {
       console.error('Error al crear caja:', error);
       throw error;
     }
   }
-  
-  
-  
 
   async findAll() {
     return await this.cajaRepository.find();

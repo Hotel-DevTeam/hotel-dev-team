@@ -19,3 +19,9 @@ body {
   background: bisque;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer utilities {
+  .text-shadow-md {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Borde alrededor del texto */
+  }
+}

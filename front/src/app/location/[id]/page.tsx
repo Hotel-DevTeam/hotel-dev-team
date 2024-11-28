@@ -67,8 +67,8 @@ const LocationDetail = () => {
           </a>
         </li>
         <li>
-          <a
-            href="#"
+          <Link
+           href={`/location/${id}/products`}
             className="group relative block overflow-hidden rounded-lg shadow-md"
           >
             <Image
@@ -86,7 +86,7 @@ const LocationDetail = () => {
                 Ingresar
               </span>
             </div>
-          </a>
+          </Link>
         </li>
       </ul>
     </div>
