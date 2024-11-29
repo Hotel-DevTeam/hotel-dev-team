@@ -53,6 +53,8 @@ export default function LocationProducts() {
             onEdit={() => handleEdit(product.id)} 
             isEditing={isEditing === product.id} 
             onEditSubmit={handleSaveEdit} 
+            onDelete={()=>handleEdit(product.id)}   //esto cambiar
+            onSaveEdit={()=>handleEdit(product.id)}  //esto cambiar
           />
         ))}
       </div>

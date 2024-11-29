@@ -35,8 +35,8 @@ export default function Location() {
           >
             <Link href={`/location/${ubicacion.id}`} className="cursor-pointer">
               <Image
-                alt={ubicacion.name}
-                src={ubicacion.imgUrl}  
+                alt={ubicacion.name || ''}
+                src={ubicacion.imgUrl || ''}  
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-110"
                 width={970}
                 height={250}
@@ -55,12 +55,12 @@ export default function Location() {
       </div>
       <div className="relative">
         <div className="absolute top-0 right-0 mb-4 mr-4">
-          <a
+          <link
             href="/location/create"
             className="inline-block mx-auto mb-6 px-4 py-2 border bg-teal-500 text-white font-semibold rounded-md shadow-md hover:bg-teal-600 transition"
           >
             Crear nueva ubicación
-          </a>
+          </link>
         </div>
       </div>
     </div>

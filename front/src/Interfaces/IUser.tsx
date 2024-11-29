@@ -50,10 +50,10 @@ export interface IUserContextType {
   
 
   export interface ILocation {
-    id:string;
-    name:string;
-    address:string;
-    imgUrl:string;
+    id?:string;
+    name?:string;
+    address?:string;
+    imgUrl?:string;
   }
   
 export enum Tipo {
