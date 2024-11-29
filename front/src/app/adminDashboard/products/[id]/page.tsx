@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/location/[id]/products/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
+
 import { useParams } from "next/navigation";
+// import { fetchProductById } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
 import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "@/components/Products/cardProduct";
 import { useProducts } from "@/components/Products/useProduct";

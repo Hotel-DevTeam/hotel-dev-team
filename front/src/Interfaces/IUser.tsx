@@ -49,9 +49,9 @@ export interface ILoginResponse {
 
 export interface ILocation {
   id?: string;
-  name: string;
-  address: string;
-  imgUrl: string;
+  name?: string;
+  address?: string;
+  imgUrl?: string;
 }
 
 export enum Tipo {

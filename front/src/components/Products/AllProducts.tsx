@@ -1,34 +1,39 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "./cardProduct";
 import { useProducts } from "./useProduct";
 
 export default function AllProducts() {
-  const { products, loading, toggleProductStatus, handleEditSubmit } = useProducts();
+  const { products, loading, toggleProductStatus, handleEditSubmit } =
+    useProducts();
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
-  const [selectedType, setSelectedType] = useState<string>('');
-  const [editingProduct, setEditingProduct] = useState<string | null>(null); 
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
 
   useEffect(() => {
     let filtered = [...products];
-    if (selectedType !== '') {
+    if (selectedType !== "") {
       filtered = filtered.filter((product) => product.tipo === selectedType);
     }
     setFilteredProducts(filtered);
   }, [products, selectedType]);
 
   const handleEdit = (productId: string) => {
-    setEditingProduct(productId);  // Poner el producto en modo de edición
+    setEditingProduct(productId); // Poner el producto en modo de edición
   };
 
   const handleSaveEdit = (updatedProduct: IProduct) => {
     setEditingProduct(null); // Salir del modo de edición
-    handleEditSubmit(updatedProduct);  // Guardar el producto actualizado
+    handleEditSubmit(updatedProduct); // Guardar el producto actualizado
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -56,10 +61,11 @@ export default function AllProducts() {
             key={product.id}
             product={product}
             onToggleStatus={() => toggleProductStatus(product.id)}
-            onEdit={() => handleEdit(product.id)} 
+            onEdit={() => handleEdit(product.id)}
             onDelete={() => {}}
-            isEditing={editingProduct === product.id} 
-            onEditSubmit={handleSaveEdit} 
+            isEditing={editingProduct === product.id} // Comprobar si es el producto en edición
+            onEditSubmit={handleSaveEdit} // Guardar los cambios
+            onSaveEdit={() => {}} //aqui cambie
           />
         ))}
       </div>

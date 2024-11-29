@@ -57,11 +57,13 @@ export default function LocationProducts() {
             key={product.id}
             product={product}
             onToggleStatus={() => toggleProductStatus(product.id)}
+
             onEdit={() => handleEdit(product.id)}
             isEditing={isEditing === product.id}
             onEditSubmit={handleSaveEdit}
             onDelete={() => handleDelete(product.id)}
             onSaveEdit={handleSaveEdit}
+
           />
         ))}
       </div>

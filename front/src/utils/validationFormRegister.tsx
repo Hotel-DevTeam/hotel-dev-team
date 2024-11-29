@@ -1,4 +1,4 @@
-import { IUserRegister } from "@/components/Interfaces/IUser";
+import { IUserRegister } from "../Interfaces/IUser";
 
 export const validationRegister = (userRegister: IUserRegister) => {
   const errors: { name?: string; email?: string; password?: string; confirmPassword?: string;} = {};

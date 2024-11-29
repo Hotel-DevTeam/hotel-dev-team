@@ -10,11 +10,12 @@ const UploadProductComponent: React.FC = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [locations, setLocations] = useState<ILocation[]>([]);
   const [product, setProduct] = useState<IProduct>({
-    id: "", // Se agrega un valor inicial para "id"
+    id: "",
     tipo: Tipo.Consumible,
     nombre: "",
     Activo: true,
     foto: "",
+
     ubicacion: { id: "", name: "", address: "", imgUrl: "" },
   });
 

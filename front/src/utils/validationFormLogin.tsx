@@ -1,4 +1,4 @@
-import { ILoginUser } from "@/components/Interfaces/IUser";
+import { ILoginUser } from "../Interfaces/IUser";
 
 export const validationLogin = (user: ILoginUser) => {
     const errors: { email?: string; password?: string } = {};
