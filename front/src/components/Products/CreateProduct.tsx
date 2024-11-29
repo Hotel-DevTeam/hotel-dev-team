@@ -10,12 +10,13 @@ const UploadProductComponent: React.FC = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [locations, setLocations] = useState<ILocation[]>([]);
   const [product, setProduct] = useState<IProduct>({
-    id:"",
+    id: "",
     tipo: Tipo.Consumible,
     nombre: "",
     Activo: true,
     foto: "",
-    ubicacion: { id: ""},
+
+    ubicacion: { id: "", name: "", address: "", imgUrl: "" },
   });
 
   useEffect(() => {
@@ -30,15 +31,29 @@ const UploadProductComponent: React.FC = () => {
     loadLocations();
   }, []);
 
-  const handleLocationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setProduct({
-      ...product,
-      ubicacion: { id: event.target.value },
-    });
+  const handleLocationChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedLocation = locations.find(
+      (loc) => loc.id === event.target.value
+    );
+    if (selectedLocation) {
+      setProduct({
+        ...product,
+        ubicacion: selectedLocation, // Asignar toda la ubicación
+      });
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!product.nombre || !product.foto || !product.ubicacion.id) {
+      setNotificationMessage("Por favor, complete todos los campos.");
+      setShowNotification(true);
+      return;
+    }
+
     try {
       const response = await fetchUploadProduct(product);
       if (response) {
@@ -73,16 +88,18 @@ const UploadProductComponent: React.FC = () => {
               htmlFor="tipo"
               className="block text-sm font-medium text-gray-700"
             >
-              Tipo de producto:
+              Tipo de Producto:
             </label>
             <select
               id="tipo"
               value={product.tipo}
-              onChange={(e) => setProduct({ ...product, tipo: e.target.value as Tipo })}
-              className="w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 text-sm shadow-sm focus:outline-none transition duration-300"
+              onChange={(e) =>
+                setProduct({ ...product, tipo: e.target.value as Tipo })
+              }
+              className="mt-1 block w-full rounded-lg border-gray-300 py-2 px-4 shadow-sm focus:ring-1 focus:ring-gray-500 sm:text-sm"
             >
-              <option value={Tipo.Consumible}>Consumible</option>
-              <option value={Tipo.Servicio}>Servicio</option>
+              <option value="Consumible">Consumible</option>
+              <option value="Servicio">Servicio</option>
             </select>
           </div>
 
@@ -94,13 +111,13 @@ const UploadProductComponent: React.FC = () => {
               Nombre:
             </label>
             <input
-              id="nombre"
               type="text"
+              id="nombre"
               value={product.nombre}
-              onChange={(e) => setProduct({ ...product, nombre: e.target.value })}
-              required
-              className="w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 text-sm shadow-sm focus:outline-none transition duration-300"
-              placeholder="Nombre del producto"
+              onChange={(e) =>
+                setProduct({ ...product, nombre: e.target.value })
+              }
+              className="mt-1 block w-full rounded-lg border-gray-300 py-2 px-4 shadow-sm focus:ring-1 focus:ring-gray-500 sm:text-sm"
             />
           </div>
 
@@ -109,16 +126,14 @@ const UploadProductComponent: React.FC = () => {
               htmlFor="foto"
               className="block text-sm font-medium text-gray-700"
             >
-              URL de la foto:
+              Foto:
             </label>
             <input
               id="foto"
-              type="url"
+              type="text"
               value={product.foto}
               onChange={(e) => setProduct({ ...product, foto: e.target.value })}
-              required
-              className="w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 text-sm shadow-sm focus:outline-none transition duration-300"
-              placeholder="URL de la foto"
+              className="mt-1 block w-full rounded-lg border-gray-300 py-2 px-4 shadow-sm focus:ring-1 focus:ring-gray-500 sm:text-sm"
             />
           </div>
 
@@ -133,10 +148,9 @@ const UploadProductComponent: React.FC = () => {
               id="ubicacion"
               value={product.ubicacion.id}
               onChange={handleLocationChange}
-              required
-              className="w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 text-sm shadow-sm focus:outline-none transition duration-300"
+              className="mt-1 block w-full rounded-lg border-gray-300 py-2 px-4 shadow-sm focus:ring-1 focus:ring-gray-500 sm:text-sm"
             >
-              <option value="">Seleccione una ubicación</option>
+              <option value="">Selecciona una ubicación</option>
               {locations.map((location) => (
                 <option key={location.id} value={location.id}>
                   {location.name}
@@ -145,36 +159,17 @@ const UploadProductComponent: React.FC = () => {
             </select>
           </div>
 
-          <div>
-            <label
-              htmlFor="Activo"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Activo:
-            </label>
-            <input
-              id="Activo"
-              type="checkbox"
-              checked={product.Activo}
-              onChange={(e) => setProduct({ ...product, Activo: e.target.checked })}
-              className="w-full rounded-lg border text-gray-500 border-gray-300 py-5 px-4 text-sm shadow-sm focus:outline-none transition duration-300"
-            />
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-            >
-              Crear
-            </button>
-          </div>
-        {showNotification && (
-                        <div className="absolute top-12 left-0 right-0 mx-auto w-max">
-                            <NotificationsForms message={notificationMessage} />
-                        </div>
-        )}
+          <button
+            type="submit"
+            className="w-full py-3 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            Crear
+          </button>
         </form>
+
+        {showNotification && (
+          <NotificationsForms message={notificationMessage} />
+        )}
       </div>
     </div>
   );
