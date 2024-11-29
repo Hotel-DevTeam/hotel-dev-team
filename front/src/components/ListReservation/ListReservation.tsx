@@ -46,7 +46,7 @@ const ReservationsList: React.FC = () => {
     });
   };
 
-  const handleRemoveReservation = (id: number) => {
+  const handleRemoveReservation = (id: string) => {
     Swal.fire({
       title: "¿Eliminar esta reserva?",
       text: "Esta acción no se puede deshacer.",
@@ -190,7 +190,8 @@ const ReservationsList: React.FC = () => {
                
                 <button
                   onClick={() =>
-                    handleRemoveReservation(parseInt(reservation.id, 10))
+                    //handleRemoveReservation(parseInt(reservation.id, 10))
+                    handleRemoveReservation(reservation.id)
                   } 
                   className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
                 >

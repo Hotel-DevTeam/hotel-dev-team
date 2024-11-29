@@ -8,7 +8,7 @@ interface ReservationContextProps {
   rooms: Room[];
   addReservation: (reservation: Reservation) => void;
   finalizeReservation: (reservation: Reservation) => void;
-  removeReservation: (id: number) => void; // Función para eliminar reservas
+  removeReservation: (id: string) => void; // Función para eliminar reservas
 }
 
 interface ReservationProviderProps {
@@ -93,7 +93,7 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
     );
   };
 
-  const removeReservation = (id: number) => {
+  const removeReservation = (id: string) => {
     setReservations((prevReservations) =>
       prevReservations.filter((reservation) => reservation.id !== id)
     );
