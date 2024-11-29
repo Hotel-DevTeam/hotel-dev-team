@@ -62,7 +62,7 @@ export enum Tipo {
 }
 
 export interface IProduct {
-  id:string;
+  id?:string;
   tipo: Tipo;
   nombre:string;
   Activo:boolean;

@@ -34,7 +34,7 @@ async function bootstrap() {
     console.log('Database seeding completed');
     await app.close(); // Cierra la aplicación después de sembrar
   } else {
-    await app.listen(3000); // Inicia la aplicación normalmente
+    await app.listen(3001); // Inicia la aplicación normalmente
   }
 }
 bootstrap();
