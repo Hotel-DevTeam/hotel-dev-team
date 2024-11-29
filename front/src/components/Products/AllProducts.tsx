@@ -60,6 +60,7 @@ export default function AllProducts() {
             onDelete={() => {}}
             isEditing={editingProduct === product.id}  // Comprobar si es el producto en edición
             onEditSubmit={handleSaveEdit}  // Guardar los cambios
+            onSaveEdit={()=>{}} //aqui cambie
           />
         ))}
       </div>

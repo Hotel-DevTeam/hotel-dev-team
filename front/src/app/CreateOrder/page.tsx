@@ -1,4 +1,4 @@
-import CreateOrder from "@/Components/CreateOrder/CreateOrder";
+import CreateOrder from "@/components/CreateOrder/CreateOrder";
 import Link from "next/link";
 
 function Page() {
