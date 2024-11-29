@@ -8,6 +8,7 @@ interface ReservationContextProps {
   rooms: Room[];
   addReservation: (reservation: Reservation) => void;
   finalizeReservation: (reservation: Reservation) => void;
+  removeReservation: (id: number) => void; // Función para eliminar reservas
 }
 
 interface ReservationProviderProps {
@@ -31,10 +32,7 @@ export const useReservationContext = (): ReservationContextProps => {
 export const ReservationProvider: React.FC<ReservationProviderProps> = ({
   children,
 }) => {
-  // Estado para verificar si estamos en el cliente
   const [isClient, setIsClient] = useState(false);
-
-  // Inicializar el estado de las reservas y habitaciones solo después de que el cliente se haya montado
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [rooms, setRooms] = useState<Room[]>([
     {
@@ -57,7 +55,6 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
     },
   ]);
 
-  // Cargar datos desde localStorage solo en el cliente
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -77,7 +74,6 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
     }
   }, [isClient]);
 
-  // Guardar en localStorage cuando las reservas cambian
   useEffect(() => {
     if (isClient) {
       localStorage.setItem("reservations", JSON.stringify(reservations));
@@ -97,9 +93,21 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
     );
   };
 
+  const removeReservation = (id: number) => {
+    setReservations((prevReservations) =>
+      prevReservations.filter((reservation) => reservation.id !== id)
+    );
+  };
+
   return (
     <ReservationContext.Provider
-      value={{ reservations, rooms, addReservation, finalizeReservation }}
+      value={{
+        reservations,
+        rooms,
+        addReservation,
+        finalizeReservation,
+        removeReservation, // Exponemos la función para eliminar reservas
+      }}
     >
       {children}
     </ReservationContext.Provider>

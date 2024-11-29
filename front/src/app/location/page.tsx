@@ -1,21 +1,20 @@
 "use client";
-import Location from '@/components/Locations/Location';
-import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
-import { UserContext } from '@/context/UserContext';
-import { useRouter } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
+import Location from "@/components/Locations/Location";
+import { NotificationsForms } from "@/components/Notifications/NotificationsForms";
+import { UserContext } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import React, { useContext, useEffect, useState } from "react";
 
 export default function Page() {
   const { isAdmin } = useContext(UserContext);
   const router = useRouter();
 
   const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Ruta privada
   useEffect(() => {
-    
     if (isAdmin === false) {
       setNotificationMessage("Debes ser administrador para ver ubicaciones");
       setShowNotification(true);
@@ -34,7 +33,7 @@ export default function Page() {
   }
 
   return (
-    <div className="bg-background text-foreground">
+    <div className="mt-8 bg-background text-foreground">
       {isAdmin && <Location />}
       {showNotification && <NotificationsForms message={notificationMessage} />}
     </div>
