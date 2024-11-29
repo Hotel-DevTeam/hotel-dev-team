@@ -55,12 +55,13 @@ export default function Location() {
       </div>
       <div className="relative">
         <div className="absolute top-0 right-0 mb-4 mr-4">
-          <link
+          <Link
             href="/location/create"
             className="inline-block mx-auto mb-6 px-4 py-2 border bg-teal-500 text-white font-semibold rounded-md shadow-md hover:bg-teal-600 transition"
           >
             Crear nueva ubicación
-          </link>
+            
+          </Link>
         </div>
       </div>
     </div>
