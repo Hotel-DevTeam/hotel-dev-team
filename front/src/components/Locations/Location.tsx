@@ -35,8 +35,8 @@ export default function Location() {
           >
             <Link href={`/location/${ubicacion.id}`} className="cursor-pointer">
               <Image
-                alt={ubicacion.name}
-                src={ubicacion.imgUrl}  
+                alt={ubicacion.name ?? "Ubicación sin nombre"}
+                src={ubicacion.imgUrl || ""}  
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-110"
                 width={970}
                 height={250}
