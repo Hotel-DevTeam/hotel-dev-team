@@ -189,7 +189,7 @@ const CreateReservation: React.FC = () => {
         {/* Deposit */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito : $USD
+            Depósito : $USD.
           </label>
           <input
             type="number"
