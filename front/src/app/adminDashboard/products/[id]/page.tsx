@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";  
 import { fetchProductById } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
-import { IProductView } from "@/Interfaces/IUser";
+import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "@/components/Products/cardProduct";
 
 export default function ProductDetail() {
     const { id } = useParams();  
-    const [product, setProduct] = useState<IProductView | null>(null);
+    const [product, setProduct] = useState<IProduct | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -54,6 +54,10 @@ export default function ProductDetail() {
         console.log("Editando el producto", product?.id);
     };
  
+    const handleEditing = () => {
+        console.log("Editando el producto", product?.id);
+    };
+
     const handleDelete = () => {
         console.log("Eliminando el producto", product?.id);
     };
@@ -65,7 +69,9 @@ export default function ProductDetail() {
                 onToggleStatus={handleToggleStatus}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                
+                isEditing={false}
+                onEditSubmit={handleEditing}
+                onSaveEdit={handleEditing}
             />
         </div>
     );
