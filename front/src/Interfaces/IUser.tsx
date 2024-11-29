@@ -1,86 +1,87 @@
 export interface ILoginUser {
-    email:string;
-    password:string;
+  email: string;
+  password: string;
 }
 
 export enum Role {
-  Admin = 'admin',
-  Recep = 'receptionist',
-  Emplo = 'employee',
+  Admin = "admin",
+  Recep = "receptionist",
+  Emplo = "employee",
 }
 
 export interface IUserRegister {
-    email:string;
-    name:string;
-    password:string;
-    confirmPassword:string;
-    role: Role;
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+  role: Role;
 }
 
 export interface INotificationProps {
-    message: string; 
-  }
+  message: string;
+}
 
-  
 export interface IUserContextType {
-    user: IUserResponse | null;
-    setUser: React.Dispatch<React.SetStateAction<IUserResponse | null>>;
-    isLogged: boolean;
-    isAdmin: boolean;
-    setIsAdmin: (isAdmin: boolean) => void;
-    setIsLogged: (isLogged: boolean) => void;
-    signIn: (credentials: ILoginUser) => Promise<boolean>;
-    signUp: (user: IUserRegister) => Promise<boolean>;
-    logOut: () => void;
-    token: string | null;
-    setToken: React.Dispatch<React.SetStateAction<string | null>>;
-  }
-  
-  export interface IUserResponse {
-    message: string;
-    token: string;
-    role:Role
-     }
+  user: IUserResponse | null;
+  setUser: React.Dispatch<React.SetStateAction<IUserResponse | null>>;
+  isLogged: boolean;
+  isAdmin: boolean;
+  setIsAdmin: (isAdmin: boolean) => void;
+  setIsLogged: (isLogged: boolean) => void;
+  signIn: (credentials: ILoginUser) => Promise<boolean>;
+  signUp: (user: IUserRegister) => Promise<boolean>;
+  logOut: () => void;
+  token: string | null;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
-  export interface ILoginResponse {
-    message: string;
-    token: string;
-    role:Role
-  }
-  
+export interface IUserResponse {
+  message: string;
+  token: string;
+  role: Role;
+}
 
-  export interface ILocation {
-    id:string;
-    name:string;
-    address:string;
-    imgUrl:string;
-  }
-  
+export interface ILoginResponse {
+  message: string;
+  token: string;
+  role: Role;
+}
+
+export interface ILocation {
+  id?: string;
+  name: string;
+  address: string;
+  imgUrl: string;
+}
+
 export enum Tipo {
-  Consumible = 'Consumible',
-  Servicio = 'Servicio'
+  Consumible = "Consumible",
+  Servicio = "Servicio",
 }
 
 export interface IProduct {
-  id:string;
+  id: string;
   tipo: Tipo;
-  nombre:string;
-  Activo:boolean;
-  foto:string;
-  ubicacion:ILocation;
+  nombre: string;
+  Activo: boolean;
+  foto: string;
+  ubicacion: ILocation;
 }
-
-
 
 export interface IProductsPageProps {
   products: IProduct[];
 }
 
+// src/components/Products/cardProduct.tsx
 
 export interface ICardProductProps {
   product: IProduct;
-  onToggleStatus: (id: string) => void; 
-  onEdit: (id: string) => void;       
+  onToggleStatus: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  isEditing: boolean;
+  onEditSubmit: (updatedProduct: IProduct) => void;
+  onSaveEdit?: (updatedProduct: IProduct) => void;
 }
 
 export interface ILoginClientProps {

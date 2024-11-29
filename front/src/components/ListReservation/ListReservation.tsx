@@ -126,7 +126,7 @@ const ReservationsList: React.FC = () => {
           onChange={(e) => setSelectedRoom(e.target.value)}
           className="block mx-auto p-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
         >
-          <option value="">Filtra por habitacion</option>
+          <option value="">Filtra por habitación</option>
           {rooms.map((room) => (
             <option key={room.id} value={room.roomNumber}>
               Habitación {room.roomNumber}
@@ -187,9 +187,11 @@ const ReservationsList: React.FC = () => {
                   {reservation.finalized ? "Finalizado" : "Finalizar Reserva"}
                 </button>
 
-                {/* Botón Eliminar */}
+               
                 <button
-                  onClick={() => handleRemoveReservation(reservation.id)}
+                  onClick={() =>
+                    handleRemoveReservation(parseInt(reservation.id, 10))
+                  } 
                   className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
                 >
                   Eliminar

@@ -1,72 +1,84 @@
+// src/app/location/[id]/products/page.tsx
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";  
-import { fetchProductById } from "@/components/Fetchs/ProductsFetchs/ProductsFetchs";
-import { IProductView } from "@/Interfaces/IUser";
+import { useParams } from "next/navigation";
+import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "@/components/Products/cardProduct";
+import { useProducts } from "@/components/Products/useProduct";
 
-export default function ProductDetail() {
-    const { id } = useParams();  
-    const [product, setProduct] = useState<IProductView | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+export default function LocationProducts() {
+  const { products, loading, toggleProductStatus, handleEditSubmit } =
+    useProducts();
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+  const [isEditing, setIsEditing] = useState<string | null>(null);
+  const params = useParams();
+  const locationId = params?.id;
 
-    useEffect(() => {
-        const getProductDetail = async () => {
-            if (typeof id === "string") {
-                try {
-                    const data = await fetchProductById(id);
-                    setProduct(data);
-                } catch (error) {
-                    console.error("Error fetching product details:", error);
-                } finally {
-                    setLoading(false);
-                }
-            } else {
-                console.error("Invalid product ID");
-                setLoading(false);
-            }
-        };
-
-        getProductDetail();
-    }, [id]);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
-            </div>
-        );
+  useEffect(() => {
+    if (locationId && products.length > 0) {
+      const filtered = products.filter(
+        (product) => product.ubicacion?.id === locationId
+      );
+      setFilteredProducts(filtered);
     }
+  }, [products, locationId]);
 
-    if (!product) {
-        return <div>No se encontró el producto.</div>;
-    }
+  const handleEdit = (productId: string) => {
+    setIsEditing(productId);
+  };
 
-    const handleToggleStatus = () => {
-        if (product) {
-            const updatedProduct = { ...product, Activo: !product.Activo };
-            setProduct(updatedProduct);
-            console.log("Producto actualizado:", updatedProduct);
-        }
-    };
+  const handleSaveEdit = (updatedProduct: IProduct) => {
+    handleEditSubmit(updatedProduct);
+    setIsEditing(null);
+  };
 
-    const handleEdit = () => {
-        console.log("Editando el producto", product?.id);
-    };
- 
-    const handleDelete = () => {
-        console.log("Eliminando el producto", product?.id);
-    };
-
-    return (
-        <div className="mt-28 mb-24">
-            <CardProduct
-                product={product}
-                onToggleStatus={handleToggleStatus}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                
-            />
-        </div>
+  const handleDelete = (productId: string) => {
+    setFilteredProducts((prev) =>
+      prev.filter((product) => product.id !== productId)
     );
+
+    fetch(`/api/products/${productId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("No se pudo eliminar el producto.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al eliminar el producto:", error);
+      });
+  };
+
+  if (loading) {
+    return <p>Cargando productos...</p>;
+  }
+
+  if (!filteredProducts.length) {
+    return <p>No se encontraron productos para esta ubicación.</p>;
+  }
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold text-center text-gray-800 my-10 pb-4 border-b-4 border-gray-300 shadow-2xl">
+        Productos y Servicios en esta Ubicación
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        {filteredProducts.map((product) => (
+          <CardProduct
+            key={product.id}
+            product={product}
+            onToggleStatus={(id) => toggleProductStatus(id)}
+            onEdit={(id) => handleEdit(id)}
+            onDelete={(id) => handleDelete(id)}
+            isEditing={isEditing === product.id}
+            onEditSubmit={handleSaveEdit}
+            onSaveEdit={(updatedProduct) => handleSaveEdit(updatedProduct)}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }

@@ -5,10 +5,10 @@ import CardProduct from "./cardProduct";
 import { useProducts } from "./useProduct";
 
 export default function AllProducts() {
-  const { products, loading, toggleProductStatus, handleEditSubmit } = useProducts(); // Usamos el hook
+  const { products, loading, toggleProductStatus, handleEditSubmit } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [selectedType, setSelectedType] = useState<string>('');
-  const [editingProduct, setEditingProduct] = useState<string | null>(null); // Estado para controlar el producto en edición
+  const [editingProduct, setEditingProduct] = useState<string | null>(null); 
 
   useEffect(() => {
     let filtered = [...products];
@@ -56,10 +56,10 @@ export default function AllProducts() {
             key={product.id}
             product={product}
             onToggleStatus={() => toggleProductStatus(product.id)}
-            onEdit={() => handleEdit(product.id)}  // Cambiar a modo edición
+            onEdit={() => handleEdit(product.id)} 
             onDelete={() => {}}
-            isEditing={editingProduct === product.id}  // Comprobar si es el producto en edición
-            onEditSubmit={handleSaveEdit}  // Guardar los cambios
+            isEditing={editingProduct === product.id} 
+            onEditSubmit={handleSaveEdit} 
           />
         ))}
       </div>
