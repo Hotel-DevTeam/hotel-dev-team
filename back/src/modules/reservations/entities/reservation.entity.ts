@@ -74,6 +74,8 @@ export class Reservation {
   @ManyToOne(() => Room, (room) => room.reservations)
   room: Room;
 
+  @Column('text', { array: true, nullable: true, default:[] })
+  notasAdicionales: string[];
   
 
 }

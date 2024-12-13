@@ -92,6 +92,7 @@ export class ReservationService {
         dniPassport: createReservationDto.pax.dniPassport,
         phone: createReservationDto.pax.phone,
         birthdate: createReservationDto.pax.birthdate,
+        
       });
       await this.paxRepository.save(visitor);
     }
@@ -114,6 +115,10 @@ export class ReservationService {
     }
   
     findReservation.status = Status.Cancelled;
+    if (!findReservation.notasAdicionales) {
+      findReservation.notasAdicionales = [];
+    }
+    findReservation.notasAdicionales.push('Reserva cancelada');
     await this.reservationsRepository.save(findReservation) 
   
     return findReservation;
