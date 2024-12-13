@@ -2,17 +2,22 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SeedService } from './seeds/seed.service'; // Importa el SeedService
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from './modules/Users/users.service';
+import { AuthGuard } from './modules/Auth/guards/auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Habilitar CORS con la configuración adecuada
   app.enableCors({
-    origin: '*',
-    //origin: 'http://localhost:3001', // Origen permitido
-    methods: 'GET,POST,PUT,DELETE,OPTIONS', // Métodos permitidos
+    origin: '*', // o restringe a una URL específica
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
     credentials: true,
   });
+
+  // Aplicar el AuthGuard globalmente, para que se aplique a todas las rutas
+  app.useGlobalGuards(new AuthGuard(app.get(JwtService), app.get(UsersService)));
 
   // Configuración de Swagger
   const config = new DocumentBuilder()

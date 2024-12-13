@@ -19,8 +19,11 @@ export class CreateCajaDto {
   @ApiProperty({ description: 'Cargo a la habitación', example: 200 })
   cargoHabitacion: number;
 
-  @ApiProperty({ description: 'Egresos de la caja', example: 100 })
+  @ApiProperty({ description: 'Efectivo de cierre', example: 700 })
   egresos: number;
+
+  @ApiProperty({ description: 'Egresos de la caja', example: 100 })
+  efectivoCierre: number;
 
   @ApiProperty({
     description: 'ID del usuario asociado a la caja',

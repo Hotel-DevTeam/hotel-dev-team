@@ -6,7 +6,6 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { Role } from '../../Users/roles.enum';
 import { UsersService } from 'src/modules/Users/users.service';
 
