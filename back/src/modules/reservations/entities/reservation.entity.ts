@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Room } from 'src/modules/Rooms/entities/rooms.entity';
+import { Status } from '../status.enum';
 
 @Entity({ name: 'reservations' })
 export class Reservation {
@@ -66,10 +67,13 @@ export class Reservation {
   @ApiProperty({ description: 'Saldo restante', example: 10000.0 })
   balance: number;
 
-  @Column()
-  @ApiProperty({ description: 'Indica si la reserva está completada' })
-  completed: boolean;
+  @Column({type: 'enum', enum: Status, default: Status.Active})
+  @ApiProperty({ description: 'Indica si la reserva está completada, activa o cancelada' })
+  status: Status;
 
   @ManyToOne(() => Room, (room) => room.reservations)
   room: Room;
+
+  
+
 }
