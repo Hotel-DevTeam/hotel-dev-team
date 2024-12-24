@@ -86,7 +86,10 @@ useEffect(() => {
 
         setToken(token);
         setIsLogged(Boolean(token));
-        setIsAdmin(role === "admin");  // Establece el rol correctamente
+        setIsAdmin(role === "admin"); 
+
+        console.log("Role:", role); // Depuración
+        console.log("isAdmin:", role === "admin"); // Depuración
       } catch (error) {
         console.error("Error al parsear authData:", error);
         setIsLogged(false);

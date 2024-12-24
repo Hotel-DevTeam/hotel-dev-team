@@ -63,8 +63,7 @@ export default function RegisterForm() {
                         ¡Bienvenido a HotelDev!
                     </h1>
                     <p className="mt-2 text-gray-500">
-                  
-                  cdcd      Crea tu cuenta para realizar reservas
+                         Crea tu cuenta para realizar reservas
                     </p>
                 </div>
 
