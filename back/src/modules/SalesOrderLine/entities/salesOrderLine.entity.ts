@@ -19,6 +19,9 @@ export class SalesOrderLine {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   lineTotal: number;
 
+  @Column()
+  orderId: string;
+
   @ManyToOne(() => SalesOrder, (order) => order.orderLines)
   order: SalesOrder;
 }

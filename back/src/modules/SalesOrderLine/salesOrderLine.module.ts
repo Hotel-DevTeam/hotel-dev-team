@@ -8,5 +8,6 @@ import { SalesOrderLineRepository } from './salesOrderLine.repository';
   imports: [TypeOrmModule.forFeature([SalesOrderLineRepository])],
   providers: [SalesOrderLineService],
   controllers: [SalesOrderLineController],
+  exports: [SalesOrderLineService]
 })
 export class SalesOrderLineModule {}

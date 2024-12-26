@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { SalesOrderService } from './salesOrder.service';
 import { CreateSalesOrderDto } from './dto/salesOrder.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -13,4 +13,10 @@ export class SalesOrderController {
   createSalesOrder(@Body() createSalesOrderDto: CreateSalesOrderDto) {
     return this.salesOrderService.createSalesOrder(createSalesOrderDto);
   }
+
+  @Post('confirm/:id')
+  async confirmOrder(@Param('id') id: string, @Body('userId') userId: string, @Body('productId') productId: string) {
+    await this.salesOrderService.confirmOrder(id, userId, productId);
+  }
+  
 }
