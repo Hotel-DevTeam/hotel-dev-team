@@ -40,12 +40,14 @@ export interface IUserContextType {
     message: string;
     token: string;
     role:Role
+    
      }
 
   export interface ILoginResponse {
     message: string;
     token: string;
-    role:Role
+    role:Role;
+    username:string;
   }
   
 
@@ -60,7 +62,7 @@ export enum Tipo {
   Consumible = 'Consumible',
   Servicio = 'Servicio'
 }
-
+ 
 export interface IProduct {
   id:string;
   tipo: Tipo;

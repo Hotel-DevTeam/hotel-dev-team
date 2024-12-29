@@ -37,7 +37,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           const user = {
             token: data.token,
             role: data.role,
-            message: data.message  
+            message: data.message,
           };
           localStorage.setItem("user", JSON.stringify(user));
   

@@ -4,10 +4,11 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { UserContext } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const { isLogged, logOut, isAdmin } = useContext(UserContext); // Obtenemos el estado de sesión, la función de cerrar sesión y el rol de administrador
-
+  const router = useRouter();
   const [isOrderMenuOpen, setOrderMenuOpen] = useState(false);
   const [isReservationMenuOpen, setReservationMenuOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -54,7 +55,23 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
-  if (!isLogged) return null; // Si el usuario no está logueado, no mostramos el Navbar
+  
+  const handleLogOut = () => {
+    // Aquí asumes que el contexto o algún estado tiene la información del usuario
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+    if (user && !user.isAdmin) {
+      // Si el usuario NO es administrador, redirigimos al formulario de cierre de caja
+      router.push("/cashClosing");
+    } else {
+      // Si es administrador, cerramos sesión normalmente
+      logOut();
+      router.push("/"); // Redirige a la página de inicio o donde sea necesario
+    }
+  };
+  
+
+  if (!isLogged) return null; 
 
   return (
     <nav
@@ -158,6 +175,14 @@ const Navbar: React.FC = () => {
                       Registrar usuario
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      href="/cashMovementsPage"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Movimientos de caja
+                    </Link>
+                  </li>
                 </ul>
               )}
             </li>
@@ -254,6 +279,14 @@ const Navbar: React.FC = () => {
                     Registrar usuario
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/cashMovementsPage"
+                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                  >
+                    Movimientos de caja
+                  </Link>
+                </li>
               </ul>
             )}
           </li>
@@ -261,7 +294,7 @@ const Navbar: React.FC = () => {
         {/* Botón de Cerrar sesión */}
         <li>
           <button
-            onClick={logOut}
+             onClick={handleLogOut}
             className="hover:text-[#F4A261] transition duration-200"
           >
             Cerrar sesión
