@@ -66,4 +66,10 @@ export class CreateReservationDto {
     example: true,
   })
   completed: boolean;
+
+  @ApiProperty({
+    description: 'Detalles extra sobre el pax o la reserva',
+    example: ["Pax en silla de ruedas", "Reserva cancelada"],
+  })
+  notasAdicionales: string[]
 }
