@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
   const orderMenuRef = useRef<HTMLUListElement | null>(null);
   const reservationMenuRef = useRef<HTMLUListElement | null>(null);
-
   const navRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = (menu: "reservation" | "order") => {
@@ -58,17 +57,14 @@ const Navbar: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
   
     if (user && user.role !== "admin") {
-     
       router.push("/cashClosing");
     } else {
-      
       logOut();
       router.push("/");
     }
   };
-  
 
-  if (!isLogged) return null; 
+  if (!isLogged) return null;
 
   return (
     <nav
@@ -95,85 +91,39 @@ const Navbar: React.FC = () => {
           stroke="currentColor"
           className="w-6 h-6 text-[#264653]"
         >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
 
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6 text-[#264653]"
+      {/* Menú en móvil */}
+      {isMobileMenuOpen && (
+        <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+             <li className="border-b">
+          <Link href={"/CreateOrder"}
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-
-        {/* Menú en móvil */}
-        {isMobileMenuOpen && (
-          <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
-            <li
-              className="border-b cursor-pointer"
-              onClick={() => setReservationsOpen(!isReservationsOpen)}
-            >
-              <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
-                Reservas
-              </span>
-              {isReservationsOpen && (
-                <ul className="bg-white shadow-md w-full">
-                  <li>
-                    <Link
-                      href="/HotelReservations"
-                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Hotel
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/DepartmentReservations"
-                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Departamento
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-
-            <li>
-              <Link href={"/"}>
-                <button
-                  onClick={logOut}
-                  className="block px-4 py-2 hover:bg-red-400 transition"
-                >
-                  Cerrar sesión
-                </button>
-              </Link>
-            </li>
-          </ul>
-        )}
-
-        {/* Menú en escritorio */}
-        <ul className="hidden md:flex space-x-6">
+            Ventas
+          </Link>
+        </li>
           <li
-            className="relative cursor-pointer"
-            onClick={() => setReservationsOpen(!isReservationsOpen)}
+            className="border-b cursor-pointer"
+            onClick={() => setReservationMenuOpen(!isReservationMenuOpen)}
           >
-            <span className="hover:text-[#F4A261] transition duration-200">
+            <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
               Reservas
             </span>
-            {isReservationsOpen && (
-              <ul className="absolute left-0 bg-white shadow-md w-48">
+            {isReservationMenuOpen && (
+              <ul className="bg-white shadow-md w-full">
                 <li>
                   <Link
                     href="/HotelReservations"
                     className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Hotel
                   </Link>
@@ -182,82 +132,40 @@ const Navbar: React.FC = () => {
                   <Link
                     href="/DepartmentReservations"
                     className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     Departamento
                   </Link>
                 </li>
               </ul>
             )}
-
-          </li>
-          <li className="border-b">
-            <Link
-              href="/Reservations"
-              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-              onClick={() => setReservationMenuOpen(false)}
-            >
-              Todas las Reservas
-            </Link>
-          </li>
-          <li className="border-b">
-            <Link
-              href="/OrderPage"
-              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-              onClick={() => setOrderMenuOpen(false)}
-            >
-              Página de Órdenes
-            </Link>
           </li>
 
-          <li className="border-b">
-            <Link
-              href="/CreateOrder"
-              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-              onClick={() => setOrderMenuOpen(false)}
-            >
-              Crear Orden
-
-            </Link>
-          </li>
-
-          {/* Menú Admin */}
-          {isAdmin && (
-            <li className="border-b">
+          <li>
+            <Link href={"/"}>
               <button
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}
+                onClick={handleLogOut}
+                className="block px-4 py-2 hover:bg-red-400 transition"
               >
-                Panel Admin
+                Cerrar sesión
               </button>
-              {isAdminMenuOpen && (
-                <ul className="ml-4">
-                  <li>
-                    <Link
-                      href="/register"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Registrar usuario
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/cashMovementsPage"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Movimientos de caja
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-          )}
+            </Link>
+          </li>
         </ul>
       )}
 
       {/* Menú en escritorio */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
-      <li>
-          <Link href={"/expenses"}
+      <li className="relative">
+          <Link href={"/CreateOrder"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Ventas
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={"/expenses"}
             className="hover:text-[#F4A261] transition duration-200"
           >
             Gastos
@@ -362,10 +270,11 @@ const Navbar: React.FC = () => {
             )}
           </li>
         )}
+
         {/* Botón de Cerrar sesión */}
         <li>
           <button
-             onClick={handleLogOut}
+            onClick={handleLogOut}
             className="hover:text-[#F4A261] transition duration-200"
           >
             Cerrar sesión
