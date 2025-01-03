@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useContext } from "react";
 import { ILocation } from "@/Interfaces/IUser";
-import { fetchLocations, fetchCashMovements } from "../Fetchs/UserFetchs/UserFetchs"; // Asegúrate de tener la función fetchCashMovements en UserFetchs
+import { fetchCashMovements, fetchLocations } from "../Fetchs/UserFetchs/UserFetchs"; // Asegúrate de tener la función fetchCashMovements en UserFetchs
 import { useLocationContext } from "@/context/LocationContext";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/context/UserContext";

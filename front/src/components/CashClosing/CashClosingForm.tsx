@@ -1,30 +1,34 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';  
+import { UserContext } from '@/context/UserContext';
 
 const CashClosingForm: React.FC = () => {
   const [efectivoCierre, setEfectivoCierre] = useState<string>(''); 
   const [fechaHora, setFechaHora] = useState<string>(''); 
   const [usuario, setUsuario] = useState<string>(''); 
   const [ubicacion, setUbicacion] = useState<string>(''); 
+  const { logOut} = useContext(UserContext);
 
   const router = useRouter();  
-
   useEffect(() => {
     const now = new Date();
     const formattedDate = now.toLocaleString();
     setFechaHora(formattedDate);
-
+  
+    // Obtener los datos del localStorage
     const userData = localStorage.getItem('user');
     const locationData = localStorage.getItem('selectedLocation');
-
+  
+    // Verificar y acceder a los datos de usuario y ubicación
     if (userData && locationData) {
-      const user = JSON.parse(userData);
+      const user = JSON.parse(userData).user; 
       const location = JSON.parse(locationData);
-      setUsuario(user.email || '');
-      setUbicacion(location.name || '');
+      setUsuario(user.email || ''); 
+      setUbicacion(location.name || ''); 
     }
   }, []);
+  
 
   // Función para manejar el cambio en el efectivo de cierre
   const handleEfectivoCierreChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,12 +46,6 @@ const CashClosingForm: React.FC = () => {
     logOut();  
     router.push("/");  
   };
-
-
-  const logOut = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('selectedLocation');
-    };
 
   return (
     <div className="max-w-lg mt-20 mx-auto p-6 bg-white shadow-lg rounded-lg space-y-6">

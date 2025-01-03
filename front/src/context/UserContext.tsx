@@ -30,18 +30,29 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const data: ILoginResponse = await fetchLoginUser(credentials);
   
-      if (data && data.token && data.role) {  
+      if (data && data.token && data.role && data.user) {  
         console.log("Token set:", data.token);
   
         if (typeof window !== "undefined") {
-          const user = {
+          const userData = {
             token: data.token,
             role: data.role,
             message: data.message,
+            user: data.user, 
           };
-          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("user", JSON.stringify(userData));
   
-          setUser(user);  
+          setUser({
+            message: data.message,
+            token: data.token,
+            role: data.role,
+            user: {
+              id: data.user.id,
+              name: data.user.name,
+              email: data.user.email,
+            },
+          });
+           
           setToken(data.token);
           setIsLogged(true);
           setIsAdmin(data.role === "admin"); 

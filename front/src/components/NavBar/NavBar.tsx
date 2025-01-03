@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useContext, useRef, useState, useEffect } from "react";
@@ -7,12 +6,12 @@ import { UserContext } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
-  const { isLogged, logOut, isAdmin } = useContext(UserContext); // Obtenemos el estado de sesión, la función de cerrar sesión y el rol de administrador
+  const { isLogged, logOut, isAdmin } = useContext(UserContext);
   const router = useRouter();
   const [isOrderMenuOpen, setOrderMenuOpen] = useState(false);
   const [isReservationMenuOpen, setReservationMenuOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false); // Estado para el menú de administrador
+  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
 
   const orderMenuRef = useRef<HTMLUListElement | null>(null);
   const reservationMenuRef = useRef<HTMLUListElement | null>(null);
@@ -55,18 +54,16 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
-  
   const handleLogOut = () => {
-    // Aquí asumes que el contexto o algún estado tiene la información del usuario
     const user = JSON.parse(localStorage.getItem('user') || '{}');
   
-    if (user && !user.isAdmin) {
-      // Si el usuario NO es administrador, redirigimos al formulario de cierre de caja
+    if (user && user.role !== "admin") {
+     
       router.push("/cashClosing");
     } else {
-      // Si es administrador, cerramos sesión normalmente
+      
       logOut();
-      router.push("/"); // Redirige a la página de inicio o donde sea necesario
+      router.push("/");
     }
   };
   
@@ -110,6 +107,13 @@ const Navbar: React.FC = () => {
       {/* Menú en móvil */}
       {isMobileMenuOpen && (
         <ul className="md:hidden absolute top-12 right-0 bg-white shadow-md w-48 z-50">
+          <li className="border-b">
+          <Link href={"/expenses"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Gastos
+          </Link>
+        </li>
           <li className="border-b">
             <Link
               href="/ReservationCreate"
@@ -192,6 +196,13 @@ const Navbar: React.FC = () => {
 
       {/* Menú en escritorio */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
+      <li>
+          <Link href={"/expenses"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Gastos
+          </Link>
+        </li>
         <li className="relative" onClick={() => toggleMenu("reservation")}>
           <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
             Reservas

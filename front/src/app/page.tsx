@@ -1,33 +1,37 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import hotel from "../../public/Hotel1.jpg"; // Utilizaremos esta imagen como fondo
 
 const Home = () => {
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen text-[#264653] py-6">
-      {/* Imagen de fondo */}
-      <Image
-        src={hotel}
-        alt="Imagen de fondo"
-        layout="fill"
-        objectFit="cover"
-        quality={100}
-        className="-z-10" // Colocamos la imagen al fondo usando un índice z negativo
-      />
+    <div className="relative flex flex-col items-center justify-between min-h-screen bg-beige">
+      <div className="relative w-full h-1/2">
+        <Image
+          src="https://lh3.googleusercontent.com/p/AF1QipP9NjP72GiD9SrAnwK82_hqZi_4zKmb8o4ggOW2=s1360-w1360-h1020"
+          alt="Imagen de fondo"
+          fill
+          style={{ objectFit: "cover" }}
+          quality={100}
+          className="rounded-b-xl shadow-lg"
+        />
+      </div>
 
-      <h1 className="text-3xl font-semibold text-[#264653] mb-8 bg-white bg-opacity-80 px-4 py-2 rounded">
-        Bienvenido a Villa Rosarito
+      {/* Título principal */}
+      <h1 className="text-4xl font-bold text-black mt-8 text-center">
+        Bienvenido a <span className="text-[#CD9C8A]">Villa Rosarito</span>
       </h1>
 
       {/* Botón de iniciar sesión */}
-      <Link href="/login">
-        <button className="px-6 py-3 bg-[#264653] text-white rounded-lg text-lg font-semibold transition-transform duration-300 ease-in-out transform hover:scale-105">
-          Iniciar Sesión
-        </button>
-      </Link>
+      <div className="mt-6">
+        <Link href="/login">
+          <button className="px-8 py-4 bg-[#CD9C8A] text-white font-semibold text-lg rounded-lg shadow-lg hover:bg-orange-400 hover:text-white  transition-all duration-300">
+            Iniciar Sesión
+          </button>
+        </Link>
+      </div>
+
+      {/* Espaciado final */}
+      <div className="h-16" />
     </div>
   );
 };

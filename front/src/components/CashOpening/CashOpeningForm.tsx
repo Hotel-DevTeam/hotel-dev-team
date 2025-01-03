@@ -7,24 +7,30 @@ const CashOpeningForm: React.FC = () => {
   const [usuario, setUsuario] = useState<string>(''); 
   const [ubicacion, setUbicacion] = useState<string>(''); 
 
-  // Cargar la fecha y hora actual
-  useEffect(() => {
-    const now = new Date();
-    const formattedDate = now.toLocaleString(); 
-    setFechaHora(formattedDate);
+// Cargar la fecha y hora actual
+useEffect(() => {
+  const now = new Date();
+  const formattedDate = now.toLocaleString(); 
+  setFechaHora(formattedDate);
 
-    // Obtener los datos del localStorage
-    const userData = localStorage.getItem('user');
-    const locationData = localStorage.getItem('selectedLocation');
+  // Obtener los datos del localStorage
+  const userData = localStorage.getItem('user');
+  console.log("Datos de usuario:", userData); 
 
-    if (userData && locationData) {
-      const user = JSON.parse(userData);
-      const location = JSON.parse(locationData);
+  const locationData = localStorage.getItem('selectedLocation');
+  console.log("Datos de ubicación:", locationData);
 
-      setUsuario(user.email || ''); 
-      setUbicacion(location.name || '');
-    }
-  }, []);
+  if (userData) {
+    const user = JSON.parse(userData).user; 
+    setUsuario(user.email || ''); 
+  }
+
+  if (locationData) {
+    const location = JSON.parse(locationData);
+    setUbicacion(location.name || '');
+  }
+}, []);
+
 
   // Función para manejar el cambio en el saldo inicial
   const handleSaldoChange = (event: React.ChangeEvent<HTMLInputElement>) => {

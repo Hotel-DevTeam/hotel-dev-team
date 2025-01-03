@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
+import { Status } from './status.enum';
 
 @Injectable()
 export class ReservationService {
@@ -100,5 +101,30 @@ export class ReservationService {
       pax: visitor,
     });
     return await this.reservationsRepository.save(reservation);
+  }
+
+  async cancelReservation(id: string) {
+    const findReservation = await this.getReservationById(id);
+    if (!findReservation) {
+      throw new NotFoundException('Error al buscar la reserva por ID');
+    }
+
+    if (
+      findReservation.status === Status.Cancelled ||
+      findReservation.status === Status.Completed
+    ) {
+      throw new BadRequestException(
+        'La reserva ya está cancelada o ha sido completada',
+      );
+    }
+
+    findReservation.status = Status.Cancelled;
+    if (!findReservation.notasAdicionales) {
+      findReservation.notasAdicionales = [];
+    }
+    findReservation.notasAdicionales.push('Reserva cancelada');
+    await this.reservationsRepository.save(findReservation);
+
+    return findReservation;
   }
 }
