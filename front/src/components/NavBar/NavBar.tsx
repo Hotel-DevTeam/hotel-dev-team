@@ -107,9 +107,16 @@ const Navbar: React.FC = () => {
       {/* Menú en móvil */}
       {isMobileMenuOpen && (
         <ul className="md:hidden absolute top-12 right-0 bg-white shadow-md w-48 z-50">
+           <li className="border-b">
+          <Link href={"/CreateOrder"}
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+          >
+            Ventas
+          </Link>
+        </li>
           <li className="border-b">
           <Link href={"/expenses"}
-            className="hover:text-[#F4A261] transition duration-200"
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
           >
             Gastos
           </Link>
@@ -191,12 +198,27 @@ const Navbar: React.FC = () => {
               )}
             </li>
           )}
+           <li className="border-b">
+              <button
+                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+             onClick={handleLogOut}
+          >
+            Cerrar sesión
+          </button>
+        </li>
         </ul>
       )}
 
       {/* Menú en escritorio */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
-      <li>
+      <li className="relative">
+          <Link href={"/CreateOrder"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Ventas
+          </Link>
+        </li>
+      <li className="relative">
           <Link href={"/expenses"}
             className="hover:text-[#F4A261] transition duration-200"
           >
