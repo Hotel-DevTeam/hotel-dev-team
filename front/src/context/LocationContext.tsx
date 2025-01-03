@@ -1,31 +1,56 @@
 "use client"
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Define la interfaz para el contexto de Location
-interface LocationContextType {
-  locationId: string | null;
-  setLocationId: (id: string) => void;
+// Definimos la interfaz para el contexto del usuario
+interface ILocationContextType {
+  userId: string | null;
+  location: { id: string; name: string } | null;
+  setLocation: (location: { id: string; name: string }) => void;
+  clearLocation: () => void;
 }
 
-// Crear el contexto
-const LocationContext = createContext<LocationContextType | undefined>(undefined);
+// Crear el contexto inicial
+export const LocationContext = createContext<ILocationContextType | undefined>(undefined);
 
-// Crear el proveedor de contexto
-export const LocationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [locationId, setLocationId] = useState<string | null>(null);
+// Proveedor del contexto
+export const LocationProvider : React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [userId] = useState<string | null>(null); 
+  const [location, setLocationState] = useState<{ id: string; name: string } | null>(
+    JSON.parse(localStorage.getItem("selectedLocation") || "null")
+  );
 
+  const router = useRouter();
+
+  const setLocation = (location: { id: string; name: string }) => {
+    setLocationState(location);
+    localStorage.setItem("selectedLocation", JSON.stringify(location));
+  };
+
+ 
+    const clearLocation = () => {
+      setLocationState(null);
+      localStorage.removeItem("selectedLocation");
+      router.push("/location");
+  };
+
+ 
   return (
-    <LocationContext.Provider value={{ locationId, setLocationId }}>
+    <LocationContext.Provider value={{ userId, location, setLocation, clearLocation }}>
       {children}
     </LocationContext.Provider>
   );
 };
 
-// Hook para usar el contexto de Location
-export const useLocation = () => {
+// Hook personalizado para usar el contexto
+export const useLocationContext = () => {
   const context = useContext(LocationContext);
-  if (context === undefined) {
-    throw new Error("useLocation debe ser usado dentro de un LocationProvider");
+  if (!context) {
+    throw new Error("useUserContext debe usarse dentro de un UserProvider");
   }
   return context;
 };
+
+

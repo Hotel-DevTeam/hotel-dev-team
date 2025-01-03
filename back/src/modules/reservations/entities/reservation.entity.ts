@@ -67,15 +67,15 @@ export class Reservation {
   @ApiProperty({ description: 'Saldo restante', example: 10000.0 })
   balance: number;
 
-  @Column({type: 'enum', enum: Status, default: Status.Active})
-  @ApiProperty({ description: 'Indica si la reserva está completada, activa o cancelada' })
+  @Column({ type: 'enum', enum: Status, default: Status.Active })
+  @ApiProperty({
+    description: 'Indica si la reserva está completada, activa o cancelada',
+  })
   status: Status;
 
   @ManyToOne(() => Room, (room) => room.reservations)
   room: Room;
 
-  @Column('text', { array: true, nullable: true, default:[] })
+  @Column('text', { array: true, nullable: true, default: [] })
   notasAdicionales: string[];
-  
-
 }
