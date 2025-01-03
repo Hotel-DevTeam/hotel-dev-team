@@ -9,6 +9,7 @@ const Navbar: React.FC = () => {
   const { isLogged, logOut } = useContext(UserContext); // Obtenemos el estado de sesión y la función de cerrar sesión
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isReservationsOpen, setReservationsOpen] = useState(false); // Estado para manejar el menú desplegable de reservas
   const navRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -72,23 +73,35 @@ const Navbar: React.FC = () => {
                 Ubicaciones
               </Link>
             </li>
-            <li className="border-b">
-              <Link
-                href="/ReservationList"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Lista de Reservas
-              </Link>
-            </li>
-            <li className="border-b">
-              <Link
-                href="/OrderPage"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Página de Órdenes
-              </Link>
+            <li
+              className="border-b cursor-pointer"
+              onClick={() => setReservationsOpen(!isReservationsOpen)}
+            >
+              <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
+                Reservas
+              </span>
+              {isReservationsOpen && (
+                <ul className="bg-white shadow-md w-full">
+                  <li>
+                    <Link
+                      href="/HotelReservations"
+                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Hotel
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/DepartmentReservations"
+                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Departamento
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
             <li>
               <button
@@ -111,13 +124,33 @@ const Navbar: React.FC = () => {
               Ubicaciones
             </Link>
           </li>
-          <li>
-            <Link
-              href="/ReservationList"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
+          <li
+            className="relative cursor-pointer"
+            onClick={() => setReservationsOpen(!isReservationsOpen)}
+          >
+            <span className="hover:text-[#F4A261] transition duration-200">
               Reservas
-            </Link>
+            </span>
+            {isReservationsOpen && (
+              <ul className="absolute left-0 bg-white shadow-md w-48">
+                <li>
+                  <Link
+                    href="/HotelReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Hotel
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/DepartmentReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Departamento
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
           <li>
             <Link

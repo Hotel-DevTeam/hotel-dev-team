@@ -76,13 +76,13 @@ const CreateReservation: React.FC = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
+      className="max-w-4xl mx-auto mt-20 bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
     >
       <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">
         Crear Reserva
       </h2>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Check-in Date */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -214,7 +214,7 @@ const CreateReservation: React.FC = () => {
         </div>
 
         {/* Comments */}
-        <div>
+        <div className="col-span-2">
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Comentarios:
           </label>
@@ -225,15 +225,15 @@ const CreateReservation: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="bg-[#CD9C8A] text-white px-4 py-2 rounded-lg w-full hover:bg-orange-400 transition-all"
-        >
-          Crear Reserva
-        </button>
       </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className="bg-[#CD9C8A] text-white px-4 py-2 rounded-lg w-full hover:bg-orange-400 transition-all"
+      >
+        Crear Reserva
+      </button>
     </form>
   );
 };
