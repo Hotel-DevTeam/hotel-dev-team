@@ -123,7 +123,7 @@ export class ReservationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'La reserva fue cancelada exitosamente.',
-    type: Reservation
+    type: Reservation,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -134,7 +134,8 @@ export class ReservationsController {
     description: 'La reserva ya estaba cancelada.',
   })
   async cancelReservation(@Param('id') id: string) {
-    const cancelledReservation = await this.reservationService.cancelReservation(id);
+    const cancelledReservation =
+      await this.reservationService.cancelReservation(id);
     return {
       message: 'Reserva cancelada exitosamente',
       reservation: cancelledReservation,

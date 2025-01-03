@@ -63,8 +63,7 @@ export default function RegisterForm() {
                         ¡Bienvenido a HotelDev!
                     </h1>
                     <p className="mt-2 text-gray-500">
-                  
-                  cdcd      Crea tu cuenta para realizar reservas
+                         Crea tu cuenta para realizar reservas
                     </p>
                 </div>
 
@@ -161,9 +160,9 @@ export default function RegisterForm() {
                         <button
                          disabled={Object.keys(errors).length > 0}
                             type="submit"
-                            className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                            className="inline-block rounded bg-[#FF5100] border border-[#FF5100] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-[#FF5100] focus:outline-none focus:ring active:text-[#FF5100] transition-all duration-300"
                         >
-                            Registrarme
+                            Registrar
                         </button>
                     </div>
 

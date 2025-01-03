@@ -1,5 +1,5 @@
-export enum Status{
-    Active = 'active',
-    Cancelled = 'cancelled',
-    Completed = 'completed'
+export enum Status {
+  Active = 'active',
+  Cancelled = 'cancelled',
+  Completed = 'completed',
 }

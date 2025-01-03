@@ -92,7 +92,6 @@ export class ReservationService {
         dniPassport: createReservationDto.pax.dniPassport,
         phone: createReservationDto.pax.phone,
         birthdate: createReservationDto.pax.birthdate,
-        
       });
       await this.paxRepository.save(visitor);
     }
@@ -109,20 +108,23 @@ export class ReservationService {
     if (!findReservation) {
       throw new NotFoundException('Error al buscar la reserva por ID');
     }
-    
-    if (findReservation.status === Status.Cancelled || findReservation.status === Status.Completed) {
-      throw new BadRequestException('La reserva ya está cancelada o ha sido completada');
+
+    if (
+      findReservation.status === Status.Cancelled ||
+      findReservation.status === Status.Completed
+    ) {
+      throw new BadRequestException(
+        'La reserva ya está cancelada o ha sido completada',
+      );
     }
-  
+
     findReservation.status = Status.Cancelled;
     if (!findReservation.notasAdicionales) {
       findReservation.notasAdicionales = [];
     }
     findReservation.notasAdicionales.push('Reserva cancelada');
-    await this.reservationsRepository.save(findReservation) 
-  
+    await this.reservationsRepository.save(findReservation);
+
     return findReservation;
-  
-    
   }
 }
