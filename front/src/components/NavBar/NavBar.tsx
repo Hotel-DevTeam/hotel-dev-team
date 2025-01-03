@@ -12,9 +12,9 @@ const Navbar: React.FC = () => {
   const [isReservationMenuOpen, setReservationMenuOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
-
   const orderMenuRef = useRef<HTMLUListElement | null>(null);
   const reservationMenuRef = useRef<HTMLUListElement | null>(null);
+
   const navRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = (menu: "reservation" | "order") => {
@@ -95,42 +95,100 @@ const Navbar: React.FC = () => {
           stroke="currentColor"
           className="w-6 h-6 text-[#264653]"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
 
-      {/* Menú en móvil */}
-      {isMobileMenuOpen && (
-        <ul className="md:hidden absolute top-12 right-0 bg-white shadow-md w-48 z-50">
-          <li className="border-b">
-          <Link href={"/expenses"}
-            className="hover:text-[#F4A261] transition duration-200"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-6 h-6 text-[#264653]"
           >
-            Gastos
-          </Link>
-        </li>
-          <li className="border-b">
-            <Link
-              href="/ReservationCreate"
-              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-              onClick={() => setReservationMenuOpen(false)}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+
+        {/* Menú en móvil */}
+        {isMobileMenuOpen && (
+          <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+            <li
+              className="border-b cursor-pointer"
+              onClick={() => setReservationsOpen(!isReservationsOpen)}
             >
-              Crear Reserva
-            </Link>
-          </li>
-          <li className="border-b">
-            <Link
-              href="/ReservationList"
-              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-              onClick={() => setReservationMenuOpen(false)}
-            >
-              Lista de Reservas
-            </Link>
+              <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
+                Reservas
+              </span>
+              {isReservationsOpen && (
+                <ul className="bg-white shadow-md w-full">
+                  <li>
+                    <Link
+                      href="/HotelReservations"
+                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Hotel
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/DepartmentReservations"
+                      className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Departamento
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            <li>
+              <Link href={"/"}>
+                <button
+                  onClick={logOut}
+                  className="block px-4 py-2 hover:bg-red-400 transition"
+                >
+                  Cerrar sesión
+                </button>
+              </Link>
+            </li>
+          </ul>
+        )}
+
+        {/* Menú en escritorio */}
+        <ul className="hidden md:flex space-x-6">
+          <li
+            className="relative cursor-pointer"
+            onClick={() => setReservationsOpen(!isReservationsOpen)}
+          >
+            <span className="hover:text-[#F4A261] transition duration-200">
+              Reservas
+            </span>
+            {isReservationsOpen && (
+              <ul className="absolute left-0 bg-white shadow-md w-48">
+                <li>
+                  <Link
+                    href="/HotelReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Hotel
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/DepartmentReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Departamento
+                  </Link>
+                </li>
+              </ul>
+            )}
+
           </li>
           <li className="border-b">
             <Link
@@ -150,6 +208,7 @@ const Navbar: React.FC = () => {
               Página de Órdenes
             </Link>
           </li>
+
           <li className="border-b">
             <Link
               href="/CreateOrder"
@@ -157,6 +216,7 @@ const Navbar: React.FC = () => {
               onClick={() => setOrderMenuOpen(false)}
             >
               Crear Orden
+
             </Link>
           </li>
 
