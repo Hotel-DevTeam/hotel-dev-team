@@ -14,7 +14,9 @@ const Navbar: React.FC = () => {
   const [isVerReservasMenuOpen, setVerReservasMenuOpen] = useState(false);
   const [isOrdenesMenuOpen, setOrdenesMenuOpen] = useState(false); // Estado para el menú de "Ordenes"
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isSubMenuOpen, setSubMenuOpen] = useState(false); // Estado para el submenú
+  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
+  const orderMenuRef = useRef<HTMLUListElement | null>(null);
+  const reservationMenuRef = useRef<HTMLUListElement | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = (menu: "reservas" | "verReservas" | "ordenes") => {
@@ -102,23 +104,29 @@ const Navbar: React.FC = () => {
         </svg>
       </button>
 
-      {/* Menú móvil */}
+      {/* Menú en móvil */}
       {isMobileMenuOpen && (
-        <ul className="absolute top-full left-0 w-full bg-[#F1FAEE] shadow-md z-50 flex flex-col items-start p-4 space-y-4">
-          {/* Crear Reservas */}
-          <li className="relative">
-            <button
-              className="w-full text-left hover:text-[#F4A261] transition duration-200"
-              onClick={() => toggleMenu("reservas")}
-            >
-              Crear Reservas
-            </button>
-            {isReservasMenuOpen && (
-              <ul className="absolute left-0 mt-2 bg-white shadow-md w-full z-50">
+        <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+             <li className="border-b">
+          <Link href={"/CreateOrder"}
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+          >
+            Ventas
+          </Link>
+        </li>
+          <li
+            className="border-b cursor-pointer"
+            onClick={() => setReservationMenuOpen(!isReservationMenuOpen)}
+          >
+            <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
+              Reservas
+            </span>
+            {isReservationMenuOpen && (
+              <ul className="bg-white shadow-md w-full">
                 <li>
                   <Link
-                    href="/ResHotel"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    href="/HotelReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Hotel
@@ -126,8 +134,8 @@ const Navbar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    href="/ResDepartamento"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    href="/DepartmentReservations"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Departamento
@@ -137,124 +145,39 @@ const Navbar: React.FC = () => {
             )}
           </li>
 
-          {/* Ver Reservas */}
-          <li className="relative">
-            <button
-              className="w-full text-left hover:text-[#F4A261] transition duration-200"
-              onClick={() => toggleMenu("verReservas")}
-            >
-              Ver Reservas
-            </button>
-            {isVerReservasMenuOpen && (
-              <ul className="absolute left-0 mt-2 bg-white shadow-md w-full z-50">
-                <li>
-                  <Link
-                    href="/ListReservation"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Reservas
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/Reservations"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Historial
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Crear Ordenes */}
-          <li className="relative">
-            <button
-              className="w-full text-left hover:text-[#F4A261] transition duration-200"
-              onClick={() => toggleMenu("ordenes")}
-            >
-              Ordenes
-            </button>
-            {isOrdenesMenuOpen && (
-              <ul className="absolute left-0 mt-2 bg-white shadow-md w-full z-50">
-                <li>
-                  <Link
-                    href="/CrearOrden"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Crear Orden
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/VerOrdenes"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Ver Ordenes
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/HistorialOrdenes"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Historial
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Gastos */}
           <li>
-            <Link
-              href="/expenses"
-              className="hover:text-[#F4A261] transition duration-200"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Gastos
-            </Link>
-          </li>
-
-          {/* Panel Admin */}
-          {isAdmin && (
-            <li>
-              <Link
-                href="/admin"
-                className="hover:text-[#F4A261] transition duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+            <Link href={"/"}>
+              <button
+                onClick={handleLogOut}
+                className="block px-4 py-2 hover:bg-red-400 transition"
               >
-                Panel Admin
-              </Link>
-            </li>
-          )}
-
-          {/* Cerrar sesión */}
-          <li>
-            <button
-              onClick={handleLogOut}
-              className="hover:text-[#F4A261] transition duration-200"
-            >
-              Cerrar sesión
-            </button>
+                Cerrar sesión
+              </button>
+            </Link>
           </li>
         </ul>
       )}
 
       {/* Menú en escritorio */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
-        {/* Crear Reservas */}
-        <li className="relative">
-          <button
-            className="w-full text-left hover:text-[#F4A261] transition duration-200"
-            onClick={() => toggleMenu("reservas")}
+      <li className="relative">
+          <Link href={"/CreateOrder"}
+            className="hover:text-[#F4A261] transition duration-200"
           >
-            Crear Reservas
+            Ventas
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={"/expenses"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Gastos
+          </Link>
+        </li>
+        <li className="relative" onClick={() => toggleMenu("reservation")}>
+          <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
+            Reservas
           </button>
           {isReservasMenuOpen && (
             <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
@@ -368,7 +291,7 @@ const Navbar: React.FC = () => {
           </li>
         )}
 
-        {/* Cerrar sesión */}
+        {/* Botón de Cerrar sesión */}
         <li>
           <button
             onClick={handleLogOut}
