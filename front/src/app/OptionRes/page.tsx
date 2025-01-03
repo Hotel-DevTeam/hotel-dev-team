@@ -11,8 +11,8 @@ function Page() {
       {/* Descripciones y botones */}
       <div className="flex flex-col items-center space-y-6">
         {/* Opción de Hotel */}
-        <div className="text-center">
-          <p className="text-lg text-black mb-7">
+        <div className="border border-[#CD9C8A] rounded-lg p-6 w-80 text-center shadow-lg">
+          <p className="text-lg text-black mb-6">
             Haz clic aquí para crear una reserva en el{" "}
             <span className="text-[#CD9C8A] font-semibold">Hotel</span>.
           </p>
@@ -25,9 +25,9 @@ function Page() {
         </div>
 
         {/* Opción de Departamento */}
-        <div className="text-center">
-          <p className="text-lg text-black mb-7">
-            Haz clic aquí para crear una reserva en un
+        <div className="border border-[#CD9C8A] rounded-lg p-6 w-80 text-center shadow-lg">
+          <p className="text-lg text-black mb-6">
+            Haz clic aquí para crear una reserva en un{" "}
             <span className="text-[#CD9C8A] font-semibold">Departamento</span>.
           </p>
           <Link

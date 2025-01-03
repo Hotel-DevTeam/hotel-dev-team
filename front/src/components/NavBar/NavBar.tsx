@@ -64,15 +64,6 @@ const Navbar: React.FC = () => {
         {/* Menú en móvil */}
         {isMobileMenuOpen && (
           <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
-            <li className="border-b">
-              <Link
-                href="/location"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Ubicaciones
-              </Link>
-            </li>
             <li
               className="border-b cursor-pointer"
               onClick={() => setReservationsOpen(!isReservationsOpen)}
@@ -103,27 +94,22 @@ const Navbar: React.FC = () => {
                 </ul>
               )}
             </li>
+
             <li>
-              <button
-                onClick={logOut}
-                className="block px-4 py-2 hover:bg-red-400 transition"
-              >
-                Cerrar sesión
-              </button>
+              <Link href={"/"}>
+                <button
+                  onClick={logOut}
+                  className="block px-4 py-2 hover:bg-red-400 transition"
+                >
+                  Cerrar sesión
+                </button>
+              </Link>
             </li>
           </ul>
         )}
 
         {/* Menú en escritorio */}
         <ul className="hidden md:flex space-x-6">
-          <li>
-            <Link
-              href="/location"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
-              Ubicaciones
-            </Link>
-          </li>
           <li
             className="relative cursor-pointer"
             onClick={() => setReservationsOpen(!isReservationsOpen)}
@@ -161,12 +147,14 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
           <li>
-            <button
-              onClick={logOut}
-              className="hover:text-red-400 transition duration-200"
-            >
-              Cerrar sesión
-            </button>
+            <Link href={"/"}>
+              <button
+                onClick={logOut}
+                className="hover:text-red-400 transition duration-200"
+              >
+                Cerrar sesión
+              </button>
+            </Link>
           </li>
         </ul>
       </div>
