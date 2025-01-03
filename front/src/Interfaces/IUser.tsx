@@ -1,26 +1,25 @@
 export interface ILoginUser {
-  email:string;
-  password:string;
+  email: string;
+  password: string;
 }
 
 export enum Role {
-Admin = 'admin',
-Recep = 'receptionist',
-Emplo = 'employee',
+  Admin = "admin",
+  Recep = "receptionist",
+  Emplo = "employee",
 }
 
 export interface IUserRegister {
-  email:string;
-  name:string;
-  password:string;
-  confirmPassword:string;
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
   role: Role;
 }
 
 export interface INotificationProps {
-  message: string; 
+  message: string;
 }
-
 
 export interface IUserContextType {
   user: IUserResponse | null;
@@ -39,60 +38,60 @@ export interface IUserContextType {
 export interface IUserResponse {
   message: string;
   token: string;
-  role:Role
+  role: Role;
   user: {
     id: string;
     name: string;
     email: string;
-    };
-   }
+  };
+}
 
 export interface ILoginResponse {
   message: string;
   token: string;
-  role:Role;
+  role: Role;
   user: {
     id: string;
     name: string;
     email: string;
-    };
+  };
 }
 
-
 export interface ILocation {
-  id?:string;
-  name?:string;
-  address?:string;
-  imgUrl?:string;
+  id?: string;
+  name?: string;
+  address?: string;
+  imgUrl?: string;
 }
 
 export enum Tipo {
-Consumible = 'Consumible',
-Servicio = 'Servicio'
+  Consumible = "Consumible",
+  Servicio = "Servicio",
 }
 
 export interface IProduct {
-id:string;
-tipo: Tipo;
-nombre:string;
-Activo:boolean;
-foto:string;
-ubicacion:ILocation;
+  id: string;
+  tipo: Tipo;
+  nombre: string;
+  Activo: boolean;
+  foto: string;
+  ubicacion: ILocation;
 }
-
-
 
 export interface IProductsPageProps {
-products: IProduct[];
+  products: IProduct[];
 }
 
-
 export interface ICardProductProps {
-product: IProduct;
-onToggleStatus: (id: string) => void; 
-onEdit: (id: string) => void;       
+  product: IProduct;
+  onToggleStatus: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
 export interface ILoginClientProps {
-setToken: (token: string | null) => void;
+  setToken: (token: string | null) => void;
+}
+
+export interface IUserN {
+  role: string;
 }

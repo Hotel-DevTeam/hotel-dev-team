@@ -37,7 +37,7 @@ const CreateReservation: React.FC = () => {
       reservationMethod,
       breakfastIncluded: breakfast,
       totalPrice,
-      totalPriceUSD: totalPrice / 100,
+      totalPriceUSD: totalPriceUSD,
       deposit,
       depositUSD,
       remainingBalance: totalPrice - deposit,
@@ -118,7 +118,19 @@ const CreateReservation: React.FC = () => {
           </label>
           <select
             value={roomId ?? ""}
-            onChange={(e) => setRoomId(Number(e.target.value))}
+            onChange={(e) => {
+              const selectedRoomId = Number(e.target.value);
+              setRoomId(selectedRoomId);
+
+              // Actualiza el totalPrice y totalPriceUSD según el precio de la habitación seleccionada
+              const selectedRoom = rooms.find(
+                (room) => room.id === selectedRoomId
+              );
+              if (selectedRoom) {
+                setTotalPrice(selectedRoom.price); // Establece el precio total en base a la habitación
+                setTotalPriceUSD(selectedRoom.price / 100); // Calcula el precio en USD (si es necesario)
+              }
+            }}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
             required
           >
@@ -175,7 +187,7 @@ const CreateReservation: React.FC = () => {
         {/* Total Price */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total : $USD
+            Precio Total: $USD
           </label>
           <input
             type="number"
@@ -227,13 +239,14 @@ const CreateReservation: React.FC = () => {
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="bg-[#CD9C8A] text-white px-4 py-2 rounded-lg w-full hover:bg-orange-400 transition-all"
-      >
-        Crear Reserva
-      </button>
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          className="bg-[#FF5100] text-white py-2 px-6 rounded-lg shadow-md hover:bg-[#FF3A00] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+        >
+          Crear Reserva
+        </button>
+      </div>
     </form>
   );
 };
