@@ -1,25 +1,27 @@
+
+
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode } from "react"; // Agregar ReactNode
+import { IRoomId } from "../Interfaces/IReservation";
 import { Reservation } from "../Interfaces/IReservation";
 import { roomsData } from "../Data/Data";
 
 interface ReservationContextProps {
   reservations: Reservation[];
-  rooms: { id: number; roomNumber: string }[];
+  rooms: IRoomId[];
   addReservation: (reservation: Reservation) => void;
   finalizeReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
 }
 
 interface ReservationProviderProps {
-  children: React.ReactNode;
+  children: ReactNode; // Agregar children aquí
 }
 
 const ReservationContext = createContext<ReservationContextProps | undefined>(
   undefined
 );
-console.log(roomsData);
 
 export const useReservationContext = (): ReservationContextProps => {
   const context = useContext(ReservationContext);
@@ -34,35 +36,9 @@ export const useReservationContext = (): ReservationContextProps => {
 export const ReservationProvider: React.FC<ReservationProviderProps> = ({
   children,
 }) => {
-  const [isClient, setIsClient] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rooms, setRooms] = useState(roomsData); // Usamos los datos importados
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient) {
-      const savedReservations = localStorage.getItem("reservations");
-      const savedRooms = localStorage.getItem("rooms");
-
-      if (savedReservations) {
-        setReservations(JSON.parse(savedReservations));
-      }
-
-      if (savedRooms) {
-        setRooms(JSON.parse(savedRooms));
-      }
-    }
-  }, [isClient]);
-
-  useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("reservations", JSON.stringify(reservations));
-      localStorage.setItem("rooms", JSON.stringify(rooms));
-    }
-  }, [reservations, rooms, isClient]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [rooms, setRooms] = useState<IRoomId[]>(roomsData);
 
   const addReservation = (reservation: Reservation) => {
     setReservations((prevReservations) => [...prevReservations, reservation]);
@@ -89,11 +65,10 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
         rooms,
         addReservation,
         finalizeReservation,
-        removeReservation, // Exponemos la función para eliminar reservas
+        removeReservation,
       }}
     >
       {children}
     </ReservationContext.Provider>
   );
-  
 };

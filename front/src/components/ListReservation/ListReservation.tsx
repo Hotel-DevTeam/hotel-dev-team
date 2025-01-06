@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
+import { roomsData } from "../../Data/Data"; // Importamos roomsData
 
 const ReservationsList: React.FC = () => {
-  const { reservations, rooms, finalizeReservation, removeReservation } =
+  const { reservations, finalizeReservation, removeReservation } =
     useReservationContext();
   const [filter, setFilter] = useState<"all" | "finalized" | "unfinalized">(
     "all"
@@ -17,9 +18,8 @@ const ReservationsList: React.FC = () => {
     if (filter === "finalized") return reservation.finalized;
     if (filter === "unfinalized") return !reservation.finalized;
     if (selectedRoom) {
-      // Filtramos por habitación si se ha seleccionado una
-      const room = rooms.find((room) => room.id === reservation.roomId);
-      return room?.roomNumber === selectedRoom;
+      // Convertimos roomId a string para compararlo con selectedRoom
+      return String(reservation.roomId) === selectedRoom;
     }
     return true;
   });
@@ -127,8 +127,8 @@ const ReservationsList: React.FC = () => {
           className="block mx-auto p-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
         >
           <option value="">Filtra por habitación</option>
-          {rooms.map((room) => (
-            <option key={room.id} value={room.roomNumber}>
+          {roomsData.map((room) => (
+            <option key={room.id} value={room.roomNumber.toString()}>
               Habitación {room.roomNumber}
             </option>
           ))}
@@ -138,8 +138,7 @@ const ReservationsList: React.FC = () => {
       {/* Contenedor flex para tarjetas */}
       <div className="flex flex-wrap gap-6">
         {filteredReservations.map((reservation) => {
-          // Encontramos la habitación asociada a la reserva
-          const room = rooms.find((room) => room.id === reservation.roomId);
+          const room = roomsData.find((room) => room.id === reservation.roomId);
 
           return (
             <div
@@ -187,12 +186,8 @@ const ReservationsList: React.FC = () => {
                   {reservation.finalized ? "Finalizado" : "Finalizar Reserva"}
                 </button>
 
-               
                 <button
-                  onClick={() =>
-                    //handleRemoveReservation(parseInt(reservation.id, 10))
-                    handleRemoveReservation(reservation.id)
-                  } 
+                  onClick={() => handleRemoveReservation(reservation.id)}
                   className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
                 >
                   Eliminar

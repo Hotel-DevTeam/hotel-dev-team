@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/components/CreateReservation.tsx
 "use client";
 
 import { useState } from "react";
-import Swal from "sweetalert2"; // Importa SweetAlert2
 import { useReservationContext } from "@/context/reservationContext";
+import Swal from "sweetalert2"; // Asegúrate de importar SweetAlert2
 import { Reservation } from "../../Interfaces/IReservation";
 
 const CreateReservation: React.FC = () => {
@@ -32,18 +34,17 @@ const CreateReservation: React.FC = () => {
       passengerType,
       reservationMethod,
       breakfastIncluded: breakfast,
-      totalPrice: 0, // El precio total no se maneja aquí
-      totalPriceUSD: 0, // El precio total en USD tampoco
+      totalPrice: 0,
+      totalPriceUSD: 0,
       deposit,
-      depositUSD: deposit / 100, // Aquí solo calculamos el depósito
-      remainingBalance: 0, // El saldo pendiente se calcula con el depósito
+      depositUSD: deposit / 100,
+      remainingBalance: 0,
       finalized: false,
       comments,
     };
 
     addReservation(newReservation);
 
-    // Mostrar mensaje de éxito con SweetAlert2
     Swal.fire({
       title: "Reserva creada",
       text: "La reserva se ha realizado con éxito.",
@@ -52,7 +53,6 @@ const CreateReservation: React.FC = () => {
       confirmButtonText: "Aceptar",
     });
 
-    // Resetear el formulario
     setCheckInDate("");
     setCheckOutDate("");
     setRoomId(null);
@@ -76,35 +76,7 @@ const CreateReservation: React.FC = () => {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Check-in Date */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-in:
-          </label>
-          <input
-            type="date"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
-            required
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Check-out Date */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-out:
-          </label>
-          <input
-            type="date"
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
-            required
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Room Selection */}
+        {/* Habitación */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Habitación:
@@ -124,7 +96,35 @@ const CreateReservation: React.FC = () => {
           </select>
         </div>
 
-        {/* Adult Count */}
+        {/* Fecha de check-in */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Check-in:
+          </label>
+          <input
+            type="date"
+            value={checkInDate}
+            onChange={(e) => setCheckInDate(e.target.value)}
+            required
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Fecha de check-out */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Check-out:
+          </label>
+          <input
+            type="date"
+            value={checkOutDate}
+            onChange={(e) => setCheckOutDate(e.target.value)}
+            required
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Adultos */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Adultos:
@@ -138,7 +138,7 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Child Count */}
+        {/* Niños */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Niños:
@@ -152,7 +152,7 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Breakfast Option */}
+        {/* Desayuno */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             ¿Desayuno incluido?
@@ -165,7 +165,7 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Deposit */}
+        {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Depósito: $USD
@@ -179,20 +179,7 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Remaining Balance */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Saldo pendiente: $USD
-          </label>
-          <input
-            type="number"
-            value={remainingBalance}
-            disabled
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Comments */}
+        {/* Comentarios */}
         <div className="col-span-2">
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Comentarios:
@@ -200,7 +187,6 @@ const CreateReservation: React.FC = () => {
           <textarea
             value={comments}
             onChange={(e) => setComments(e.target.value)}
-            rows={4}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
