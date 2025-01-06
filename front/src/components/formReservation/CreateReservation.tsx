@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -16,10 +15,7 @@ const CreateReservation: React.FC = () => {
   const [passengerType, setPassengerType] = useState<string>("adulto");
   const [reservationMethod, setReservationMethod] = useState<string>("");
   const [breakfast, setBreakfast] = useState<boolean>(false);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalPriceUSD, setTotalPriceUSD] = useState<number>(0);
   const [deposit, setDeposit] = useState<number>(0);
-  const [depositUSD, setDepositUSD] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
 
@@ -36,11 +32,11 @@ const CreateReservation: React.FC = () => {
       passengerType,
       reservationMethod,
       breakfastIncluded: breakfast,
-      totalPrice,
-      totalPriceUSD: totalPriceUSD,
+      totalPrice: 0, // El precio total no se maneja aquí
+      totalPriceUSD: 0, // El precio total en USD tampoco
       deposit,
-      depositUSD,
-      remainingBalance: totalPrice - deposit,
+      depositUSD: deposit / 100, // Aquí solo calculamos el depósito
+      remainingBalance: 0, // El saldo pendiente se calcula con el depósito
       finalized: false,
       comments,
     };
@@ -65,10 +61,7 @@ const CreateReservation: React.FC = () => {
     setPassengerType("adulto");
     setReservationMethod("");
     setBreakfast(false);
-    setTotalPrice(0);
-    setTotalPriceUSD(0);
     setDeposit(0);
-    setDepositUSD(0);
     setRemainingBalance(0);
     setComments("");
   };
@@ -118,26 +111,14 @@ const CreateReservation: React.FC = () => {
           </label>
           <select
             value={roomId ?? ""}
-            onChange={(e) => {
-              const selectedRoomId = Number(e.target.value);
-              setRoomId(selectedRoomId);
-
-              // Actualiza el totalPrice y totalPriceUSD según el precio de la habitación seleccionada
-              const selectedRoom = rooms.find(
-                (room) => room.id === selectedRoomId
-              );
-              if (selectedRoom) {
-                setTotalPrice(selectedRoom.price); // Establece el precio total en base a la habitación
-                setTotalPriceUSD(selectedRoom.price / 100); // Calcula el precio en USD (si es necesario)
-              }
-            }}
+            onChange={(e) => setRoomId(Number(e.target.value))}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
             required
           >
             <option value="">Seleccione una habitación</option>
             {rooms.map((room) => (
               <option key={room.id} value={room.id}>
-                {room.roomNumber} - ${room.price} por noche
+                {room.roomNumber}
               </option>
             ))}
           </select>
@@ -184,24 +165,10 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Total Price */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total: $USD
-          </label>
-          <input
-            type="number"
-            value={totalPrice}
-            onChange={(e) => setTotalPrice(Number(e.target.value))}
-            min={0}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
         {/* Deposit */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito : $USD.
+            Depósito: $USD
           </label>
           <input
             type="number"
@@ -219,7 +186,7 @@ const CreateReservation: React.FC = () => {
           </label>
           <input
             type="number"
-            value={totalPrice - deposit}
+            value={remainingBalance}
             disabled
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />

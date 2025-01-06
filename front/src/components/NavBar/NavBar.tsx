@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isReservasMenuOpen, setReservasMenuOpen] = useState(false);
   const [isVerReservasMenuOpen, setVerReservasMenuOpen] = useState(false);
-  const [isOrdenesMenuOpen, setOrdenesMenuOpen] = useState(false); // Estado para el menú de "Ordenes"
+
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
   const [isSubMenuOpen, setSubMenuOpen] = useState(false); // Nuevo estado para el submenú
@@ -24,22 +24,15 @@ const Navbar: React.FC = () => {
     if (menu === "reservas") {
       setReservasMenuOpen(!isReservasMenuOpen);
       setVerReservasMenuOpen(false);
-      setOrdenesMenuOpen(false); // Cerrar menú Ordenes
     } else if (menu === "verReservas") {
       setVerReservasMenuOpen(!isVerReservasMenuOpen);
       setReservasMenuOpen(false);
-      setOrdenesMenuOpen(false); // Cerrar menú Ordenes
-    } else if (menu === "ordenes") {
-      setOrdenesMenuOpen(!isOrdenesMenuOpen);
-      setReservasMenuOpen(false);
-      setVerReservasMenuOpen(false); // Cerrar menú Reservas
     }
   };
 
   const closeMenus = () => {
     setReservasMenuOpen(false);
     setVerReservasMenuOpen(false);
-    setOrdenesMenuOpen(false); // Cerrar menú Ordenes
     setSubMenuOpen(false); // Cerrar el submenú
   };
 
@@ -213,7 +206,7 @@ const Navbar: React.FC = () => {
             <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
               <li>
                 <Link
-                  href="/Reservation"
+                  href="/ReservationList"
                   className="block px-4 py-2 hover:bg-[#E9C46A] transition"
                 >
                   Reservas
@@ -222,44 +215,6 @@ const Navbar: React.FC = () => {
               <li>
                 <Link
                   href="/Reservations"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Historial
-                </Link>
-              </li>
-            </ul>
-          )}
-        </li>
-
-        {/* Ordenes */}
-        <li className="relative">
-          <button
-            className="w-full text-left hover:text-[#F4A261] transition duration-200"
-            onClick={() => toggleMenu("ordenes")}
-          >
-            Ordenes
-          </button>
-          {isOrdenesMenuOpen && (
-            <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
-              <li>
-                <Link
-                  href="/CrearOrden"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Crear Orden
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/VerOrdenes"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Ver Ordenes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/HistorialOrdenes"
                   className="block px-4 py-2 hover:bg-[#E9C46A] transition"
                 >
                   Historial
