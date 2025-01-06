@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
   const [isOrdenesMenuOpen, setOrdenesMenuOpen] = useState(false); // Estado para el menú de "Ordenes"
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
+  const [isSubMenuOpen, setSubMenuOpen] = useState(false); // Nuevo estado para el submenú
   const orderMenuRef = useRef<HTMLUListElement | null>(null);
   const reservationMenuRef = useRef<HTMLUListElement | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -107,44 +108,42 @@ const Navbar: React.FC = () => {
       {/* Menú en móvil */}
       {isMobileMenuOpen && (
         <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
-             <li className="border-b">
-          <Link href={"/CreateOrder"}
-            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-          >
-            Ventas
-          </Link>
-        </li>
+          <li className="border-b">
+            <Link
+              href={"/CreateOrder"}
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Ventas
+            </Link>
+          </li>
           <li
             className="border-b cursor-pointer"
-            onClick={() => setReservationMenuOpen(!isReservationMenuOpen)}
+            onClick={() => setSubMenuOpen(!isSubMenuOpen)} // Toggle del submenú
           >
             <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
-              Reservas
+              Submenú
             </span>
-            {isReservationMenuOpen && (
+            {isSubMenuOpen && (
               <ul className="bg-white shadow-md w-full">
                 <li>
                   <Link
-                    href="/HotelReservations"
+                    href="/SubmenuItem1"
                     className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    Hotel
+                    Item 1
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/DepartmentReservations"
+                    href="/SubmenuItem2"
                     className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    Departamento
+                    Item 2
                   </Link>
                 </li>
               </ul>
             )}
           </li>
-
           <li>
             <Link href={"/"}>
               <button
@@ -160,8 +159,9 @@ const Navbar: React.FC = () => {
 
       {/* Menú en escritorio */}
       <ul className="hidden md:flex space-x-6 justify-end w-full">
-      <li className="relative">
-          <Link href={"/CreateOrder"}
+        <li className="relative">
+          <Link
+            href={"/CreateOrder"}
             className="hover:text-[#F4A261] transition duration-200"
           >
             Ventas
@@ -175,7 +175,7 @@ const Navbar: React.FC = () => {
             Gastos
           </Link>
         </li>
-        <li className="relative" onClick={() => toggleMenu("reservation")}>
+        <li className="relative" onClick={() => toggleMenu("reservas")}>
           <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
             Reservas
           </button>
