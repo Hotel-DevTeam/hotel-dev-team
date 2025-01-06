@@ -25,7 +25,7 @@ const OrderPage: React.FC = () => {
               className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow border border-[#E9C46A]"
             >
               <p className="text-[#264653]">
-                <strong>Producto:</strong> {order.product.name} <br />
+                <strong>Producto:</strong> {order.product.nombre} <br />
                 <strong>Cantidad:</strong> {order.quantity} <br />
                 <strong>Precio por unidad:</strong> ${order.product.price}{" "}
                 <br />

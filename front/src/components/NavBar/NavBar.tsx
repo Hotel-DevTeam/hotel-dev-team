@@ -194,6 +194,14 @@ const Navbar: React.FC = () => {
                       Movimientos de caja
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
                 </ul>
               )}
             </li>
@@ -320,6 +328,14 @@ const Navbar: React.FC = () => {
                     Movimientos de caja
                   </Link>
                 </li>
+                <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
               </ul>
             )}
           </li>

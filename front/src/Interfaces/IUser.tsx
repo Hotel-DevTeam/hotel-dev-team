@@ -80,6 +80,13 @@ foto:string;
 ubicacion:ILocation;
 }
 
+export interface ICreateProduct {
+  tipo: Tipo;
+  nombre:string;
+  Activo:boolean;
+  foto:string;
+  ubicacion:ILocation;
+  }
 
 
 export interface IProductsPageProps {
@@ -88,10 +95,15 @@ products: IProduct[];
 
 
 export interface ICardProductProps {
-product: IProduct;
-onToggleStatus: (id: string) => void; 
-onEdit: (id: string) => void;       
+  product: IProduct; 
+  onToggleStatus: (id: string) => void; 
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void; 
+  isEditing: boolean; 
+  onEditSubmit: (updatedProduct: IProduct) => void; 
+  onSaveEdit: () => void; 
 }
+
 
 export interface ILoginClientProps {
 setToken: (token: string | null) => void;
