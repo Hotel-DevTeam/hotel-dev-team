@@ -12,111 +12,66 @@ const ReservationsList: React.FC = () => {
   const [filteredReservations, setFilteredReservations] = useState<
     Reservation[]
   >([]);
-  const [filter, setFilter] = useState<"all" | "finalized" | "notFinalized">(
-    "all"
-  );
 
   useEffect(() => {
-    filterReservations();
-  }, [filter, reservations]);
-
-  const filterReservations = () => {
-    switch (filter) {
-      case "finalized":
-        setFilteredReservations(
-          reservations.filter((reservation) => reservation.finalized)
-        );
-        break;
-      case "notFinalized":
-        setFilteredReservations(
-          reservations.filter((reservation) => !reservation.finalized)
-        );
-        break;
-      default:
-        setFilteredReservations(reservations);
-        break;
-    }
-  };
+    setFilteredReservations(reservations);
+  }, [reservations]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 text-black">
+    <div className="max-w-6xl mx-auto p-4 text-black">
       <h1 className="text-2xl font-bold text-center mb-6 text-pink-600">
-        Lista de Reservas
+        Historial de Reservas
       </h1>
 
-      <div className="mb-4 flex justify-center space-x-4">
-        <button
-          onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition ${
-            filter === "all" ? "bg-pink-500 text-white" : "bg-pink-200"
-          } hover:bg-pink-300`}
-        >
-          Todas
-        </button>
-        <button
-          onClick={() => setFilter("finalized")}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition ${
-            filter === "finalized" ? "bg-pink-500 text-white" : "bg-pink-200"
-          } hover:bg-pink-300`}
-        >
-          Finalizadas
-        </button>
-        <button
-          onClick={() => setFilter("notFinalized")}
-          className={`px-4 py-2 rounded-md font-medium text-sm transition ${
-            filter === "notFinalized" ? "bg-pink-500 text-white" : "bg-pink-200"
-          } hover:bg-pink-300`}
-        >
-          No Finalizadas
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredReservations.map((reservation) => (
-          <div
-            key={reservation.id}
-            className="bg-green-100 shadow-lg rounded-lg p-6 hover:bg-green-200 transition duration-300"
-          >
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Check-in:</strong>{" "}
-              <span>{reservation.checkInDate}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Check-out:</strong>{" "}
-              <span>{reservation.checkOutDate}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Habitación ID:</strong>{" "}
-              <span>{reservation.roomId}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Pasajeros:</strong>{" "}
-              <span>{reservation.passengerCount}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">
-                Tipo de Pasajeros:
-              </strong>{" "}
-              <span>{reservation.passengerType}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Reserva:</strong>{" "}
-              <span>{reservation.reservationMethod}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Desayuno:</strong>{" "}
-              <span>{reservation.breakfastIncluded ? "Sí" : "No"}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Precio Total:</strong>{" "}
-              <span>${reservation.totalPrice.toFixed(2)}</span>
-            </div>
-            <div className="mb-4">
-              <strong className="text-sm text-gray-700">Finalizada:</strong>{" "}
-              <span>{reservation.finalized ? "Sí" : "No"}</span>
-            </div>
-          </div>
-        ))}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-pink-200">
+              <th className="px-6 py-3 text-left border-b">Check-in</th>
+              <th className="px-6 py-3 text-left border-b">Check-out</th>
+              <th className="px-6 py-3 text-left border-b">Habitación ID</th>
+              <th className="px-6 py-3 text-left border-b">Pasajeros</th>
+              <th className="px-6 py-3 text-left border-b">
+                Tipo de Pasajeros
+              </th>
+              <th className="px-6 py-3 text-left border-b">Reserva</th>
+              <th className="px-6 py-3 text-left border-b">Desayuno</th>
+              <th className="px-6 py-3 text-left border-b">Precio Total</th>
+              <th className="px-6 py-3 text-left border-b">Finalizada</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredReservations.map((reservation) => (
+              <tr key={reservation.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 border-b">
+                  {reservation.checkInDate}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.checkOutDate}
+                </td>
+                <td className="px-6 py-4 border-b">{reservation.roomId}</td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.passengerCount}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.passengerType}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.reservationMethod}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.breakfastIncluded ? "Sí" : "No"}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  ${reservation.totalPrice.toFixed(2)}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {reservation.finalized ? "Sí" : "No"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

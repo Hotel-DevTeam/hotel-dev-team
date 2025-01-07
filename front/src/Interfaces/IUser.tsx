@@ -1,26 +1,25 @@
 export interface ILoginUser {
-  email:string;
-  password:string;
+  email: string;
+  password: string;
 }
 
 export enum Role {
-Admin = 'admin',
-Recep = 'receptionist',
-Emplo = 'employee',
+  Admin = "admin",
+  Recep = "receptionist",
+  Emplo = "employee",
 }
 
 export interface IUserRegister {
-  email:string;
-  name:string;
-  password:string;
-  confirmPassword:string;
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
   role: Role;
 }
 
 export interface INotificationProps {
-  message: string; 
+  message: string;
 }
-
 
 export interface IUserContextType {
   user: IUserResponse | null;
@@ -39,60 +38,62 @@ export interface IUserContextType {
 export interface IUserResponse {
   message: string;
   token: string;
-  role:Role
+  role: Role;
   user: {
     id: string;
     name: string;
     email: string;
-    };
-   }
+  };
+}
 
 export interface ILoginResponse {
   message: string;
   token: string;
-  role:Role;
+  role: Role;
   user: {
     id: string;
     name: string;
     email: string;
-    };
+  };
 }
 
-
 export interface ILocation {
-  id?:string;
-  name?:string;
-  address?:string;
-  imgUrl?:string;
+  id?: string;
+  name?: string;
+  address?: string;
+  imgUrl?: string;
 }
 
 export enum Tipo {
-Consumible = 'Consumible',
-Servicio = 'Servicio'
+  Consumible = "Consumible",
+  Servicio = "Servicio",
 }
 
 export interface IProduct {
-id:string;
-tipo: Tipo;
-nombre:string;
-Activo:boolean;
-foto:string;
-ubicacion:ILocation;
+  id: string;
+  tipo: Tipo;
+  nombre: string;
+  precio:number;
+  Activo: boolean;
+  foto: string;
+  ubicacion: ILocation;
 }
+
 
 export interface ICreateProduct {
   tipo: Tipo;
   nombre:string;
   Activo:boolean;
+  precio:number;
   foto:string;
   ubicacion:ILocation;
   }
 
 
-export interface IProductsPageProps {
-products: IProduct[];
-}
 
+export interface IProductsPageProps {
+  products: IProduct[];
+}
 
 export interface ICardProductProps {
   product: IProduct; 
@@ -106,5 +107,28 @@ export interface ICardProductProps {
 
 
 export interface ILoginClientProps {
-setToken: (token: string | null) => void;
+  setToken: (token: string | null) => void;
+}
+
+export interface IUserN {
+  role: string;
+}
+
+export interface IRoom {
+  id: string; 
+  name: string; 
+  number: number;
+  capacity: number; 
+  price: number; 
+  type: string; 
+  reservations: Reservation[]; 
+}
+
+
+export interface Reservation {
+
+  id: string;
+  date: string; 
+  guestName: string; 
+  status: string; 
 }

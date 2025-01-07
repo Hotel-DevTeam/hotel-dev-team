@@ -1,14 +1,15 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { Reservation, Room } from "../Interfaces/IReservation";
+import { Reservation } from "../Interfaces/IReservation";
+import { roomsData } from "../Data/Data";
 
 interface ReservationContextProps {
   reservations: Reservation[];
-  rooms: Room[];
+  rooms: { id: number; roomNumber: string }[];
   addReservation: (reservation: Reservation) => void;
   finalizeReservation: (reservation: Reservation) => void;
-  removeReservation: (id: string) => void; // Función para eliminar reservas
+  removeReservation: (id: string) => void;
 }
 
 interface ReservationProviderProps {
@@ -18,6 +19,7 @@ interface ReservationProviderProps {
 const ReservationContext = createContext<ReservationContextProps | undefined>(
   undefined
 );
+console.log(roomsData);
 
 export const useReservationContext = (): ReservationContextProps => {
   const context = useContext(ReservationContext);
@@ -34,26 +36,7 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
 }) => {
   const [isClient, setIsClient] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([
-    {
-      id: 1,
-      roomNumber: "101",
-      description: "Habitación estándar",
-      price: 100,
-      capacity: 2,
-      priceUSD: 100,
-      breakfastIncluded: true,
-    },
-    {
-      id: 2,
-      roomNumber: "102",
-      description: "Habitación deluxe",
-      price: 150,
-      capacity: 2,
-      priceUSD: 150,
-      breakfastIncluded: false,
-    },
-  ]);
+  const [rooms, setRooms] = useState(roomsData); // Usamos los datos importados
 
   useEffect(() => {
     setIsClient(true);
@@ -112,4 +95,5 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
       {children}
     </ReservationContext.Provider>
   );
+  
 };

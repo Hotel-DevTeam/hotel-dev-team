@@ -4,7 +4,6 @@ import { ILocation } from "@/Interfaces/IUser";
 import { fetchLocations } from "../Fetchs/UserFetchs/UserFetchs"; // Eliminamos fetchCashMovements, ya que usaremos el mock
 import { useLocationContext } from "@/context/LocationContext";
 import { useRouter } from "next/navigation";
-import { UserContext } from "@/context/UserContext";
 import Image from "next/image";
 
 // Mock de movimientos de caja

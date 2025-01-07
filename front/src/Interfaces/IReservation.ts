@@ -26,3 +26,5 @@ export interface Room {
   priceUSD: number;
   breakfastIncluded: boolean;
 }
+
+// app/Interfaces/IReservation.ts

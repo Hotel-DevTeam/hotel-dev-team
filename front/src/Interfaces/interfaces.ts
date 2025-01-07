@@ -30,4 +30,5 @@ export interface OrderItem {
   product: Product;
   quantity: number;
   price:number;
+  totalPrice:number;
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -16,10 +15,7 @@ const CreateReservation: React.FC = () => {
   const [passengerType, setPassengerType] = useState<string>("adulto");
   const [reservationMethod, setReservationMethod] = useState<string>("");
   const [breakfast, setBreakfast] = useState<boolean>(false);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalPriceUSD, setTotalPriceUSD] = useState<number>(0);
   const [deposit, setDeposit] = useState<number>(0);
-  const [depositUSD, setDepositUSD] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
 
@@ -36,11 +32,11 @@ const CreateReservation: React.FC = () => {
       passengerType,
       reservationMethod,
       breakfastIncluded: breakfast,
-      totalPrice,
-      totalPriceUSD: totalPrice / 100,
+      totalPrice: 0, // El precio total no se maneja aquí
+      totalPriceUSD: 0, // El precio total en USD tampoco
       deposit,
-      depositUSD,
-      remainingBalance: totalPrice - deposit,
+      depositUSD: deposit / 100, // Aquí solo calculamos el depósito
+      remainingBalance: 0, // El saldo pendiente se calcula con el depósito
       finalized: false,
       comments,
     };
@@ -65,10 +61,7 @@ const CreateReservation: React.FC = () => {
     setPassengerType("adulto");
     setReservationMethod("");
     setBreakfast(false);
-    setTotalPrice(0);
-    setTotalPriceUSD(0);
     setDeposit(0);
-    setDepositUSD(0);
     setRemainingBalance(0);
     setComments("");
   };
@@ -76,13 +69,13 @@ const CreateReservation: React.FC = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
+      className="max-w-4xl mx-auto mt-20 bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
     >
       <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">
         Crear Reserva
       </h2>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Check-in Date */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -125,7 +118,7 @@ const CreateReservation: React.FC = () => {
             <option value="">Seleccione una habitación</option>
             {rooms.map((room) => (
               <option key={room.id} value={room.id}>
-                {room.roomNumber} - ${room.price} por noche
+                {room.roomNumber}
               </option>
             ))}
           </select>
@@ -172,24 +165,10 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Total Price */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total : $USD
-          </label>
-          <input
-            type="number"
-            value={totalPrice}
-            onChange={(e) => setTotalPrice(Number(e.target.value))}
-            min={0}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
         {/* Deposit */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito : $USD.
+            Depósito: $USD
           </label>
           <input
             type="number"
@@ -207,14 +186,14 @@ const CreateReservation: React.FC = () => {
           </label>
           <input
             type="number"
-            value={totalPrice - deposit}
+            value={remainingBalance}
             disabled
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
         {/* Comments */}
-        <div>
+        <div className="col-span-2">
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Comentarios:
           </label>
@@ -225,11 +204,12 @@ const CreateReservation: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
+      </div>
 
-        {/* Submit Button */}
+      <div className="flex justify-center">
         <button
           type="submit"
-          className="bg-[#CD9C8A] text-white px-4 py-2 rounded-lg w-full hover:bg-orange-400 transition-all"
+          className="bg-[#FF5100] text-white py-2 px-6 rounded-lg shadow-md hover:bg-[#FF3A00] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
         >
           Crear Reserva
         </button>
