@@ -113,18 +113,20 @@ const CreateOrder: React.FC = () => {
         return;
       }
       // Agregar el producto al array orderItems
-      const updatedOrderItems = [
-        ...orderItems,
-        { product, quantity: numericQuantity },
-      ];
-      setOrderItems(updatedOrderItems);
-  
-      // Calcular el precio total de la orden
-      const calculatedTotalPrice = updatedOrderItems.reduce((acc, item) => {
-        const itemPrice = parseFloat(item.product.price);
-        const itemQuantity = parseInt(item.quantity, 10);
-        return acc + (isNaN(itemPrice) || isNaN(itemQuantity) ? 0 : itemPrice * itemQuantity);
-      }, 0);
+      // Agregar el producto al array orderItems
+  const updatedOrderItems = [
+    ...orderItems,
+    { product, quantity: numericQuantity },
+  ];
+  setOrderItems(updatedOrderItems);
+
+  // Calcular el precio total de la orden
+  const calculatedTotalPrice = updatedOrderItems.reduce((acc, item) => {
+    const itemPrice = parseFloat(item.product.price); // Usar item.product.price
+    const itemQuantity = parseInt(item.quantity, 10); // Convertir quantity a número
+    return acc + (isNaN(itemPrice) || isNaN(itemQuantity) ? 0 : itemPrice * itemQuantity);
+  }, 0);
+
   
       setTotalPrice(calculatedTotalPrice.toFixed(2)); // Actualizamos el precio total
       console.log({
@@ -152,148 +154,145 @@ const CreateOrder: React.FC = () => {
     }
   };
   
-  
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 py-6 mb-4 max-w-xl mx-auto">
-        <h2 className="text-lg font-semibold text-[#264653] mb-4">Crear Orden</h2>
-
-        {/* Producto */}
-        <div className="mb-4">
-          <label htmlFor="product" className="block text-gray-700">Selecciona un Producto:</label>
-          <select
-            id="product"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded"
-            value={selectedProduct}
-            onChange={(e) => setSelectedProduct(e.target.value)}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="ml-8 mt-2">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
+          <h2 className="text-sm font-semibold text-[#264653] mb-3">Crear Orden</h2>
+  
+          {/* Producto */}
+          <div className="mb-3">
+            <label htmlFor="product" className="block text-gray-700 text-sm">Selecciona un Producto:</label>
+            <select
+              id="product"
+              className="mt-1 block w-full px-2 py-1 border border-gray-300 rounded text-sm"
+              value={selectedProduct}
+              onChange={(e) => setSelectedProduct(e.target.value)}
+            >
+              <option value="">Seleccione un producto</option>
+              {products.map((product) => (
+                <option key={product.id} value={product.id.toString()}>{product.nombre}</option>
+              ))}
+            </select>
+          </div>
+  
+          {/* Cantidad */}
+          <div className="mb-3">
+            <label htmlFor="quantity" className="block text-[#264653] text-xs font-bold mb-1">Cantidad:</label>
+            <input
+              type="text"
+              id="quantity"
+              value={quantity}
+              onChange={handleQuantityChange}
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
+              placeholder="Ingrese la cantidad"
+            />
+          </div>
+  
+          {/* Usuario */}
+          <div className="mb-3">
+            <label htmlFor="user" className="block text-[#264653] text-xs font-bold mb-1">Usuario:</label>
+            <input
+              type="text"
+              id="user"
+              value={user}
+              readOnly
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none"
+            />
+          </div>
+  
+          {/* Número de habitación */}
+          <div className="mb-3">
+            <label htmlFor="roomNumber" className="block text-[#264653] text-xs font-bold mb-1">Número de Habitación:</label>
+            <select
+              id="roomNumber"
+              value={roomNumber}
+              onChange={(e) => setRoomNumber(e.target.value)}
+              required
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
+            >
+              <option value="">Seleccione una habitación</option>
+              {rooms.map((room) => (
+                <option key={room.id} value={room.roomNumber}>{room.roomNumber}</option>
+              ))}
+            </select>
+          </div>
+  
+          {/* Precio por unidad */}
+          <div className="mb-3">
+            <label htmlFor="price" className="block text-[#264653] text-xs font-bold mb-1">Precio por unidad:</label>
+            <input
+              type="text"
+              id="price"
+              value={price}
+              onChange={handlePriceChange}
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
+            />
+          </div>
+  
+          {/* Precio Total */}
+          <div className="mb-3">
+            <label htmlFor="totalPrice" className="block text-[#264653] text-xs font-bold mb-1">Precio Total:</label>
+            <input
+              type="text"
+              id="totalPrice"
+              value={totalPrice}
+              readOnly
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
+            />
+          </div>
+  
+          {/* Monto Pagado */}
+          <div className="mb-3">
+            <label htmlFor="paidAmount" className="block text-[#264653] text-xs font-bold mb-1">Monto Pagado:</label>
+            <input
+              type="text"
+              id="paidAmount"
+              value={paidAmount}
+              onChange={handlePaidAmountChange}
+              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-1 px-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
+              placeholder="Ingrese el monto pagado"
+            />
+          </div>
+  
+          <button
+            type="submit"
+            className="bg-[#CD9C8A] text-white w-full py-1 rounded-lg text-sm focus:outline-none hover:bg-orange-400 transition-all"
           >
-            <option value="">Seleccione un producto</option>
-            {products.map((product) => (
-              <option key={product.id} value={product.id.toString()}>{product.nombre}</option>
+            Agregar Producto
+          </button>
+        </form>
+      </div>
+      {/* Tarjeta para mostrar productos agregados */}
+      <div className="bg-white shadow-md rounded px-6 py-4 mt-4 max-w-[700px] mx-auto">
+        <h3 className="text-sm font-semibold text-[#264653] mb-3">
+          Productos Agregados
+        </h3>
+        {orderItems.length > 0 ? (
+          <ul>
+            {orderItems.map((item, index) => (
+              <li key={index} className="flex justify-between mb-2 text-md">
+                <span>
+                  {item.product.nombre} <strong>x{item.quantity}</strong>
+                </span>
+                <span className="bg-slate-300">${(item.product.price * item.quantity).toFixed(2)}</span>
+              </li>
             ))}
-          </select>
-        </div>
-
-        {/* Cantidad */}
-        <div className="mb-4">
-          <label htmlFor="quantity" className="block text-[#264653] text-sm font-bold mb-2">Cantidad:</label>
-          <input
-            type="text"
-            id="quantity"
-            value={quantity}
-            onChange={handleQuantityChange}
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-            placeholder="Ingrese la cantidad"
-          />
-        </div>
-
-        {/* Usuario */}
-        <div className="mb-4">
-          <label htmlFor="user" className="block text-[#264653] text-sm font-bold mb-2">Usuario:</label>
-          <input
-            type="text"
-            id="user"
-            value={user}
-            readOnly
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none"
-          />
-        </div>
-
-        {/* Número de habitación */}
-        <div className="mb-4">
-          <label htmlFor="roomNumber" className="block text-[#264653] text-sm font-bold mb-2">Número de Habitación:</label>
-          <select
-            id="roomNumber"
-            value={roomNumber}
-            onChange={(e) => setRoomNumber(e.target.value)}
-            required
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-          >
-            <option value="">Seleccione una habitación</option>
-            {rooms.map((room) => (
-              <option key={room.id} value={room.roomNumber}>{room.roomNumber}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Precio por unidad */}
-        <div className="mb-4">
-          <label htmlFor="price" className="block text-[#264653] text-sm font-bold mb-2">Precio por unidad:</label>
-          <input
-            type="text"
-            id="price"
-            value={price}
-            onChange={handlePriceChange}
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-          />
-        </div>
-
-        {/* Precio Total */}
-        <div className="mb-4">
-          <label htmlFor="totalPrice" className="block text-[#264653] text-sm font-bold mb-2">Precio Total:</label>
-          <input
-            type="text"
-            id="totalPrice"
-            value={totalPrice}
-            readOnly
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-          />
-        </div>
-
-        {/* Monto Pagado */}
-        <div className="mb-4">
-          <label htmlFor="paidAmount" className="block text-[#264653] text-sm font-bold mb-2">Monto Pagado:</label>
-          <input
-            type="text"
-            id="paidAmount"
-            value={paidAmount}
-            onChange={handlePaidAmountChange}
-            className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-            placeholder="Ingrese el monto pagado"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-[#CD9C8A] text-white w-full py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
-        >
-          Agregar Producto
-        </button>
-      </form>
-
-    {/* Tarjeta para mostrar productos agregados */}
-<div className="bg-white shadow-md rounded px-8 py-6 mt-6 max-w-xl mx-auto">
-  <h3 className="text-lg font-semibold text-[#264653] mb-4">Productos Agregados</h3>
-  {orderItems.length > 0 ? (
-    <ul>
-      {orderItems.map((item, index) => {
-        // Asegurarse de que el precio sea un número válido y la cantidad también
-        const price = parseFloat(item.product.price);
-        const quantity = parseInt(item.quantity, 10);
-
-        // Si el precio o la cantidad no son números válidos, asignamos 0
-        const totalItemPrice = isNaN(price) || isNaN(quantity) ? '0.00' : (price * quantity).toFixed(2);
-
-        return (
-          <li key={index} className="flex justify-between mb-2">
-            <span>{item.product.nombre} x{quantity}</span> {/* Nombre del producto y cantidad */}
-            <span>${totalItemPrice}</span> {/* Precio total */}
-          </li>
-        );
-      })}
-    </ul>
-  ) : (
-    <p>No se han agregado productos aún.</p>
-  )}
+          </ul>
+        ) : (
+          <p className="text-sm">No se han agregado productos aún.</p>
+        )}
         <button
           onClick={handleCreateOrder}
-          className="bg-[#CD9C8A] text-white w-full mt-4 py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
+          className="bg-[#CD9C8A] text-white w-full mt-3 py-1 rounded-lg text-sm focus:outline-none hover:bg-orange-400 transition-all"
         >
           Crear Orden
         </button>
       </div>
     </div>
   );
+  
 };
 
 export default CreateOrder;

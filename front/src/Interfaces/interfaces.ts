@@ -29,5 +29,5 @@ export interface Order {
 export interface OrderItem {
   product: Product;
   quantity: number;
-  price:string;
+  price:number;
 }
