@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useOrderContext } from "../../context/OrderContext";
-import { products, rooms } from "../../helpers/helpers";
+import { products } from "../../helpers/helpers";
+import { roomsData } from "@/Data/Data";
 import Swal from "sweetalert2";
 
 // Definir la interfaz para los items de la orden
@@ -169,7 +170,7 @@ const CreateOrder: React.FC = () => {
               className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none focus:ring focus:ring-[#FF5100]"
             >
               <option value="">Seleccione una habitación</option>
-              {rooms.map((room) => (
+              {roomsData.map((room) => (
                 <option key={room.id} value={room.roomNumber}>
                   {room.roomNumber}
                 </option>
