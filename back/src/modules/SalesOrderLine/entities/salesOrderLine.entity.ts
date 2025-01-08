@@ -22,6 +22,8 @@ export class SalesOrderLine {
   @Column()
   orderId: string;
 
-  @ManyToOne(() => SalesOrder, (order) => order.orderLines)
+  @ManyToOne(() => SalesOrder, (salesOrder) => salesOrder.orderLines, {
+    onDelete: 'CASCADE',
+  })
   order: SalesOrder;
 }

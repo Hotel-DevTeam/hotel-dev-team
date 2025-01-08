@@ -42,6 +42,10 @@ export class Movimiento {
   })
   tipoMovimiento: TipoMovimiento;
 
+  @Column({ type: 'enum', enum: ['ingreso', 'egreso'], default: 'ingreso' })
+  tipo: 'ingreso' | 'egreso';
+
+
   @Column('decimal', { precision: 10, scale: 2, nullable: false })
   monto: number;
 
