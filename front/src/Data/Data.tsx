@@ -1,6 +1,7 @@
-// src/components/Data.tsx
+// src/Data/Data.ts
+import { IRoomId } from "../Interfaces/IReservation";
 
-export const roomsData = [
+export const roomsData: IRoomId[] = [
   { id: 1, roomNumber: "1" },
   { id: 2, roomNumber: "2" },
   { id: 3, roomNumber: "3" },

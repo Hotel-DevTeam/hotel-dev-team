@@ -27,4 +27,9 @@ export interface Room {
   breakfastIncluded: boolean;
 }
 
+export interface IRoomId {
+  id: number;
+  roomNumber: string;
+}
+
 // app/Interfaces/IReservation.ts
