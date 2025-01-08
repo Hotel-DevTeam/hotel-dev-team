@@ -154,6 +154,14 @@ const Navbar: React.FC = () => {
       <ul className="hidden md:flex space-x-6 justify-end w-full">
         <li className="relative">
           <Link
+            href={"/Calendar"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Calendario
+          </Link>
+        </li>
+        <li className="relative">
+          <Link
             href={"/CreateOrder"}
             className="hover:text-[#F4A261] transition duration-200"
           >

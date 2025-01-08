@@ -15,6 +15,7 @@ export interface Reservation {
   remainingBalance: number;
   finalized: boolean;
   comments: string;
+  status?: string;
 }
 
 export interface Room {
