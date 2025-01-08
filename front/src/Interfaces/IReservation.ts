@@ -15,6 +15,7 @@ export interface Reservation {
   remainingBalance: number;
   finalized: boolean;
   comments: string;
+  status?: string;
 }
 
 export interface Room {
@@ -25,6 +26,11 @@ export interface Room {
   price: number;
   priceUSD: number;
   breakfastIncluded: boolean;
+}
+
+export interface IRoomId {
+  id: number;
+  roomNumber: string;
 }
 
 // app/Interfaces/IReservation.ts

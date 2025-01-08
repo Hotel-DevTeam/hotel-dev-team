@@ -1,27 +1,30 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { Reservation } from "../Interfaces/IReservation";
-import { roomsData } from "../Data/Data";
+import { IRoomId } from "../Interfaces/IReservation";
+import { roomsData } from "../Data/Data"; // Importar los datos de las habitaciones
 
-interface ReservationContextProps {
+interface ReservationContextType {
   reservations: Reservation[];
-  rooms: { id: number; roomNumber: string }[];
-  addReservation: (reservation: Reservation) => void;
+  rooms: IRoomId[]; // Tipo de rooms como IRoomId[]
   finalizeReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
+  addReservation: (reservation: Reservation) => void;
 }
 
-interface ReservationProviderProps {
-  children: React.ReactNode;
-}
-
-const ReservationContext = createContext<ReservationContextProps | undefined>(
+const ReservationContext = createContext<ReservationContextType | undefined>(
   undefined
 );
-console.log(roomsData);
 
-export const useReservationContext = (): ReservationContextProps => {
+export const useReservationContext = (): ReservationContextType => {
   const context = useContext(ReservationContext);
   if (!context) {
     throw new Error(
@@ -31,69 +34,67 @@ export const useReservationContext = (): ReservationContextProps => {
   return context;
 };
 
+interface ReservationProviderProps {
+  children: ReactNode;
+}
+
 export const ReservationProvider: React.FC<ReservationProviderProps> = ({
   children,
 }) => {
   const [isClient, setIsClient] = useState(false);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rooms, setRooms] = useState(roomsData); // Usamos los datos importados
 
+  // Llamar a este efecto solo cuando estemos en el cliente
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (isClient) {
-      const savedReservations = localStorage.getItem("reservations");
-      const savedRooms = localStorage.getItem("rooms");
+  const [reservations, setReservations] = useState<Reservation[]>(() => {
+    const savedReservations = localStorage.getItem("reservations");
+    return savedReservations ? JSON.parse(savedReservations) : [];
+  });
 
-      if (savedReservations) {
-        setReservations(JSON.parse(savedReservations));
-      }
-
-      if (savedRooms) {
-        setRooms(JSON.parse(savedRooms));
-      }
-    }
-  }, [isClient]);
+  const [rooms, setRooms] = useState<IRoomId[]>(roomsData); // Usar los datos importados directamente
 
   useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("reservations", JSON.stringify(reservations));
-      localStorage.setItem("rooms", JSON.stringify(rooms));
-    }
-  }, [reservations, rooms, isClient]);
+    const saveReservationsToLocalStorage = (newReservations: Reservation[]) => {
+      if (isClient) {
+        localStorage.setItem("reservations", JSON.stringify(newReservations));
+      }
+    };
 
-  const addReservation = (reservation: Reservation) => {
-    setReservations((prevReservations) => [...prevReservations, reservation]);
-  };
+    if (isClient) {
+      saveReservationsToLocalStorage(reservations);
+    }
+  }, [reservations, isClient]); // No es necesario agregar saveReservationsToLocalStorage como dependencia
 
   const finalizeReservation = (reservation: Reservation) => {
-    setReservations((prevReservations) =>
-      prevReservations.map((r) =>
-        r.id === reservation.id ? { ...r, finalized: true } : r
-      )
+    const updatedReservations = reservations.map((res) =>
+      res.id === reservation.id ? { ...res, finalized: true } : res
     );
+    setReservations(updatedReservations);
   };
 
   const removeReservation = (id: string) => {
-    setReservations((prevReservations) =>
-      prevReservations.filter((reservation) => reservation.id !== id)
-    );
+    const updatedReservations = reservations.filter((res) => res.id !== id);
+    setReservations(updatedReservations);
+  };
+
+  const addReservation = (reservation: Reservation) => {
+    const updatedReservations = [...reservations, reservation];
+    setReservations(updatedReservations);
   };
 
   return (
     <ReservationContext.Provider
       value={{
         reservations,
-        rooms,
-        addReservation,
+        rooms, // Proveer los rooms al contexto
         finalizeReservation,
-        removeReservation, // Exponemos la función para eliminar reservas
+        removeReservation,
+        addReservation,
       }}
     >
       {children}
     </ReservationContext.Provider>
   );
-  
 };
