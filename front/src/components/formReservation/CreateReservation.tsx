@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect } from "react";
 import { useReservationContext } from "@/context/reservationContext";
 import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
+import CurrencyConverterForm from "../formReservation/DollarReservation"; // Importamos el componente
 
 const CreateReservation: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
@@ -18,93 +20,17 @@ const CreateReservation: React.FC = () => {
   const [deposit, setDeposit] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
-
-  // Para almacenar el tipo de cambio del dólar
-  const [dollarRate, setDollarRate] = useState<number>(0);
-
-  // Definir variables para el total
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalPriceUSD, setTotalPriceUSD] = useState<number>(0);
 
-  // Obtener el tipo de cambio desde el backend
-  useEffect(() => {
-    const fetchDollarRate = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/exchange-rate/Dollar"
-        );
+  const handleTotalPriceChange = (price: number) => {
+    setTotalPrice(price);
+    setRemainingBalance(price - deposit);
+  };
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Respuesta completa de la API:", data); // Ver toda la respuesta
-
-        // Verifica si 'cotizaciones' existe y es un array
-        if (
-          data &&
-          data.cotizaciones &&
-          Array.isArray(data.cotizaciones) &&
-          data.cotizaciones.length > 0
-        ) {
-          const dollarValue = data.cotizaciones[0]?.venta;
-          console.log("Valor del dólar:", dollarValue); // Verificamos el valor del dólar
-
-          if (dollarValue && !isNaN(dollarValue) && dollarValue > 0) {
-            setDollarRate(dollarValue); // Si es válido, lo asignamos
-          } else {
-            throw new Error(
-              "Tipo de cambio inválido (valor no mayor a 0 o no es un número válido)"
-            );
-          }
-        } else {
-          console.log(
-            "No se encontraron cotizaciones válidas en la respuesta."
-          );
-          throw new Error("No se encontraron cotizaciones válidas");
-        }
-      } catch (error) {
-        console.error("Error fetching dollar rate:", error);
-        Swal.fire({
-          title: "Error",
-          text: "No se pudo obtener el tipo de cambio. Intenta nuevamente más tarde.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
-      }
-    };
-
-    fetchDollarRate();
-  }, []);
-
-  useEffect(() => {
-    console.log("Total Price:", totalPrice); // Log de totalPrice
-    console.log("Deposit:", deposit); // Log de deposit
-    // Validamos que el tipo de cambio sea un número válido y mayor a 0
-    if (dollarRate > 0) {
-      const calculatedRemainingBalance = totalPrice - deposit;
-      setRemainingBalance(calculatedRemainingBalance);
-
-      // Convertir a dólares solo si el tipo de cambio es válido
-      const calculatedTotalPriceUSD = totalPrice / dollarRate;
-      setTotalPriceUSD(calculatedTotalPriceUSD);
-    } else {
-      setRemainingBalance(0);
-      setTotalPriceUSD(0); // Si no se ha obtenido un tipo de cambio válido, asignar 0
-    }
-  }, [totalPrice, deposit, dollarRate]);
-
-  // Calcular el precio total y el saldo pendiente
-  useEffect(() => {
-    console.log("Recalculating remaining balance and USD total...");
-    const calculatedRemainingBalance = totalPrice - deposit;
-    setRemainingBalance(calculatedRemainingBalance);
-
-    // Convertir a Dólares
-    const calculatedTotalPriceUSD = totalPrice / dollarRate;
-    setTotalPriceUSD(calculatedTotalPriceUSD);
-  }, [totalPrice, deposit, dollarRate]);
+  const handleDepositChange = (amount: number) => {
+    setDeposit(amount);
+    setRemainingBalance(totalPrice - amount);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,16 +45,16 @@ const CreateReservation: React.FC = () => {
       passengerType,
       reservationMethod,
       breakfastIncluded: breakfast,
-      totalPrice, // Precio en Pesos
-      totalPriceUSD, // Precio en Dólares
+      totalPrice,
       deposit,
-      depositUSD: deposit / 100,
       remainingBalance,
       finalized: false,
       comments,
+      totalPriceUSD: 0,
+      depositUSD: 0,
     };
 
-    console.log("New Reservation Data:", newReservation); // Log de la reserva antes de agregarla
+    console.log("New Reservation Data:", newReservation);
 
     addReservation(newReservation);
 
@@ -153,8 +79,8 @@ const CreateReservation: React.FC = () => {
     setRemainingBalance(0);
     setComments("");
     setTotalPrice(0);
-    setTotalPriceUSD(0);
   };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -165,52 +91,55 @@ const CreateReservation: React.FC = () => {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {/* Habitación */}
+        {/* Fecha de entrada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Habitación:
-          </label>
-          <select
-            value={roomId ?? ""}
-            onChange={(e) => setRoomId(Number(e.target.value))}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-            required
-          >
-            <option value="">Seleccione una habitación</option>
-            {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
-                {room.roomNumber}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Fecha de check-in */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-in:
+            Fecha de entrada:
           </label>
           <input
             type="date"
             value={checkInDate}
             onChange={(e) => setCheckInDate(e.target.value)}
-            required
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Fecha de check-out */}
+        {/* Fecha de salida */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-out:
+            Fecha de salida:
           </label>
           <input
             type="date"
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
-            required
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
+        </div>
+
+        {/* Número de habitación */}
+        {/* Número de habitación */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Número de habitación:
+          </label>
+          <select
+            value={roomId || ""}
+            onChange={(e) => setRoomId(Number(e.target.value))}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="">Selecciona una habitación</option>
+            {/* Verifica si rooms está disponible antes de intentar mapearlo */}
+            {rooms && rooms.length > 0 ? (
+              rooms.map((room) => (
+                <option key={room.id} value={room.id}>
+                  {room.roomNumber}
+                </option>
+              ))
+            ) : (
+              <option disabled>No hay habitaciones disponibles</option>
+            )}
+          </select>
         </div>
 
         {/* Adultos */}
@@ -241,73 +170,94 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Precio Total en Pesos */}
+        {/* Tipo de pasajero */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total:
+            Tipo de pasajero:
+          </label>
+          <select
+            value={passengerType}
+            onChange={(e) => setPassengerType(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="adulto">Adulto</option>
+            <option value="niño">Niño</option>
+          </select>
+        </div>
+
+        {/* Método de reserva */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Método de reserva:
           </label>
           <input
-            type="number"
-            value={totalPrice}
-            onChange={(e) => setTotalPrice(Number(e.target.value))}
+            type="text"
+            value={reservationMethod}
+            onChange={(e) => setReservationMethod(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Depósito en Pesos */}
+        {/* Desayuno */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            checked={breakfast}
+            onChange={() => setBreakfast(!breakfast)}
+            className="mr-2"
+          />
+          <label className="text-sm font-medium text-[#264653]">
+            Desayuno incluido
+          </label>
+        </div>
+
+        {/* Precio total */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Precio total:
+          </label>
+          <input
+            type="text" // Usamos el tipo "text" en lugar de "number"
+            value={totalPrice || ""}
+            onChange={(e) => {
+              // Validamos que el valor sea un número
+              const newValue = e.target.value;
+              if (/^\d*\.?\d*$/.test(newValue)) {
+                handleTotalPriceChange(Number(newValue) || 0);
+              }
+            }}
+            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Depósito:
           </label>
           <input
-            type="number"
-            value={deposit}
-            onChange={(e) => setDeposit(Number(e.target.value))}
+            type="text" // Usamos el tipo "text" en lugar de "number"
+            value={deposit || ""}
+            onChange={(e) => {
+              // Validamos que el valor sea un número
+              const newValue = e.target.value;
+              if (/^\d*\.?\d*$/.test(newValue)) {
+                handleDepositChange(Number(newValue) || 0);
+              }
+            }}
+            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Saldo Pendiente */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Saldo Pendiente:
-          </label>
-          <input
-            type="text"
-            value={`$${remainingBalance.toLocaleString()}`}
-            readOnly
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Precio en Dólares */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total en Dólares:
-          </label>
-          <input
-            type="text"
-            value={`$${totalPriceUSD.toFixed(2)}`}
-            readOnly
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-      </div>
-
-      {/* Desayuno */}
-      <div>
-        <label className="block text-sm font-medium text-[#264653] mb-1">
-          Desayuno incluido:
-        </label>
-        <input
-          type="checkbox"
-          checked={breakfast}
-          onChange={() => setBreakfast(!breakfast)}
-          className="focus:ring-2 focus:ring-[#FF5100]"
+        {/* Conversión a dólares */}
+        <CurrencyConverterForm
+          pesosAmount={totalPrice}
+          depositAmount={deposit}
         />
       </div>
 
-      {/* Comentarios */}
       <div>
         <label className="block text-sm font-medium text-[#264653] mb-1">
           Comentarios:

@@ -159,20 +159,41 @@ const ReservationsList: React.FC = () => {
               <div className="text-white text-md">
                 Pasajeros: {reservation.passengers}
               </div>
+
+              {/* Precio Total en Pesos */}
               <div className="text-white text-md">
-                Precio Total: $USD {reservation.totalPrice}
+                Precio Total: ${reservation.totalPrice} ARS
               </div>
 
+              {/* Precio Total en Dólares */}
+              <div className="text-white text-md">
+                Precio Total: ${reservation.totalPriceUSD.toFixed(2)} USD
+              </div>
+
+              {/* Desayuno */}
               <div className="text-white text-md">
                 Desayuno: {reservation.breakfastIncluded ? "Sí" : "No"}
               </div>
+              {/* Depósito en Pesos */}
               <div className="text-white text-md">
-                Depósito: $USD {reservation.deposit}
+                Depósito: ${reservation.deposit} ARS
               </div>
 
+              {/* Depósito en Dólares */}
               <div className="text-white text-md">
-                Saldo Pendiente: $USD {reservation.remainingBalance}
+                Depósito: ${(reservation.depositUSD).toFixed(2)} USD
               </div>
+
+              {/* Saldo Pendiente en Pesos */}
+              <div className="text-white text-md">
+                Saldo Pendiente: ${reservation.remainingBalance} ARS
+              </div>
+
+              {/* Saldo Pendiente en Dólares */}
+              <div className="text-white text-md">
+                Saldo Pendiente: ${reservation.remainingBalance.toFixed(2)} USD
+              </div>
+
               <div className="text-white text-md">
                 Comentarios: {reservation.comments}
               </div>
