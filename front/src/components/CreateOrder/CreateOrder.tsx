@@ -1,67 +1,148 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useOrderContext } from "../../context/OrderContext";
-import { products } from "../../helpers/helpers";
-import { roomsData } from "@/Data/Data";
+import { fetchGetProducts } from "../Fetchs/ProductsFetchs/ProductsFetchs";
 import Swal from "sweetalert2";
-
-// Definir la interfaz para los items de la orden
-interface OrderItem {
-  product: { id: number; name: string; price: number };
-  quantity: number;
-}
+import { UserContext } from "@/context/UserContext";
+import { OrderItem } from "@/Interfaces/interfaces";
+import { IProduct, IRoom } from "@/Interfaces/IUser";
+import { fetchGetRooms } from "../Fetchs/RoomsFetch/RoomsFetch";
+import { useLocationContext } from "@/context/LocationContext";  
 
 const CreateOrder: React.FC = () => {
+  const { token } = useContext(UserContext);
   const { addOrder } = useOrderContext();
-  const [selectedProductId, setSelectedProductId] = useState<number>(0);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [user, setUser] = useState<string>(""); // Estado para el usuario
-  const [roomNumber, setRoomNumber] = useState<string>("");
-  const [paidAmount, setPaidAmount] = useState<number>(0);
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]); // Estado para los productos agregados
+  const { location } = useLocationContext();  
+  const [user, setUser] = useState<string>('');
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
+  const [rooms, setRooms] = useState<IRoom[]>([]); 
+  const [roomNumber, setRoomNumber] = useState("");
+  const [paidAmount, setPaidAmount] = useState<string>('0');
+  const [productPrice, setProductPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<string>('0.00');
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
-  useEffect(() => {
-    // Obtener los datos del localStorage
-    const userData = localStorage.getItem("user");
-    console.log("Datos de usuario en localStorage:", userData); // Verifica el valor almacenado
-
-    if (userData) {
-      const user = JSON.parse(userData).user;
-      setUser(user.email || ""); // Establece el email del usuario si existe
-    }
-  }, []); // Se ejecuta solo una vez cuando el componente se monta
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const product = products.find((p) => p.id === selectedProductId);
-    if (product) {
-      // Actualizamos los productos agregados
-      setOrderItems([
-        ...orderItems,
-        { product, quantity }, // Agrega el producto y la cantidad seleccionada
-      ]);
-
-      addOrder(product, quantity, user, roomNumber);
-
-      await Swal.fire({
-        title: "Orden Agregada!",
-        text: `Se ha agregado con éxito la orden de ${quantity} unidades de ${product.name}.`,
-        icon: "success",
-        confirmButtonText: "Aceptar",
-      });
-
-      // Limpiamos el formulario
-      setSelectedProductId(0);
-      setQuantity(1);
-      setRoomNumber("");
-      setPaidAmount(0);
+  // Función para manejar el cambio en la cantidad
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value === '' || !isNaN(parseFloat(value))) {
+      setQuantity(value);
     }
   };
 
-  const totalPrice = selectedProductId
-    ? products.find((p) => p.id === selectedProductId)?.price ?? 0 * quantity // Usando nullish coalescing (??) para un valor por defecto
-    : 0;
+  // Función para manejar el cambio en el producto
+  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProductId = e.target.value;
+    setSelectedProduct(selectedProductId);
+  
+    // Buscar el producto por ID y actualizar el precio
+    const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
+    if (selectedProduct) {
+      setProductPrice(selectedProduct.precio);
+      console.log("Precio del producto seleccionado:", selectedProduct.precio); // Verificación
+    } else {
+      setProductPrice(0);
+    }
+  };
+
+  // Cargar los productos y los datos del usuario al iniciar
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData).user;
+      setUser(user.email || '');
+    }
+
+    const fetchProducts = async () => {
+      try {
+        if (!token) return;
+        const data = await fetchGetProducts(token);
+        setProducts(data);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+      }
+    };
+
+    fetchProducts();
+    
+  }, [token]);
+
+  // Cargar las habitaciones al iniciar
+  useEffect(() => {
+    const loadRooms = async () => {
+      try {
+        if (location) {
+          if (!token) return;
+          const roomsData = await fetchGetRooms(location.id,token);  
+          setRooms(roomsData);
+        } else {
+          console.error("No location selected");
+        }
+      } catch (error) {
+        console.error("Error al obtener las habitaciones:", error);
+      }
+    };
+
+    loadRooms();
+  }, [location]);  // Dependencia de location
+
+  // Actualización del precio total en función de cantidad y precio
+  useEffect(() => {
+    if (selectedProduct && productPrice && quantity) {
+      const calculatedPrice = productPrice * parseFloat(quantity);
+      setTotalPrice(calculatedPrice.toFixed(2));
+    }
+  }, [quantity, productPrice, selectedProduct]);
+
+  // Manejo del envío del formulario
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    const product = products.find((p) => p.id.toString() === selectedProduct);
+    if (product) {
+      const numericQuantity = parseFloat(quantity); // Convertir a número solo cuando se necesite.
+      if (isNaN(numericQuantity) || numericQuantity <= 0) {
+        Swal.fire({
+          title: "Error",
+          text: "La cantidad debe ser un número mayor a cero.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        return;
+      }
+      // Agregar el producto al array orderItems
+      const updatedOrderItems = [
+        ...orderItems,
+        { product, quantity: numericQuantity, totalPrice: (numericQuantity * product.precio).toFixed(2) },
+      ];
+      setOrderItems(updatedOrderItems);
+
+      const calculatedTotalPrice = updatedOrderItems.reduce((acc, item) => {
+        const itemPrice = parseFloat(item.product.precio); // Usar item.product.precio
+        const itemQuantity = parseInt(item.quantity, 10);
+        return acc + (isNaN(itemPrice) || isNaN(itemQuantity) ? 0 : itemPrice * itemQuantity);
+      }, 0);
+
+      setTotalPrice(calculatedTotalPrice.toFixed(2)); // Actualizamos el precio total
+
+      addOrder(product, numericQuantity, user, roomNumber);
+  
+      await Swal.fire({
+        title: "Orden Agregada!",
+        text: `Se ha agregado con éxito la orden de ${numericQuantity} unidades de ${product.nombre}.`,
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
+  
+      // Limpiar formulario
+      setSelectedProduct('');
+      setQuantity('1');
+      setRoomNumber('');
+      setPaidAmount('0');
+    }
+  };
 
   const handleCreateOrder = () => {
     // Aquí puedes enviar la orden con los productos agregados
@@ -86,63 +167,45 @@ const CreateOrder: React.FC = () => {
   };
 
   return (
-    <div>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 py-6 mb-4 max-w-xl mx-auto"
-      >
-        <h2 className="text-lg font-semibold text-[#264653] mb-4">
-          Crear Orden
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Producto */}
-          <div className="mb-4">
-            <label
-              htmlFor="product"
-              className="block text-[#264653] text-sm font-bold mb-2"
-            >
-              Producto:
-            </label>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
+      <div className="ml-8 mt-2">
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
+          <h2 className="text-sm font-semibold text-[#264653] mb-3">Crear Orden</h2>
+  
+          {/* Selección de Producto */}
+          <div className="mb-3">
+            <label htmlFor="product" className="block text-gray-700 text-sm">Selecciona un Producto o Servicio:</label>
             <select
               id="product"
-              value={selectedProductId}
-              onChange={(e) => setSelectedProductId(Number(e.target.value))}
-              className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none focus:ring focus:ring-[#FF5100]"
+              className="mt-1 block w-full px-2 py-1 border border-gray-300 rounded text-sm"
+              value={selectedProduct}
+              onChange={handleProductChange}
             >
-              <option value={0}>Seleccione un producto</option>
+              <option value="">Seleccione un producto</option>
               {products.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.name}
-                </option>
+                <option key={product.id} value={product.id.toString()}>{product.nombre}</option>
               ))}
             </select>
           </div>
-
+  
           {/* Cantidad */}
           <div className="mb-4">
-            <label
-              htmlFor="quantity"
-              className="block text-[#264653] text-sm font-bold mb-2"
-            >
+            <label htmlFor="quantity" className="block text-[#264653] text-sm font-bold mb-2">
               Cantidad:
             </label>
             <input
               type="number"
               id="quantity"
               value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
+              onChange={(e) => setQuantity(e.target.value)}
               min={1}
               className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none focus:ring focus:ring-[#FF5100]"
             />
           </div>
-
+  
           {/* Usuario */}
           <div className="mb-4">
-            <label
-              htmlFor="user"
-              className="block text-[#264653] text-sm font-bold mb-2"
-            >
+            <label htmlFor="user" className="block text-[#264653] text-sm font-bold mb-2">
               Usuario:
             </label>
             <input
@@ -153,13 +216,10 @@ const CreateOrder: React.FC = () => {
               className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none"
             />
           </div>
-
+  
           {/* Número de habitación */}
           <div className="mb-4">
-            <label
-              htmlFor="roomNumber"
-              className="block text-[#264653] text-sm font-bold mb-2"
-            >
+            <label htmlFor="roomNumber" className="block text-[#264653] text-sm font-bold mb-2">
               Número de Habitación:
             </label>
             <select
@@ -170,85 +230,88 @@ const CreateOrder: React.FC = () => {
               className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none focus:ring focus:ring-[#FF5100]"
             >
               <option value="">Seleccione una habitación</option>
-              {roomsData.map((room) => (
-                <option key={room.id} value={room.roomNumber}>
-                  {room.roomNumber}
+              {rooms.map((room) => (
+                <option key={room.id} value={room.number}>
+                  {room.name} 
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Precio total */}
+  
+          {/* Precio del Producto */}
           <div className="mb-4">
-            <label
-              htmlFor="totalPrice"
-              className="block text-[#264653] text-sm font-bold mb-2"
-            >
+            <label htmlFor="price" className="block text-[#264653] text-sm font-bold mb-2">
+              Precio:
+            </label>
+            <input
+              type="text"
+              id="price"
+              value={`$${productPrice.toFixed(2)}`}
+              readOnly
+              className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none"
+            />
+          </div>
+  
+          {/* Precio Total */}
+          <div className="mb-4">
+            <label htmlFor="totalPrice" className="block text-[#264653] text-sm font-bold mb-2">
               Precio Total:
             </label>
             <input
-              type="number"
+              type="text"
               id="totalPrice"
-              value={totalPrice}
-              disabled
-              className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none focus:ring focus:ring-[#FF5100]"
+              value={`$${totalPrice}`}
+              readOnly
+              className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] hover:cursor-pointer focus:outline-none"
             />
           </div>
-
-          {/* Monto Pagado */}
-          <div className="mb-4">
-            <label
-              htmlFor="paidAmount"
-              className="block text-[#264653] hover:cursor-pointer text-sm font-bold mb-2"
-            >
-              Monto Pagado:
-            </label>
-            <input
-              type="number"
-              id="paidAmount"
-              value={paidAmount}
-              onChange={(e) => setPaidAmount(Number(e.target.value))}
-              min={0}
-              className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className="bg-[#CD9C8A] text-white w-full py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
-        >
-          Agregar Producto
-        </button>
-      </form>
-
-      {/* Tarjeta para mostrar productos agregados */}
-      <div className="bg-white shadow-md rounded px-8 py-6 mt-6 max-w-xl mx-auto">
-        <h3 className="text-lg font-semibold text-[#264653] mb-4">
-          Productos Agregados
-        </h3>
-        {orderItems.length > 0 ? (
-          <ul>
-            {orderItems.map((item, index) => (
-              <li key={index} className="flex justify-between mb-2">
-                <span>
-                  {item.product.name} x{item.quantity}
-                </span>
-                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No se han agregado productos aún.</p>
-        )}
-        {/* Botón para crear la orden */}
-        <button
-          onClick={handleCreateOrder}
-          className="bg-[#CD9C8A] text-white w-full mt-4 py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
-        >
-          Crear Orden
-        </button>
+  
+          <button
+            type="submit"
+            className="bg-[#CD9C8A] hover:bg-[#b4a7e6] text-white font-bold py-2 px-4 rounded w-full"
+          >
+            Agregar Producto
+          </button>
+        </form>
+  
       </div>
+      <div className="ml-8 mt-2">
+  <h2 className="text-[#264653] text-xl font-semibold mb-3">Productos Agregados</h2>
+  <div className="overflow-x-auto">
+    {orderItems.length === 0 ? ( // Verifica si no hay productos
+      <p className="text-center text-gray-500">Aún no has agregado productos</p> // Mensaje cuando no hay productos
+    ) : (
+      <table className="table-auto w-full">
+        <thead>
+          <tr className="bg-[#CD9C8A] text-white">
+            <th className="py-2 px-4">Producto</th>
+            <th className="py-2 px-4">Cantidad</th>
+            <th className="py-2 px-4">Precio Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orderItems.map((item, index) => (
+            <tr key={index} className="border-b">
+              <td className="py-2 px-4 text-center">{item.product.nombre}</td>
+              <td className="py-2 px-4 text-center">{item.quantity}</td>
+              <td className="py-2 px-4 text-center">${item.totalPrice}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+     
+  <div className="flex justify-center mt-4"> 
+    <button
+      onClick={handleCreateOrder}
+      className="bg-[#CD9C8A] hover:bg-[#b4a7e6] text-white font-bold py-2 px-4 rounded w-3/6"
+    >
+      Crear Orden
+    </button>
+  </div>
+      </div>
+      
     </div>
   );
 };

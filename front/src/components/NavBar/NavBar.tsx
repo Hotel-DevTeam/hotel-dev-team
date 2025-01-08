@@ -109,6 +109,14 @@ const Navbar: React.FC = () => {
               Ventas
             </Link>
           </li>
+          <li className="border-b">
+          <Link
+            href={"/expenses"}
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+          >
+            Gastos
+          </Link>
+        </li>
           <li
             className="border-b cursor-pointer"
             onClick={() => setSubMenuOpen(!isSubMenuOpen)} // Toggle del submenú
@@ -137,16 +145,54 @@ const Navbar: React.FC = () => {
               </ul>
             )}
           </li>
-          <li>
-            <Link href={"/"}>
+          
+
+              {isAdmin && (
+            <li className="border-b">
               <button
-                onClick={handleLogOut}
-                className="block px-4 py-2 hover:bg-red-400 transition"
+                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}
               >
-                Cerrar sesión
+                Panel Admin
               </button>
-            </Link>
-          </li>
+              {isAdminMenuOpen && (
+                <ul className="ml-4">
+                  <li>
+                    <Link
+                      href="/register"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Registrar usuario
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/cashMovementsPage"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Movimientos de caja
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+          )}
+          <li className="border-b">
+              <button
+                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+             onClick={handleLogOut}
+          >
+            Cerrar sesión
+          </button>
+        </li>
         </ul>
       )}
 
@@ -232,25 +278,40 @@ const Navbar: React.FC = () => {
           )}
         </li>
 
-        {/* Gastos */}
-        <li>
-          <Link
-            href="/expenses"
-            className="hover:text-[#F4A261] transition duration-200"
-          >
-            Gastos
-          </Link>
-        </li>
-
         {/* Panel Admin */}
         {isAdmin && (
-          <li>
-            <Link
-              href="/admin"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
+          <li className="relative" onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}>
+            <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
               Panel Admin
-            </Link>
+            </button>
+            {isAdminMenuOpen && (
+              <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
+                <li>
+                  <Link
+                    href="/register"
+                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                  >
+                    Registrar usuario
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/cashMovementsPage"
+                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                  >
+                    Movimientos de caja
+                  </Link>
+                </li>
+                <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
+              </ul>
+            )}
           </li>
         )}
 

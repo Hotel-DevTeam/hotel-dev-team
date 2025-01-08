@@ -37,7 +37,7 @@ export class CreateMovimientoDto {
   @ApiProperty({
     description: 'Ubicación del movimiento',
   })
-  ubicacion: Location; //ver lógica ubicacion usuario logeado
+  ubicacion: Location; 
 
   @ApiProperty({
     description: 'Tipo de movimiento',

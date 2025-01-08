@@ -141,15 +141,6 @@ export default function LoginForm({ setToken }: ILoginClientProps) {
             </button>
           </div>
 
-          <div className="flex justify-center">
-            <Link
-              href="/register"
-              className="text-center text-sm text-[#CD9C8A] hover:cursor-pointer hover:font-bold"
-            >
-              ¿No posees cuenta? Haz clic para registrarte
-            </Link>
-          </div>
-
           {showNotification && (
             <div className="absolute top-12 left-0 right-0 mx-auto w-max">
               <NotificationsForms message={notificationMessage} />
