@@ -1,142 +1,187 @@
-import { IExpenses } from '@/Interfaces/IMovements';
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
-
+import React, { useState, useEffect, useContext } from "react";
+import { fetchGetProducts } from "../Fetchs/ProductsFetchs/ProductsFetchs";
+import { UserContext } from "@/context/UserContext"; // El contexto de Usuario
+import { IProduct } from "@/Interfaces/IUser"; 
+import { ICreateMovement, TipoMovimiento } from "@/Interfaces/IMovements";
+import { crearMovimiento } from "../Fetchs/MovementsFetch.tsx/MovementsFetch";
 
 const ExpensesForm: React.FC = () => {
-  // Estado para los datos del formulario
-  const [formData, setFormData] = useState<IExpenses>({
-    monto: '',
-    descripcion: '',
-    estado: 'Hecho',
-    producto: '',
-    ubicacion: '',
-    tipoMovimiento: 'Egreso',
-  });
+  const { token } = useContext(UserContext);
+  const [user, setUser] = useState<any>(null);
+  const [ubicacion, setUbicacion] = useState<{ id: string, name: string } | null>(null); // Cambiado para guardar objeto {id, name}
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [amount, setAmount] = useState<string>('1');
+  const [descripcion, setDescripcion] = useState<string>(''); 
+  const [tipoMovimiento] = useState<TipoMovimiento>(TipoMovimiento.Egreso); 
+  const [estado] = useState<string>('Hecho'); 
 
-  // Cargar los datos desde el localStorage cuando el componente se monta
   useEffect(() => {
+    const userData = localStorage.getItem('user');
     const locationData = localStorage.getItem('selectedLocation');
+
+    if (userData) {
+      const user = JSON.parse(userData).user; 
+      setUser(user); 
+    }
+
     if (locationData) {
       const location = JSON.parse(locationData);
-      setFormData(prevState => ({
-        ...prevState,
-        ubicacion: location.name || '', 
-      }));
+      setUbicacion(location); // Ahora guardamos el objeto completo
     }
-  }, []); 
+  }, []);  
 
-  // Manejo de cambios en los inputs
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Cargar productos usando fetch
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        if (!token) return;
+        const data = await fetchGetProducts(token); 
+        setProducts(data);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [token]);
+
+  // Función para manejar el cambio de producto
+  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedProduct(e.target.value);
   };
 
-  // Manejo del envío del formulario
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // Función para manejar el cambio de cantidad
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
+  };
+
+  // Función para manejar el cambio de descripción
+  const handleDescripcionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescripcion(e.target.value);
+  };
+
+  // Función para manejar el envío de los gastos
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulario enviado:', formData);
+  
+    if (!user || !ubicacion) {
+      console.error("No user or location data available.");
+      return;
+    }
+  
+    // Crear el objeto de movimiento que se enviará
+    const movimiento: ICreateMovement = {
+      usuario: {
+        id: user.id,
+        name: user.name,
+        password:user.password,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin || false, 
+      },
+      monto: parseFloat(amount),
+      descripcion: descripcion,
+      estado: estado,
+      producto: {
+        id: selectedProduct,
+      },
+      ubicacion: {
+        id: ubicacion.id, // Aquí usamos el ID de la ubicación
+      },
+      tipoMovimiento: tipoMovimiento,
+    };
+  
+    // Verifica el objeto antes de enviarlo
+    console.log("Datos a enviar al servidor:", JSON.stringify(movimiento, null, 2));
+  
+    // Llamada a la función para crear el movimiento
+    const response = await crearMovimiento(movimiento);
+  
+    if (response) {
+      console.log("Movimiento creado exitosamente:", response);
+    } else {
+      console.error("Hubo un error al crear el movimiento");
+    }
   };
   
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-16 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-[#CD9C8A] sm:text-4xl">Registro de Gastos</h1>
-          <p className="mt-2 text-gray-500">
-            Completa los datos para registrar un movimiento
-          </p>
+    <div className="flex items-center justify-center min-h-screen">
+    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 py-4 mb-4 w-3/5">
+        <h1 className="text-lg font-bold text-[#264653] mb-3 text-center">Registrar Gasto</h1>
+
+        {/* Información de Usuario */}
+        <div className="mb-4">
+          <label htmlFor="user" className="block text-[#264653] text-sm font-bold mb-2">Usuario:</label>
+          <input
+            type="text"
+            id="user"
+            value={user ? user.name : 'Cargando...'}
+            readOnly
+            className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none"
+          />
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 py-10 space-y-6 rounded-lg border border-gray-300 bg-white p-8 shadow-xl"
+        {/* Monto */}
+        <div className="mb-4">
+          <label htmlFor="amount" className="block text-[#264653] text-sm font-bold mb-2">Monto:</label>
+          <input
+            type="number"
+            id="amount"
+            value={amount}
+            onChange={handleAmountChange}
+            className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none"
+          />
+        </div>
+
+        {/* Descripción del Gasto */}
+        <div className="mb-4">
+          <label htmlFor="descripcion" className="block text-[#264653] text-sm font-bold mb-2">Descripción:</label>
+          <input
+            type="text"
+            id="descripcion"
+            value={descripcion}
+            onChange={handleDescripcionChange}
+            className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none"
+          />
+        </div>
+
+        {/* Selección de Producto */}
+        <div className="mb-4">
+          <label htmlFor="product" className="block text-[#264653] text-sm font-bold mb-2">Selecciona un Producto:</label>
+          <select
+            id="product"
+            value={selectedProduct}
+            onChange={handleProductChange}
+            className="mt-1 block w-full px-2 py-1 border border-[#CD9C8A] rounded text-sm text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
+          >
+            <option value="">Seleccione un producto</option>
+            {products.map((product) => (
+              <option key={product.id} value={product.id.toString()}>{product.nombre}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Información de Ubicación */}
+        <div className="mb-4">
+          <label htmlFor="location" className="block text-[#264653] text-sm font-bold mb-2">Ubicación:</label>
+          <input
+            type="text"
+            id="location"
+            value={ubicacion ? ubicacion.name : 'Cargando...'} // Mostramos el nombre de la ubicación
+            readOnly
+            className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none"
+          />
+        </div>    
+
+        <button
+          type="submit"
+          className="bg-[#CD9C8A] hover:bg-[#b4a7e6] text-white font-bold py-2 px-4 rounded w-full"
         >
-          <div>
-            <label htmlFor="monto" className="block text-sm font-medium text-gray-700">
-              Monto
-            </label>
-            <input
-              type="number"
-              name="monto"
-              value={formData.monto}
-              onChange={handleChange}
-              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-              placeholder="Ingrese el monto"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">
-              Descripción
-            </label>
-            <textarea
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-              placeholder="Ingrese la descripción"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="producto" className="block text-sm font-medium text-gray-700">
-              Producto
-            </label>
-            <input
-              type="text"
-              name="producto"
-              value={formData.producto}
-              onChange={handleChange}
-              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-              placeholder="Producto asociado"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="ubicacion" className="block text-sm font-medium text-gray-700">
-              Ubicación
-            </label>
-            <input
-              type="text"
-              name="ubicacion"
-              value={formData.ubicacion}
-              onChange={handleChange}
-              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-              placeholder="Ubicación seleccionada"
-              required
-              readOnly // No permitimos cambiar la ubicación manualmente
-            />
-          </div>
-
-          <div>
-            <label htmlFor="estado" className="block text-sm font-medium text-gray-700">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={formData.estado}
-              onChange={handleChange}
-              className="w-full mt-1 rounded-lg border border-[#CD9C8A] py-2 px-3 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF5100] transition duration-300"
-            >
-              <option value="Hecho">Hecho</option>
-              <option value="Cancelado">Cancelado</option>
-            </select>
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="inline-block rounded bg-[#FF5100] border border-[#FF5100] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-[#FF5100] focus:outline-none focus:ring active:text-[#FF5100] transition-all duration-300"
-            >
-              Registrar Gasto
-            </button>
-          </div>
-        </form>
-      </div>
+          Registrar Gasto
+        </button>
+      </form>
     </div>
   );
 };

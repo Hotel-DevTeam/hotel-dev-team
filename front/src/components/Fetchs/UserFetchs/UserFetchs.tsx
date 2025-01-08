@@ -127,27 +127,3 @@ export const fetchLocationById = async (id: string): Promise<ILocation> => {
   return await response.json();
 };
 
-
-//FICTICIA!!!!
-export const fetchCashMovements = async (id: string): Promise<ILocation> => {
-  const storedUser = localStorage.getItem("user");
-
-  const token = storedUser ? JSON.parse(storedUser).token : null;
-
-  if (!token) {
-    throw new Error("Token no encontrado. Por favor, inicia sesión.");
-  }
-  const response = await fetch(`${apiUrl}/location/${id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Error al obtener la ubicación");
-  }
-
-  return await response.json();
-};

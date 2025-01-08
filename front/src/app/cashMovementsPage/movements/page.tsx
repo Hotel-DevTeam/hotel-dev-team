@@ -1,82 +1,55 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from "react";
 import { useLocationContext } from "@/context/LocationContext";
-import { useRouter } from "next/navigation";
+import { fetchCashMovements } from "@/components/Fetchs/MovementsFetch.tsx/MovementsFetch";
+import { IMovimientoCaja } from "@/Interfaces/IMovements";
 
-// Mock de movimientos de caja con fecha
-const mockCashMovements = [
-  {
-    monto: 100.5,
-    descripcion: "Pago de servicios",
-    estado: "Hecho",
-    producto: {},
-    ubicacion: {},
-    tipoMovimiento: "Ingreso",
-    fecha: "2024-01-05", // Fecha añadida
-  },
-  {
-    monto: 50.0,
-    descripcion: "Compra de materiales",
-    estado: "Hecho",
-    producto: {},
-    ubicacion: {},
-    tipoMovimiento: "Egreso",
-    fecha: "2024-02-10", // Fecha añadida
-  },
-  {
-    monto: 200.75,
-    descripcion: "Pago de impuestos",
-    estado: "Cancelado",
-    producto: {},
-    ubicacion: {},
-    tipoMovimiento: "Ingreso",
-    fecha: "2024-03-15", // Fecha añadida
-  },
-];
-
-const MockMovements: React.FC = () => {
-  const router = useRouter();
-  const [movimientosCaja, setMovimientosCaja] = useState<any[]>([]);
-  const [filteredMovements, setFilteredMovements] = useState<any[]>([]);
+const Movements: React.FC = () => {
+  const [movimientosCaja, setMovimientosCaja] = useState<IMovimientoCaja[]>([]);
+  const [filteredMovements, setFilteredMovements] = useState<IMovimientoCaja[]>([]);
   const [selectedTipo, setSelectedTipo] = useState<string>("");
   const [selectedEstado, setSelectedEstado] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const { setLocation } = useLocationContext();
+  const { location } = useLocationContext(); // Obtenemos la ubicación seleccionada desde el contexto
 
-  // Reemplazo de la función getCashMovements con el mock
+  // Llamada para obtener los movimientos de caja
   const getCashMovements = async () => {
-    try {
-      // Usamos el mock de datos en lugar de la llamada a la API
-      setMovimientosCaja(mockCashMovements);
-    } catch (error) {
-      console.error("Error al obtener los movimientos de caja:", error);
+    if (location?.id) {
+      const movements = await fetchCashMovements(); // Pasamos el ID de ubicación seleccionado
+      setMovimientosCaja(movements);
     }
   };
 
-  // Llamamos a getCashMovements cuando el componente se monta
+  // Llamamos a getCashMovements cuando el componente se monta o cuando cambia la ubicación
   useEffect(() => {
     getCashMovements();
-  }, []);
+  }, [location]);
 
   // Filtrar movimientos según los filtros seleccionados
   useEffect(() => {
     let filtered = [...movimientosCaja];
 
+    // Filtrado por tipo de movimiento
     if (selectedTipo) {
-      filtered = filtered.filter((movimiento) => movimiento.tipoMovimiento === selectedTipo);
+      filtered = filtered.filter((movimiento: IMovimientoCaja) => movimiento.tipoMovimiento === selectedTipo);
     }
 
+    // Filtrado por estado
     if (selectedEstado) {
-      filtered = filtered.filter((movimiento) => movimiento.estado === selectedEstado);
+      filtered = filtered.filter((movimiento: IMovimientoCaja) => movimiento.estado === selectedEstado);
     }
 
-    if (startDate) {
-      filtered = filtered.filter((movimiento) => new Date(movimiento.fecha) >= new Date(startDate));
+    // Filtrado por fecha
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    if (start) {
+      filtered = filtered.filter((movimiento: IMovimientoCaja) => new Date(movimiento.fecha) >= start);
     }
 
-    if (endDate) {
-      filtered = filtered.filter((movimiento) => new Date(movimiento.fecha) <= new Date(endDate));
+    if (end) {
+      filtered = filtered.filter((movimiento: IMovimientoCaja) => new Date(movimiento.fecha) <= end);
     }
 
     setFilteredMovements(filtered);
@@ -169,24 +142,27 @@ const MockMovements: React.FC = () => {
         <div className="container mx-auto px-6">
           <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Movimientos de Caja</h2>
           <ul className="space-y-6">
-            {filteredMovements.map((movimiento, index) => (
-              <li
-                key={index}
-                className="p-6 bg-white border border-gray-300 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex flex-col space-y-4">
-                  <div>
-                    <p className="text-lg font-medium text-gray-800"><strong>Descripción:</strong> {movimiento.descripcion}</p>
-                    <p className="text-sm text-gray-500"><strong>Tipo de Movimiento:</strong> {movimiento.tipoMovimiento}</p>
+            {filteredMovements.map((movimiento: IMovimientoCaja) => {
+              console.log(movimiento);  // Esto te permitirá ver cada 'movimiento' en la consola
+              return (
+                <li
+                  key={movimiento.id}
+                  className="p-6 bg-white border border-gray-300 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="flex flex-col space-y-4">
+                    <div>
+                      <p className="text-lg font-medium text-gray-800"><strong>Descripción:</strong> {movimiento.descripcion}</p>
+                      <p className="text-sm text-gray-500"><strong>Tipo de Movimiento:</strong> {movimiento.tipoMovimiento}</p>
+                    </div>
+                    <div className="flex justify-between text-sm text-gray-700">
+                      <p><strong>Monto:</strong> ${movimiento.monto}</p>
+                      <p><strong>Estado:</strong> <span className={movimiento.estado === "Hecho" ? "text-green-500" : movimiento.estado === "Cancelado" ? "text-red-500" : "text-yellow-500"}>{movimiento.estado}</span></p>
+                      <p><strong>Fecha:</strong> {movimiento.fecha ? new Date(movimiento.fecha).toLocaleDateString() : "Fecha no disponible"}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-700">
-                    <p><strong>Monto:</strong> ${movimiento.monto}</p>
-                    <p><strong>Estado:</strong> <span className={movimiento.estado === "Hecho" ? "text-green-500" : movimiento.estado === "Cancelado" ? "text-red-500" : "text-yellow-500"}>{movimiento.estado}</span></p>
-                    <p><strong>Fecha:</strong> {new Date(movimiento.fecha).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
       ) : (
@@ -196,4 +172,4 @@ const MockMovements: React.FC = () => {
   );
 };
 
-export default MockMovements;
+export default Movements;
