@@ -73,20 +73,38 @@ export interface IProduct {
   id: string;
   tipo: Tipo;
   nombre: string;
+  precio:number;
   Activo: boolean;
   foto: string;
   ubicacion: ILocation;
 }
+
+
+export interface ICreateProduct {
+  tipo: Tipo;
+  nombre:string;
+  Activo:boolean;
+  precio:number;
+  foto:string;
+  ubicacion:ILocation;
+  }
+
+
 
 export interface IProductsPageProps {
   products: IProduct[];
 }
 
 export interface ICardProductProps {
-  product: IProduct;
-  onToggleStatus: (id: string) => void;
+  product: IProduct; 
+  onToggleStatus: (id: string) => void; 
   onEdit: (id: string) => void;
+  onDelete: (id: string) => void; 
+  isEditing: boolean; 
+  onEditSubmit: (updatedProduct: IProduct) => void; 
+  onSaveEdit: () => void; 
 }
+
 
 export interface ILoginClientProps {
   setToken: (token: string | null) => void;
@@ -95,3 +113,23 @@ export interface ILoginClientProps {
 export interface IUserN {
   role: string;
 }
+
+export interface IRoom {
+  id: string; 
+  name: string; 
+  number: number;
+  capacity: number; 
+  price: number; 
+  type: string; 
+  reservations: Reservation[]; 
+}
+
+
+export interface Reservation {
+
+  id: string;
+  date: string; 
+  guestName: string; 
+  status: string; 
+}
+

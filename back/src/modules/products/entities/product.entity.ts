@@ -25,6 +25,9 @@ export class Product {
   @Column()
   nombre: string;
 
+  @Column()
+  precio: number;
+
   @Column({
     default: true,
   })
