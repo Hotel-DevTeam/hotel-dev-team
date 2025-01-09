@@ -36,3 +36,4 @@ export class Location {
   @OneToMany(() => Caja, (caja) => caja.ubicacion)
   caja: Caja[];
 }
+

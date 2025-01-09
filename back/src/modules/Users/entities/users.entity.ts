@@ -36,7 +36,7 @@ export class Users {
   @OneToMany(() => Location, (location) => location.admin)
   location: Location[];
 
-  // Getter para isAdmin, no se almacena en la base de datos
+  
   @ApiProperty({
     description: 'Indicates if the user is an Admin',
     example: true,

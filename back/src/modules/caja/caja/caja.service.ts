@@ -92,8 +92,27 @@ export class CajaService {
     }
   }
 
-  async findAll() {
-    return await this.cajaRepository.find();
+  async findAll(filters?: { locationId?: string; tipoMovimiento?: string }) {
+    const { locationId, tipoMovimiento } = filters || {};
+    
+    const query = this.cajaRepository.createQueryBuilder('caja')
+      .leftJoinAndSelect('caja.movimiento', 'movimiento')
+      .leftJoinAndSelect('caja.ubicacion', 'ubicacion');
+
+    if (locationId) {
+      query.andWhere('ubicacion.id = :locationId', { locationId });
+    }
+
+    if (tipoMovimiento) {
+      query.andWhere('movimiento.tipo = :tipoMovimiento', { tipoMovimiento });
+    }
+
+    const cajas = await query.getMany();
+    if (!cajas.length) {
+      throw new NotFoundException('No se encontraron cajas con los filtros proporcionados');
+    }
+
+    return cajas;
   }
 
   async findOneById(id: string) {
