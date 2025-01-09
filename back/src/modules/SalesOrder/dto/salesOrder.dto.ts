@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
 import { SaleStatus } from '../entities/salesOrder.entity';
 
 export class CreateSalesOrderDto {
-  @ApiProperty({ description: 'ID del usuario' })
+  @ApiProperty({ description: 'ID del usuario', type: String })
   @IsUUID()
   userId: string;
 
-  @ApiProperty({ description: 'ID de la ubicación' })
+  @ApiProperty({ description: 'ID de la ubicación', type: String })
   @IsUUID()
   locationId: string;
 
@@ -19,4 +19,14 @@ export class CreateSalesOrderDto {
   @IsOptional()
   @IsEnum(SaleStatus)
   status?: SaleStatus;
+
+  @ApiProperty({
+    description: 'Monto total de la orden (se calcula automáticamente)',
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  totalAmount?: number;
 }
+

@@ -9,6 +9,7 @@ import { RoomsRepository } from '../Rooms/room.repository';
 import { AuthModule } from '../Auth/auth.module';
 import { UsersModule } from '../Users/users.module';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([Location, RoomsRepository]),
@@ -18,6 +19,6 @@ import { UsersModule } from '../Users/users.module';
   ],
   controllers: [LocationController],
   providers: [LocationService, LocationRepository],
-  exports: [LocationService],
+  exports: [LocationService, LocationRepository], 
 })
 export class LocationModule {}

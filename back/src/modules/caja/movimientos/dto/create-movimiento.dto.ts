@@ -9,8 +9,8 @@ export class CreateMovimientoDto {
     description: 'Usuario que realiza el movimiento',
     type: () => Users,
   })
-  usuario: Users; //ver lógica usuario logeado para poder sacar del dto
-
+  usuario: Users; 
+  
   @ApiProperty({
     description: 'Monto del movimiento',
     example: 100.5,
