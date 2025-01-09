@@ -59,12 +59,13 @@ export class SalesOrderService {
   async confirmOrder(orderId: string, userId: string, productId: string): Promise<void> {
     const order = await this.salesOrderRepository.findOne({
       where: { id: orderId },
-      relations: ['orderLines'],  
+      relations: ['orderLines', 'user', 'location'],  
     });
 
     if (!order) throw new Error('Order not found');
 
     if (order.status === SaleStatus.CONFIRMED) throw new Error('Order is already confirmed');
+
 
     order.status = SaleStatus.CONFIRMED;
 
@@ -82,6 +83,8 @@ export class SalesOrderService {
 
     const usuario = await this.usersRepository.findOne({ where: { id: userId } });
     if (!usuario) throw new Error('User not found');
+
+    
 
     await this.movimientosService.create({
       descripcion: `Venta: ${order.id}`,
