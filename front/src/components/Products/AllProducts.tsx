@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "./cardProduct";
 import { useProducts } from "./useProduct";
+import Link from "next/link";
 
 export default function AllProducts() {
   const { products, loading, toggleProductStatus, handleEditSubmit } =
@@ -41,6 +42,8 @@ export default function AllProducts() {
       <h1 className="text-3xl font-bold text-center text-gray-800 my-10 pb-4 border-b-4 border-gray-300 shadow-2xl">
         Productos y Servicios
       </h1>
+      <Link href="/adminDashboard/upload"
+      className="bg-[#CD9C8A] text-white hover:bg-[#c49f92] p-2 m-2 rounded hover:cursor-pointer">Cargar nuevo producto o servicio</Link>
 
       <select
         value={selectedType}

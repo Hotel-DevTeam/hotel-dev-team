@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
-import Swal from "sweetalert2"; // Importa SweetAlert2
+import { useState, useEffect } from "react";
 import { useReservationContext } from "@/context/reservationContext";
+import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
+import CurrencyConverterForm from "../formReservation/DollarReservation"; // Importamos el componente
 
 const CreateReservation: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
@@ -16,12 +17,20 @@ const CreateReservation: React.FC = () => {
   const [passengerType, setPassengerType] = useState<string>("adulto");
   const [reservationMethod, setReservationMethod] = useState<string>("");
   const [breakfast, setBreakfast] = useState<boolean>(false);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalPriceUSD, setTotalPriceUSD] = useState<number>(0);
   const [deposit, setDeposit] = useState<number>(0);
-  const [depositUSD, setDepositUSD] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+
+  const handleTotalPriceChange = (price: number) => {
+    setTotalPrice(price);
+    setRemainingBalance(price - deposit);
+  };
+
+  const handleDepositChange = (amount: number) => {
+    setDeposit(amount);
+    setRemainingBalance(totalPrice - amount);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,17 +46,18 @@ const CreateReservation: React.FC = () => {
       reservationMethod,
       breakfastIncluded: breakfast,
       totalPrice,
-      totalPriceUSD: totalPrice / 100,
       deposit,
-      depositUSD,
-      remainingBalance: totalPrice - deposit,
+      remainingBalance,
       finalized: false,
       comments,
+      totalPriceUSD: 0,
+      depositUSD: 0,
     };
+
+    console.log("New Reservation Data:", newReservation);
 
     addReservation(newReservation);
 
-    // Mostrar mensaje de éxito con SweetAlert2
     Swal.fire({
       title: "Reserva creada",
       text: "La reserva se ha realizado con éxito.",
@@ -56,7 +66,7 @@ const CreateReservation: React.FC = () => {
       confirmButtonText: "Aceptar",
     });
 
-    // Resetear el formulario
+    // Limpiar los campos del formulario
     setCheckInDate("");
     setCheckOutDate("");
     setRoomId(null);
@@ -65,73 +75,74 @@ const CreateReservation: React.FC = () => {
     setPassengerType("adulto");
     setReservationMethod("");
     setBreakfast(false);
-    setTotalPrice(0);
-    setTotalPriceUSD(0);
     setDeposit(0);
-    setDepositUSD(0);
     setRemainingBalance(0);
     setComments("");
+    setTotalPrice(0);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
+      className="max-w-6xl mx-auto mt-20 bg-white shadow-lg rounded-lg px-8 py-6 space-y-6"
     >
       <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">
         Crear Reserva
       </h2>
 
-      <div className="space-y-4">
-        {/* Check-in Date */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Fecha de entrada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-in:
+            Fecha de entrada:
           </label>
           <input
             type="date"
             value={checkInDate}
             onChange={(e) => setCheckInDate(e.target.value)}
-            required
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Check-out Date */}
+        {/* Fecha de salida */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-out:
+            Fecha de salida:
           </label>
           <input
             type="date"
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
-            required
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Room Selection */}
+        {/* Número de habitación */}
+        {/* Número de habitación */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Habitación:
+            Número de habitación:
           </label>
           <select
-            value={roomId ?? ""}
+            value={roomId || ""}
             onChange={(e) => setRoomId(Number(e.target.value))}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-            required
           >
-            <option value="">Seleccione una habitación</option>
-            {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
-                {room.roomNumber} - ${room.price} por noche
-              </option>
-            ))}
+            <option value="">Selecciona una habitación</option>
+            {/* Verifica si rooms está disponible antes de intentar mapearlo */}
+            {rooms && rooms.length > 0 ? (
+              rooms.map((room) => (
+                <option key={room.id} value={room.id}>
+                  {room.roomNumber}
+                </option>
+              ))
+            ) : (
+              <option disabled>No hay habitaciones disponibles</option>
+            )}
           </select>
         </div>
 
-        {/* Adult Count */}
+        {/* Adultos */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Adultos:
@@ -145,7 +156,7 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Child Count */}
+        {/* Niños */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Niños:
@@ -159,77 +170,109 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Breakfast Option */}
+        {/* Tipo de pasajero */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            ¿Desayuno incluido?
+            Tipo de pasajero:
           </label>
+          <select
+            value={passengerType}
+            onChange={(e) => setPassengerType(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="adulto">Adulto</option>
+            <option value="niño">Niño</option>
+          </select>
+        </div>
+
+        {/* Método de reserva */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Método de reserva:
+          </label>
+          <input
+            type="text"
+            value={reservationMethod}
+            onChange={(e) => setReservationMethod(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Desayuno */}
+        <div className="flex items-center">
           <input
             type="checkbox"
             checked={breakfast}
-            onChange={(e) => setBreakfast(e.target.checked)}
-            className="rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+            onChange={() => setBreakfast(!breakfast)}
+            className="mr-2"
           />
+          <label className="text-sm font-medium text-[#264653]">
+            Desayuno incluido
+          </label>
         </div>
 
-        {/* Total Price */}
+        {/* Precio total */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio Total : $USD
+            Precio total:
           </label>
           <input
-            type="number"
-            value={totalPrice}
-            onChange={(e) => setTotalPrice(Number(e.target.value))}
-            min={0}
+            type="text" // Usamos el tipo "text" en lugar de "number"
+            value={totalPrice || ""}
+            onChange={(e) => {
+              // Validamos que el valor sea un número
+              const newValue = e.target.value;
+              if (/^\d*\.?\d*$/.test(newValue)) {
+                handleTotalPriceChange(Number(newValue) || 0);
+              }
+            }}
+            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Deposit */}
+        {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito : $USD.
+            Depósito:
           </label>
           <input
-            type="number"
-            value={deposit}
-            onChange={(e) => setDeposit(Number(e.target.value))}
-            min={0}
+            type="text" // Usamos el tipo "text" en lugar de "number"
+            value={deposit || ""}
+            onChange={(e) => {
+              // Validamos que el valor sea un número
+              const newValue = e.target.value;
+              if (/^\d*\.?\d*$/.test(newValue)) {
+                handleDepositChange(Number(newValue) || 0);
+              }
+            }}
+            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
 
-        {/* Remaining Balance */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Saldo pendiente: $USD
-          </label>
-          <input
-            type="number"
-            value={totalPrice - deposit}
-            disabled
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
+        {/* Conversión a dólares */}
+        <CurrencyConverterForm
+          pesosAmount={totalPrice}
+          depositAmount={deposit}
+        />
+      </div>
 
-        {/* Comments */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Comentarios:
-          </label>
-          <textarea
-            value={comments}
-            onChange={(e) => setComments(e.target.value)}
-            rows={4}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-[#264653] mb-1">
+          Comentarios:
+        </label>
+        <textarea
+          value={comments}
+          onChange={(e) => setComments(e.target.value)}
+          className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+        ></textarea>
+      </div>
 
-        {/* Submit Button */}
+      <div className="flex justify-center mt-4">
         <button
           type="submit"
-          className="bg-[#CD9C8A] text-white px-4 py-2 rounded-lg w-full hover:bg-orange-400 transition-all"
+          className="bg-[#FF5100] text-white py-2 px-6 rounded-lg shadow-md hover:bg-[#FF3A00] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
         >
           Crear Reserva
         </button>

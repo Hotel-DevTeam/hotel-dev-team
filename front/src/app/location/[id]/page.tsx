@@ -6,7 +6,7 @@ import { ILocation } from "@/Interfaces/IUser";
 import { fetchLocationById } from "@/components/Fetchs/UserFetchs/UserFetchs";
 import Image from "next/image";
 import Link from "next/link";
-import CreateReservation from "@/components/CreateReservation/CreateReservation";
+import CreateReservation from "@/components/formReservation/CreateReservation";
 import CreateOrder from "@/components/CreateOrder/CreateOrder";
 
 const LocationDetail = () => {

@@ -4,17 +4,43 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { UserContext } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import { IUserN } from "@/Interfaces/IUser";
 
 const Navbar: React.FC = () => {
-  const { isLogged, logOut } = useContext(UserContext); // Obtenemos el estado de sesión y la función de cerrar sesión
+  const { isLogged, logOut, isAdmin } = useContext(UserContext);
+  const router = useRouter();
+  const [isReservasMenuOpen, setReservasMenuOpen] = useState(false);
+  const [isVerReservasMenuOpen, setVerReservasMenuOpen] = useState(false);
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
+  const [isSubMenuOpen, setSubMenuOpen] = useState(false); // Nuevo estado para el submenú
+  const orderMenuRef = useRef<HTMLUListElement | null>(null);
+  const reservationMenuRef = useRef<HTMLUListElement | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleMenu = (menu: "reservas" | "verReservas" | "ordenes") => {
+    if (menu === "reservas") {
+      setReservasMenuOpen(!isReservasMenuOpen);
+      setVerReservasMenuOpen(false);
+    } else if (menu === "verReservas") {
+      setVerReservasMenuOpen(!isVerReservasMenuOpen);
+      setReservasMenuOpen(false);
+    }
+  };
+
+  const closeMenus = () => {
+    setReservasMenuOpen(false);
+    setVerReservasMenuOpen(false);
+    setSubMenuOpen(false); // Cerrar el submenú
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        setMobileMenuOpen(false);
+        closeMenus();
+        setMobileMenuOpen(false); // Cierra el menú móvil al hacer clic fuera
       }
     };
 
@@ -25,118 +51,280 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
-  if (!isLogged) return null; // Si el usuario no está logueado, no mostramos el Navbar
+  const handleLogOut = () => {
+    const user: IUserN = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (user && user.role !== "admin") {
+      router.push("/cashClosing");
+    } else {
+      logOut();
+      router.push("/");
+    }
+  };
+
+  if (!isLogged) return null;
 
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 left-0 w-full bg-[#F1FAEE] text-[#264653] py-3 px-4 shadow-md z-50"
+      className="flex items-center bg-[#F1FAEE] text-[#264653] py-3 px-4 relative"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-3">
         <Link href={"/"}>
           <h1 className="text-xl font-semibold text-[#264653] mb-0">
             Villa <span className="font-light text-[#2A9D8F]">Rosarito</span>
           </h1>
         </Link>
+      </div>
 
-        {/* Botón móvil */}
-        <button
-          className="md:hidden"
-          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+      {/* Botón móvil */}
+      <button
+        className="md:hidden ml-auto"
+        onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6 text-[#264653]"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6 text-[#264653]"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
 
-        {/* Menú en móvil */}
-        {isMobileMenuOpen && (
-          <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+      {/* Menú en móvil */}
+      {isMobileMenuOpen && (
+        <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+          <li className="border-b">
+            <Link
+              href={"/CreateOrder"}
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Ventas
+            </Link>
+          </li>
+          <li className="border-b">
+          <Link
+            href={"/expenses"}
+            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+          >
+            Gastos
+          </Link>
+        </li>
+          <li
+            className="border-b cursor-pointer"
+            onClick={() => setSubMenuOpen(!isSubMenuOpen)} // Toggle del submenú
+          >
+            <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
+              Submenú
+            </span>
+            {isSubMenuOpen && (
+              <ul className="bg-white shadow-md w-full">
+                <li>
+                  <Link
+                    href="/SubmenuItem1"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Item 1
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/SubmenuItem2"
+                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
+                  >
+                    Item 2
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+          
+
+              {isAdmin && (
             <li className="border-b">
-              <Link
-                href="/location"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Ubicaciones
-              </Link>
-            </li>
-            <li className="border-b">
-              <Link
-                href="/ReservationList"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Lista de Reservas
-              </Link>
-            </li>
-            <li className="border-b">
-              <Link
-                href="/OrderPage"
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Página de Órdenes
-              </Link>
-            </li>
-            <li>
               <button
-                onClick={logOut}
-                className="block px-4 py-2 hover:bg-red-400 transition"
+                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}
               >
-                Cerrar sesión
+                Panel Admin
               </button>
+              {isAdminMenuOpen && (
+                <ul className="ml-4">
+                  <li>
+                    <Link
+                      href="/register"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Registrar usuario
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/cashMovementsPage"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Movimientos de caja
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
+                </ul>
+              )}
             </li>
-          </ul>
+          )}
+          <li className="border-b">
+              <button
+                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+             onClick={handleLogOut}
+          >
+            Cerrar sesión
+          </button>
+        </li>
+        </ul>
+      )}
+
+      {/* Menú en escritorio */}
+      <ul className="hidden md:flex space-x-6 justify-end w-full">
+        <li className="relative">
+          <Link
+            href={"/Calendar"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Calendario
+          </Link>
+        </li>
+        <li className="relative">
+          <Link
+            href={"/CreateOrder"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Ventas
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={"/expenses"}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Gastos
+          </Link>
+        </li>
+        <li className="relative" onClick={() => toggleMenu("reservas")}>
+          <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
+            Reservas
+          </button>
+          {isReservasMenuOpen && (
+            <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
+              <li>
+                <Link
+                  href="/ResHotel"
+                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                >
+                  Hotel
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ResDepartamento"
+                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                >
+                  Departamento
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Ver Reservas */}
+        <li className="relative">
+          <button
+            className="w-full text-left hover:text-[#F4A261] transition duration-200"
+            onClick={() => toggleMenu("verReservas")}
+          >
+            Ver Reservas
+          </button>
+          {isVerReservasMenuOpen && (
+            <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
+              <li>
+                <Link
+                  href="/ReservationList"
+                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                >
+                  Reservas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/Reservations"
+                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                >
+                  Historial
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Panel Admin */}
+        {isAdmin && (
+          <li className="relative" onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}>
+            <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
+              Panel Admin
+            </button>
+            {isAdminMenuOpen && (
+              <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
+                <li>
+                  <Link
+                    href="/register"
+                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                  >
+                    Registrar usuario
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/cashMovementsPage"
+                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                  >
+                    Movimientos de caja
+                  </Link>
+                </li>
+                <li>
+                    <Link
+                      href="/adminDashboard/products"
+                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+                    >
+                      Productos y servicios
+                    </Link>
+                  </li>
+              </ul>
+            )}
+          </li>
         )}
 
-        {/* Menú en escritorio */}
-        <ul className="hidden md:flex space-x-6">
-          <li>
-            <Link
-              href="/location"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
-              Ubicaciones
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/ReservationList"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
-              Reservas
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/OrderPage"
-              className="hover:text-[#F4A261] transition duration-200"
-            >
-              Órdenes
-            </Link>
-          </li>
-          <li>
-            <button
-              onClick={logOut}
-              className="hover:text-red-400 transition duration-200"
-            >
-              Cerrar sesión
-            </button>
-          </li>
-        </ul>
-      </div>
+        {/* Botón de Cerrar sesión */}
+        <li>
+          <button
+            onClick={handleLogOut}
+            className="hover:text-[#F4A261] transition duration-200"
+          >
+            Cerrar sesión
+          </button>
+        </li>
+      </ul>
     </nav>
   );
 };
