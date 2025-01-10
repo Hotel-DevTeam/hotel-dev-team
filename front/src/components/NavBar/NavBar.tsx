@@ -147,44 +147,6 @@ const Navbar: React.FC = () => {
           </li>
           
 
-              {isAdmin && (
-            <li className="border-b">
-              <button
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}
-              >
-                Panel Admin
-              </button>
-              {isAdminMenuOpen && (
-                <ul className="ml-4">
-                  <li>
-                    <Link
-                      href="/register"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Registrar usuario
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/cashMovementsPage"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Movimientos de caja
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/adminDashboard/products"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Productos y servicios
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-          )}
           <li className="border-b">
               <button
                 className="block px-4 py-2 hover:bg-[#E9C46A] transition"
@@ -193,6 +155,17 @@ const Navbar: React.FC = () => {
             Cerrar sesión
           </button>
         </li>
+        
+        {/* Panel Admin */}
+        {isAdmin && (
+          <Link href="/adminDashboard">
+            <button className="w-full text-left bg-[#CD9C8A] text-white hover:bg-[#b77f6d] transition duration-200 rounded px-4 py-2">
+              Panel Admin
+            </button>
+          </Link>
+        )}
+           
+       
         </ul>
       )}
 
@@ -278,44 +251,7 @@ const Navbar: React.FC = () => {
           )}
         </li>
 
-        {/* Panel Admin */}
-        {isAdmin && (
-          <li className="relative" onClick={() => setAdminMenuOpen(!isAdminMenuOpen)}>
-            <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
-              Panel Admin
-            </button>
-            {isAdminMenuOpen && (
-              <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
-                <li>
-                  <Link
-                    href="/register"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                  >
-                    Registrar usuario
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/cashMovementsPage"
-                    className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                  >
-                    Movimientos de caja
-                  </Link>
-                </li>
-                <li>
-                    <Link
-                      href="/adminDashboard/products"
-                      className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                    >
-                      Productos y servicios
-                    </Link>
-                  </li>
-              </ul>
-            )}
-          </li>
-        )}
-
-        {/* Botón de Cerrar sesión */}
+          {/* Botón de Cerrar sesión */}
         <li>
           <button
             onClick={handleLogOut}
@@ -324,6 +260,15 @@ const Navbar: React.FC = () => {
             Cerrar sesión
           </button>
         </li>
+
+      {/* Panel Admin */}
+        {isAdmin && (
+          <Link href="/adminDashboard">
+            <button className="w-full text-left bg-[#CD9C8A] text-white hover:bg-[#b77f6d] transition duration-200 rounded px-4 py-2">
+              Panel Admin
+            </button>
+          </Link>
+        )}
       </ul>
     </nav>
   );

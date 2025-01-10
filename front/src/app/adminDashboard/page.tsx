@@ -1,8 +1,8 @@
-import OptionRest from '@/components/OptionRes'
+import Panel from '@/components/AdminDashboard/Panel'
 import React from 'react'
 
 export default function page() {
   return (
-    <OptionRest/>
+    <Panel/>
   )
 }

@@ -65,10 +65,14 @@ const Movements: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-r font-sans min-h-screen">
-      <h1 className="text-4xl font-bold text-gray-800 text-center my-16 tracking-wide">
-        Movimientos de caja por alojamiento
+    <div className="flex justify-center items-center space-x-2 my-16">
+      <h1 className="text-4xl font-bold text-gray-800 tracking-wide">
+        Movimientos de caja 
       </h1>
-
+      <h2 className="text-4xl font-bold tracking-wide text-[#CD9C8A]">
+        {location?.name}
+      </h2>
+    </div>
       <div className="flex justify-center space-x-6 mb-8">
         {/* Filtro por Tipo de Movimiento */}
         <div>
@@ -140,7 +144,6 @@ const Movements: React.FC = () => {
 
       {filteredMovements.length > 0 ? (
         <div className="container mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Movimientos de Caja</h2>
           <ul className="space-y-6">
             {filteredMovements.map((movimiento: IMovimientoCaja) => {
               console.log(movimiento);  // Esto te permitirá ver cada 'movimiento' en la consola

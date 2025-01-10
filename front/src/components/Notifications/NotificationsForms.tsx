@@ -15,7 +15,7 @@ export const NotificationsForms: React.FC<INotificationProps> = ({ message }) =>
     isVisible && (
       <div 
         role="alert" 
-        className="fixed top-4 right-4 rounded-xl border border-indigo-600 bg-indigo-600 text-white p-4 shadow-lg"
+        className="fixed top-6 right-4 rounded-xl border border-indigo-600 bg-indigo-600 text-white p-4 shadow-lg"
       >
         <div className="flex items-start gap-4">
           <div className="flex-1">
@@ -26,7 +26,7 @@ export const NotificationsForms: React.FC<INotificationProps> = ({ message }) =>
             onClick={handleClose} 
             className="text-white transition hover:text-gray-600"
           >
-            <span className="sr-only">Dismiss popup</span>
+            
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

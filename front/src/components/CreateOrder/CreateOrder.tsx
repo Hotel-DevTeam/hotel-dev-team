@@ -170,7 +170,7 @@ const CreateOrder: React.FC = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
       <div className="ml-8 mt-2">
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
-          <h2 className="text-sm font-semibold text-[#264653] mb-3">Crear Orden</h2>
+          <h2 className="text-lg font-semibold text-[#264653] mb-3">Agregar productos o servicios</h2>
   
           {/* Selección de Producto */}
           <div className="mb-3">
@@ -276,7 +276,7 @@ const CreateOrder: React.FC = () => {
   
       </div>
       <div className="ml-8 mt-2">
-  <h2 className="text-[#264653] text-xl font-semibold mb-3">Productos Agregados</h2>
+  <h2 className="text-[#264653] text-xl font-semibold mb-3">Crear Orden</h2>
   <div className="overflow-x-auto">
     {orderItems.length === 0 ? ( // Verifica si no hay productos
       <p className="text-center text-gray-500">Aún no has agregado productos</p> // Mensaje cuando no hay productos
