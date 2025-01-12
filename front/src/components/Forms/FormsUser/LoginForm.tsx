@@ -48,7 +48,7 @@ export default function LoginForm({ setToken }: ILoginClientProps) {
             setNotificationMessage("Has ingresado correctamente");
             setShowNotification(true);
             setTimeout(() => setShowNotification(false), 3000);
-            router.push("/location");
+            router.push("/OptionRes");
           } else {
             setNotificationMessage("Usuario Inválido");
             setShowNotification(true);
