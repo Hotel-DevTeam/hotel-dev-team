@@ -76,7 +76,7 @@ const signUp = async (user: IUserRegister): Promise<boolean> => {
   try {
       const data = await fetchRegisterUser(user);
       if (data) {
-          await signIn({ email: user.email, password: user.password });
+          
           return true; 
       }
       console.error(`Registration failed: ${JSON.stringify(data)}`);

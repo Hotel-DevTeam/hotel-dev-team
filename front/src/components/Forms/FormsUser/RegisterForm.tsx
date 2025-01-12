@@ -43,7 +43,7 @@ export default function RegisterForm() {
                 setNotificationMessage("Registro exitoso");
                 setShowNotification(true);
                 setTimeout(async () => {
-                    router.push("/location");
+                    router.push("/adminDashboard");
                 }, 2000);
             } else {
                 setErrors({ ...errors, general: "Registro inválido. Por favor, revisa los datos ingresados." });
