@@ -26,7 +26,7 @@ export class CajaService {
   ) {}
 
   async createCaja(createCajaDto: CreateCajaDto) {
-    const { usuarioId, ubicacionId, movimientoIds, ...data } = createCajaDto;
+    const { usuarioId, ubicacionId, movimiento: movimientoIds, ...data } = createCajaDto;
 
     try {
       console.log('Recibiendo datos para crear caja:', createCajaDto);
@@ -51,15 +51,18 @@ export class CajaService {
       }
       console.log('Ubicación encontrada:', ubicacion);
 
-      // Buscar movimientos
-      const movimientos = await this.movimientoRepository.findBy({
-        id: In(movimientoIds),
-      });
-      if (!movimientos || movimientos.length === 0) {
-        console.log(
-          `No se encontraron movimientos con los IDs: ${movimientoIds}`,
-        );
-        throw new NotFoundException('Movimientos no encontrados');
+      // Buscar movimientos si existen
+      let movimientos = [];
+      if (movimientoIds && movimientoIds.length > 0) {
+        movimientos = await this.movimientoRepository.findBy({
+          id: In(movimientoIds),
+        });
+        if (!movimientos.length) {
+          console.log(
+            `No se encontraron movimientos con los IDs: ${movimientoIds}`,
+          );
+          throw new NotFoundException('Movimientos no encontrados');
+        }
       }
       console.log('Movimientos encontrados:', movimientos);
 
@@ -78,12 +81,14 @@ export class CajaService {
 
       // Actualizar los movimientos con la relación con la caja
       for (const movimiento of movimientos) {
-        movimiento.caja = savedCaja; // Asignar la instancia de caja a cada movimiento
+        movimiento.caja = savedCaja;
       }
 
       // Guardar los movimientos actualizados
-      await this.movimientoRepository.save(movimientos);
-      console.log('Movimientos actualizados con la caja:', movimientos);
+      if (movimientos.length > 0) {
+        await this.movimientoRepository.save(movimientos);
+        console.log('Movimientos actualizados con la caja:', movimientos);
+      }
 
       return savedCaja;
     } catch (error) {
@@ -135,3 +140,4 @@ export class CajaService {
     return this.cajaRepository.save(updatedCaja);
   }
 }
+
