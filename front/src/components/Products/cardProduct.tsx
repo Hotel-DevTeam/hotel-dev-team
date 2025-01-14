@@ -5,13 +5,11 @@ import { IProduct, ICardProductProps } from "@/Interfaces/IUser";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
 
 const CardProduct: React.FC<ICardProductProps> = ({
   product,
   onToggleStatus,
   onEdit,
-  onDelete,
   isEditing,
   onEditSubmit,
   onSaveEdit,
@@ -48,11 +46,6 @@ const CardProduct: React.FC<ICardProductProps> = ({
     }
   };
 
-  const handleDelete = () => {
-    if (onDelete && product.id) {
-      onDelete(product.id); 
-    }
-  };
 
   return (
     <div className="border m-4 rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
@@ -134,12 +127,7 @@ const CardProduct: React.FC<ICardProductProps> = ({
           </button>
         )}
 
-        <button
-          onClick={handleDelete} // Aquí se pasa la función envolvente
-          className="p-2 rounded-full bg-gray-600 hover:bg-gray-900 transition-colors duration-300"
-        >
-          <FaTrashAlt className="text-white" size={20} />
-        </button>
+        
       </div>
     </div>
   );

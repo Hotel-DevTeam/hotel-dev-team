@@ -81,13 +81,13 @@ export default function Panel() {
           </h2>
           <div className="space-y-4 mt-4 max-h-[300px] overflow-y-auto">
             <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-700">Nueva Reserva agregada</p>
+              <p className="text-gray-700"></p>
             </div>
             <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-700">Cierre de caja creado</p>
+              <p className="text-gray-700"></p>
             </div>
             <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-700">Quedan pocos productos de tipo: Coca-cola</p>
+              <p className="text-gray-700"></p>
             </div>
           </div>
         </div>

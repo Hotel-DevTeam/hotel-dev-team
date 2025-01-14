@@ -106,7 +106,16 @@ const ExpensesForm: React.FC = () => {
       console.log("Movimiento creado exitosamente:", response);
       setNotificationMessage("Se ha registrado el movimiento gasto");
       setShowNotification(true);
-    } else {
+    
+      // Espera 500ms para mostrar la notificación antes de limpiar el formulario
+      setTimeout(() => {
+        setSelectedProduct('');
+        setAmount('1');
+        setDescripcion('');
+        setShowNotification(false);
+      }, 1500);
+    }
+     else {
         setErrors({ ...errors, general: "Movimiento inválido. Por favor, revisa los datos ingresados." });
     }
   } catch (error) {
