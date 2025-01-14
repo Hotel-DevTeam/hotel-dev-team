@@ -32,9 +32,9 @@ export class CajaController {
     return this.cajaService.findOneById(id);
   }
 
-  /*   @ApiOperation({ summary: 'Actualizar una caja' })
+  @ApiOperation({ summary: 'Actualizar una caja' })
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCajaDto: UpdateCajaDto) {
     return this.cajaService.updateCaja(id, updateCajaDto);
-  } */
+  } 
 }

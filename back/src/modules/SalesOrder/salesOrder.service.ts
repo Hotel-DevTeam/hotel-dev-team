@@ -97,6 +97,24 @@ export class SalesOrderService {
     });
   }
 
+  async getAllSalesOrders(): Promise<SalesOrder[]> {
+    return await this.salesOrderRepository.find({
+      relations: ['user', 'location', 'orderLines'],
+    });
+  }
+
+  async getSalesOrderById(id: string): Promise<SalesOrder> {
+    const salesOrder = await this.salesOrderRepository.findOne({
+      where: { id },
+      relations: ['user', 'location', 'orderLines'],
+    });
+    if (!salesOrder) {
+      throw new Error('Sales order not found');
+    }
+    return salesOrder;
+  }
+
+  
 
 }
 
