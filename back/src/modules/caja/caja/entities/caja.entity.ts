@@ -28,12 +28,13 @@ export class Caja {
   @ApiProperty({ description: 'Saldo inicial de la caja', example: 1000 })
   saldoInicial: number;
 
-  @OneToMany(() => Movimiento, (movimiento) => movimiento.caja)
+  @OneToMany(() => Movimiento, (movimiento) => movimiento.caja, { nullable: true })
   @ApiProperty({
     description: 'Lista de movimientos asociados a la caja',
     type: [Movimiento],
+    required: false,
   })
-  movimiento: Movimiento[];
+  movimiento: Movimiento[] | null;
 
   @Column()
   @ApiProperty({ description: 'Ingreso en efectivo', example: 500 })
@@ -59,3 +60,4 @@ export class Caja {
   @ApiProperty({ description: 'Ubicación asociada a la caja', type: Location })
   ubicacion: Location;
 }
+
