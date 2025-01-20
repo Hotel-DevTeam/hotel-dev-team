@@ -12,7 +12,7 @@ const Calendar: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
 
   const handleDayClick = (day: string) => {
-    setSelectedDate(day); // Establece la fecha seleccionada para abrir el modal
+    setSelectedDate(day); 
   };
 
   const handleMonthChange = (direction: string) => {
