@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common';
 import { MovimientosService } from './movimientos.service';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Movimiento } from './entities/movimiento.entity';
 
 @ApiTags('movimientos')
 @Controller('movimientos')
@@ -22,10 +23,18 @@ export class MovimientosController {
     return this.movimientosService.create(createMovimientoDto);
   }
 
-  @ApiOperation({ summary: 'Obtener todos los movimientos' })
-  @Get()
-  findAll() {
-    return this.movimientosService.findAll();
+
+  @Get(':locationId')
+  @ApiOperation({
+    summary: 'Obtener todos los movimientos de una ubicación específica',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de todos los movimientos de una ubicación especificada.',
+  })
+  @ApiResponse({ status: 404, description: 'Ubicación no encontrada.' })
+  findAll(@Param('locationId') locationId:string): Promise<Movimiento[]>{
+    return this.movimientosService.findAll(locationId)
   }
 
   @ApiOperation({ summary: 'Obtener un movimiento por ID' })

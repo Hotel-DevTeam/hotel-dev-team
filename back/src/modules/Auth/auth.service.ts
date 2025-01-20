@@ -57,6 +57,7 @@ export class AuthService {
       message: 'Logged-in User',
       token,
       role: user.role,
+      user,
     };
   }
 

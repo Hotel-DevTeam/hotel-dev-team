@@ -8,5 +8,6 @@ import { Movimiento } from './entities/movimiento.entity';
   imports: [TypeOrmModule.forFeature([Movimiento])],
   controllers: [MovimientosController],
   providers: [MovimientosService],
+  exports: [MovimientosService]
 })
 export class MovimientosModule {}

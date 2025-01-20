@@ -11,7 +11,11 @@ export class SalesOrderLineService {
   ) {}
 
   async createSalesOrderLine(createSalesOrderLineDto: CreateSalesOrderLineDto) {
-    const line = this.salesOrderLineRepository.create(createSalesOrderLineDto);
+
+    const line = this.salesOrderLineRepository.create({
+      ...createSalesOrderLineDto,
+      lineTotal: createSalesOrderLineDto.quantity*createSalesOrderLineDto.unitPrice
+    });
     return this.salesOrderLineRepository.save(line);
   }
 }

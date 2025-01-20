@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsInt, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsInt } from 'class-validator';
 
 export class CreateSalesOrderLineDto {
   @ApiProperty({ description: 'ID del producto' })

@@ -5,7 +5,7 @@ function Page() {
   return (
     <div>
       <Link href={"../OrderPage"}>
-        <button>Ver Ventas</button>
+        <button   className="inline-block rounded bg-[#CD9C8A] text-white px-12 py-3 text-sm font-medium hover:bg-transparent hover:text-[#FF5100] hover:border-[#CD9C8A] hover:border-2 focus:outline-none focus:ring active:text-[#FF5100] transition-all duration-300">Ver Ventas</button>
       </Link>
       <CreateOrder />
     </div>

@@ -7,7 +7,7 @@ export interface User {
 
 export interface Product {
   id: number;
-  name: string;
+  nombre: string;
   price: number; 
   category: "bebidas" | "alimentos" | "servicio";
 }
@@ -19,9 +19,16 @@ export interface Room {
 }
 
 export interface Order {
+  productId: string;  
+  quantity: number;   
+  unitPrice: number;
+  orderId: string;   
+}
+
+
+export interface OrderItem {
   product: Product;
   quantity: number;
-  user: string;
-  roomNumber: string;
-  date: string;
+  price:number;
+  totalPrice:number;
 }

@@ -6,7 +6,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Users } from 'src/modules/Users/entities/users.entity';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Movimiento } from '../../movimientos/entities/movimiento.entity';
@@ -28,12 +28,13 @@ export class Caja {
   @ApiProperty({ description: 'Saldo inicial de la caja', example: 1000 })
   saldoInicial: number;
 
-  @OneToMany(() => Movimiento, (movimiento) => movimiento.caja)
+  @OneToMany(() => Movimiento, (movimiento) => movimiento.caja, { nullable: true })
   @ApiProperty({
     description: 'Lista de movimientos asociados a la caja',
     type: [Movimiento],
+    required: false,
   })
-  movimiento: Movimiento[];
+  movimiento: Movimiento[] | null;
 
   @Column()
   @ApiProperty({ description: 'Ingreso en efectivo', example: 500 })
@@ -50,6 +51,13 @@ export class Caja {
   @Column()
   @ApiProperty({ description: 'Egresos de la caja', example: 100 })
   egresos: number;
+
+  @Column({ nullable: true })
+  @ApiPropertyOptional({
+    description: 'Saldo final o efectivo de cierre',
+    example: 1500,
+  })
+  saldoFinal?: number;
 
   @ManyToOne(() => Users, (user) => user.caja)
   @ApiProperty({ description: 'Usuario asociado a la caja', type: Users })

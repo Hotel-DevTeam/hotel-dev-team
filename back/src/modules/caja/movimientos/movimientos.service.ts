@@ -26,9 +26,9 @@ export class MovimientosService {
     }
   }
 
-  async findAll() {
+  async findAll(locationId: string): Promise<Movimiento[]> {
     try {
-      return await this.movRepository.find();
+      return await this.movRepository.find({ where: {ubicacion: {id: locationId}}});
     } catch (error) {
       throw new InternalServerErrorException(
         'Error al obtener la lista de movimientos',

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Query } from '@nestjs/common';
 import { CajaService } from './caja.service';
 import { CreateCajaDto } from './dto/create-caja.dto';
 import { UpdateCajaDto } from './dto/update-caja.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('caja')
 @Controller('caja')
@@ -15,10 +15,15 @@ export class CajaController {
     return this.cajaService.createCaja(createCajaDto);
   }
 
-  @ApiOperation({ summary: 'Obtener todas las cajas' })
+  @ApiOperation({ summary: 'Obtener todas las cajas, filtradas opcionalmente por ubicación y tipo de movimiento' })
+  @ApiQuery({ name: 'locationId', required: false, description: 'ID de la ubicación' })
+  @ApiQuery({ name: 'tipoMovimiento', required: false, description: 'Tipo de movimiento (ingreso, egreso, etc.)' })
   @Get()
-  findAll() {
-    return this.cajaService.findAll();
+  findAll(
+    @Query('locationId') locationId?: string,
+    @Query('tipoMovimiento') tipoMovimiento?: string,
+  ) {
+    return this.cajaService.findAll({ locationId, tipoMovimiento });
   }
 
   @ApiOperation({ summary: 'Obtener una caja por ID' })
@@ -27,9 +32,9 @@ export class CajaController {
     return this.cajaService.findOneById(id);
   }
 
-  /*   @ApiOperation({ summary: 'Actualizar una caja' })
+  @ApiOperation({ summary: 'Actualizar una caja' })
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCajaDto: UpdateCajaDto) {
     return this.cajaService.updateCaja(id, updateCajaDto);
-  } */
+  } 
 }

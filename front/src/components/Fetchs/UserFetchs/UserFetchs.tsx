@@ -126,3 +126,4 @@ export const fetchLocationById = async (id: string): Promise<ILocation> => {
 
   return await response.json();
 };
+
