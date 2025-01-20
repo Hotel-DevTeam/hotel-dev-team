@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { ICaja } from '@/Interfaces/ICaja';
-import {  fetchFindBoxBy, fetchFindBoxById } from '../Fetchs/CajaFetch/CajaFetch';
+import { fetchFindBoxBy, fetchFindBoxById } from '../Fetchs/CajaFetch/CajaFetch';
 
 export default function BuscarCajaPorFecha() {
   const [cajas, setCajas] = useState<ICaja[]>([]);
@@ -17,7 +17,11 @@ export default function BuscarCajaPorFecha() {
     const fetchCajas = async () => {
       try {
         const data = await fetchFindBoxBy();
-        setCajas(data);
+        // Ordenar las cajas por fecha en orden decreciente
+        const cajasOrdenadas = data.sort((a: ICaja, b: ICaja) =>
+          dayjs(b.fecha).diff(dayjs(a.fecha))
+        );
+        setCajas(cajasOrdenadas);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Ocurrió un error inesperado.');
       }
@@ -79,6 +83,7 @@ export default function BuscarCajaPorFecha() {
             >
               <p><strong>Fecha:</strong> {dayjs(caja.fecha).format('DD/MM/YYYY')}</p>
               <p><strong>Saldo Inicial:</strong> ${caja.saldoInicial}</p>
+              <p><strong>Saldo Final:</strong> ${caja.saldoFinal}</p>
               <p className='flex justify-end text-[#CD9C8A] font-bold'>Haz click para ver más</p>
             </div>
           ))}
@@ -112,6 +117,7 @@ export default function BuscarCajaPorFecha() {
           <h3 className="text-xl font-semibold mb-2">📊 Detalles del Movimiento</h3>
           <p><strong>Fecha:</strong> {dayjs(cajaSeleccionada.fecha).format('DD/MM/YYYY HH:mm')}</p>
           <p><strong>Saldo Inicial:</strong> ${cajaSeleccionada.saldoInicial}</p>
+          <p><strong>Saldo Final:</strong> ${cajaSeleccionada.saldoFinal}</p>
           <p><strong>Ingreso Efectivo:</strong> ${cajaSeleccionada.ingresoEfectivo}</p>
           <p><strong>Ingreso Tarjeta:</strong> ${cajaSeleccionada.ingresoTarjeta}</p>
           <p><strong>Cargo Habitación:</strong> ${cajaSeleccionada.cargoHabitacion}</p>

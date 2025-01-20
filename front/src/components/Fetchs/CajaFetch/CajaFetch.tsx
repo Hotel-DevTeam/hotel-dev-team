@@ -1,4 +1,4 @@
-import { ICaja, ICreateCaja } from "@/Interfaces/ICaja";
+import { ICaja, ICloseCaja, ICreateCaja } from "@/Interfaces/ICaja";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
@@ -45,7 +45,7 @@ export const fetchCreateCaja = async (caja: ICreateCaja) => {
 };
 
 //Actualizar caja
-export const fetchUpdateCaja = async (id: string, caja: ICreateCaja) => {
+export const fetchUpdateCaja = async (id: string, caja: ICloseCaja) => {
   try {
     const response = await fetch(`${apiUrl}/caja/${id}`, {
       method: 'PUT',

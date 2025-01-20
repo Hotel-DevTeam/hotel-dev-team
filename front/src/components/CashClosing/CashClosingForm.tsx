@@ -3,10 +3,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';  
 import { UserContext } from '@/context/UserContext';
 import { fetchUpdateCaja } from '../Fetchs/CajaFetch/CajaFetch'; 
-import { ICreateCaja } from '@/Interfaces/ICaja';
+import { ICloseCaja, ICreateCaja } from '@/Interfaces/ICaja';
 
 const CashClosingForm: React.FC = () => {
-  const [saldoInicial, setSaldoInicial] = useState<string>('');
+  const [saldoFinal, setsaldoFinal] = useState<string>('');
   const [ingresoEfectivo] = useState<number>(0);
   const [ingresoTarjeta] = useState<number>(0);
   const [cargoHabitacion] = useState<number>(0);
@@ -47,14 +47,14 @@ const CashClosingForm: React.FC = () => {
   const handleSaldoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (value === '' || !isNaN(parseFloat(value))) {
-      setSaldoInicial(value);
+      setsaldoFinal(value);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!saldoInicial || !fechaHora || !usuarioId || !ubicacionId) {
+    if (!saldoFinal || !fechaHora || !usuarioId || !ubicacionId) {
       setErrorMessage("Por favor, complete todos los campos.");
       setShowErrorNotification(true);
       setTimeout(() => setShowErrorNotification(false), 3000);
@@ -69,8 +69,8 @@ const CashClosingForm: React.FC = () => {
       return;
     }
 
-    const cajaData: ICreateCaja = {
-      saldoInicial: parseFloat(saldoInicial),
+    const cajaData: ICloseCaja = {
+      saldoFinal: parseFloat(saldoFinal),
       ingresoEfectivo: ingresoEfectivo,
       ingresoTarjeta: ingresoTarjeta,
       cargoHabitacion: cargoHabitacion,
@@ -87,6 +87,7 @@ const CashClosingForm: React.FC = () => {
         setNotificationMessage("Caja actualizada exitosamente.");
         setShowNotification(true);
         setTimeout(() => {
+          logOut();
           router.push("/");  
         }, 2000);
       } else {
@@ -108,13 +109,13 @@ const CashClosingForm: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Formulario de saldo inicial */}
         <div>
-          <label htmlFor="saldoInicial" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="saldoFinal" className="block text-sm font-medium text-gray-700 mb-1">
             Saldo Inicial
           </label>
           <input
             type="text" 
-            id="saldoInicial"
-            value={saldoInicial}
+            id="saldoFinal"
+            value={saldoFinal}
             onChange={handleSaldoChange}
             className="mt-1 p-3 border border-gray-300 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ingrese el saldo inicial"

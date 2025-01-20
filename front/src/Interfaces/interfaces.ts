@@ -8,8 +8,8 @@ export interface User {
 export interface Product {
   id: number;
   nombre: string;
-  price: number; 
-  category: "bebidas" | "alimentos" | "servicio";
+  price?: number; 
+  category?: "bebidas" | "alimentos" | "servicio";
 }
 
 export interface Room {
@@ -26,9 +26,3 @@ export interface Order {
 }
 
 
-export interface OrderItem {
-  product: Product;
-  quantity: number;
-  price:number;
-  totalPrice:number;
-}

@@ -1,7 +1,8 @@
 export interface ICaja {
     id: string;
     fecha: string;
-    saldoInicial: number;
+    saldoInicial?: number;
+    saldoFinal?: number;
     ingresoEfectivo: number;
     ingresoTarjeta: number;
     cargoHabitacion: number;
@@ -19,3 +20,13 @@ export interface ICaja {
     ubicacionId: string;
   }
   
+  
+  export interface ICloseCaja {
+    saldoFinal: number;
+    ingresoEfectivo: number;
+    ingresoTarjeta: number;
+    cargoHabitacion: number;
+    egresos: number;
+    usuarioId: string;
+    ubicacionId: string;
+  }

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect, useContext } from 'react';
 import ProductSelector from './ProductSelector';
 import QuantityInput from './QuantityInput';
@@ -12,6 +12,8 @@ import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import { useLocationContext } from '@/context/LocationContext';
 import { useOrderContext } from '@/context/OrderContext';
 import { UserContext } from '@/context/UserContext';
+import { NotificationsForms } from '../Notifications/NotificationsForms';
+import { createSalesOrder } from '../Fetchs/OrdersFetch/IOrdersFetch';
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
@@ -22,13 +24,14 @@ const CreateOrder: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [quantity, setQuantity] = useState<string>('1');
   const [rooms, setRooms] = useState<IRoom[]>([]); 
-  const [roomNumber, setRoomNumber] = useState("");
-  const [paidAmount, setPaidAmount] = useState<string>('0');
+  const [roomNumber, setRoomNumber] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
   const [totalPrice, setTotalPrice] = useState<string>('0.00');
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [notification, setNotification] = useState<string>('');
 
-  // Función para manejar el cambio en la cantidad
+  const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
+
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (value === '' || !isNaN(parseFloat(value))) {
@@ -36,27 +39,23 @@ const CreateOrder: React.FC = () => {
     }
   };
 
-  // Función para manejar el cambio en el producto
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedProductId = e.target.value;
     setSelectedProduct(selectedProductId);
   
-    // Buscar el producto por ID y actualizar el precio
     const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
     if (selectedProduct) {
       setProductPrice(selectedProduct.precio);
-      console.log("Precio del producto seleccionado:", selectedProduct.precio); // Verificación
     } else {
       setProductPrice(0);
     }
   };
 
-  // Cargar los productos y los datos del usuario al iniciar
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const user = JSON.parse(userData).user;
-      setUser(user.email || '');
+      setUser(user.id || '');
     }
 
     const fetchProducts = async () => {
@@ -70,16 +69,14 @@ const CreateOrder: React.FC = () => {
     };
 
     fetchProducts();
-    
   }, [token]);
 
-  // Cargar las habitaciones al iniciar
   useEffect(() => {
     const loadRooms = async () => {
       try {
         if (location) {
           if (!token) return;
-          const roomsData = await fetchGetRooms(location.id,token);  
+          const roomsData = await fetchGetRooms(location.id, token);  
           setRooms(roomsData);
         } else {
           console.error("No location selected");
@@ -90,9 +87,8 @@ const CreateOrder: React.FC = () => {
     };
 
     loadRooms();
-  }, [location]);  
+  }, [location]);
 
-  // Actualización del precio total en función de cantidad y precio
   useEffect(() => {
     if (selectedProduct && productPrice && quantity) {
       const calculatedPrice = productPrice * parseFloat(quantity);
@@ -100,74 +96,131 @@ const CreateOrder: React.FC = () => {
     }
   }, [quantity, productPrice, selectedProduct]);
 
-  // Función para manejar el cambio de habitación
   const handleRoomChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRoomNumber(e.target.value);
   };
 
-// Función para agregar el producto a la orden
-const handleAddToOrder = () => {
+  const handleAddToOrder = () => {
+    if (!location) {
+      setNotification('Por favor, selecciona una ubicación antes de agregar productos.');
+      return;
+    }
+  
+    if (!selectedProduct || !roomNumber) {
+      setNotification('Por favor, selecciona un producto y una habitación.');
+      return;
+    }
+  
+    const selectedProductObj = products.find(p => p.id.toString() === selectedProduct);
+    if (!selectedProductObj) {
+      setNotification('Producto no encontrado.');
+      return;
+    }
+  
+    const newOrderItem: OrderItem = {
+      product: selectedProductObj,
+      roomId: roomNumber,
+      quantity: parseInt(quantity, 10),
+      totalPrice: (selectedProductObj.precio * parseInt(quantity, 10)).toFixed(2),
+      price: selectedProductObj.precio
+    };
+  
+    setOrderItems(prevItems => [...prevItems, newOrderItem]);
+    setShowOrderSummary(true);
+    setSelectedProduct('');
+    setQuantity('1');
+    setRoomNumber('');
+  };
 
-};
+ 
 
-const handleSubmit = () => {
+  const handleConfirmOrder = async () => {
+    if (!location || orderItems.length === 0) {
+      setNotification('Por favor, selecciona productos y una ubicación antes de confirmar el pedido.');
+      return;
+    }
 
-}
+    const orderData = {
+      userId: user,
+      locationId: location.id,
+      status: 'confirmed',
+      totalAmount: parseFloat(totalPrice),
+    };
 
-return (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
+    console.log('Datos a enviar:', orderData);
 
-    <div className="ml-8 mt-2">
-    <h1 className="text-2xl font-bold text-center mb-6">Crear Orden</h1>
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
-        <div className="mb-3">
-          <ProductSelector 
-            products={products} 
-            selectedProduct={selectedProduct} 
-            onProductChange={handleProductChange} 
-          />
-        </div>
+    try {
+      const createdOrder = await createSalesOrder(orderData);
+      console.log('Orden de venta creada:', createdOrder);
+    } catch (error) {
+      console.error('Error al crear la orden de venta:', error);
+    }
+  };
 
-        <div className="mb-3">
-          <QuantityInput 
-            quantity={quantity} 
-            onQuantityChange={handleQuantityChange} 
-          />
-        </div>
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
+      <div className="ml-8 mt-2">
+        <h1 className="text-2xl font-bold text-center mb-6">Crear Orden</h1>
+        <form className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
+          <div className="mb-3">
+            <ProductSelector 
+              products={products} 
+              selectedProduct={selectedProduct} 
+              onProductChange={handleProductChange} 
+            />
+          </div>
 
-        <div className="mb-3">
-          <RoomSelector 
-            rooms={rooms} 
-            roomNumber={roomNumber} 
-            onRoomChange={handleRoomChange} 
-          />
-        </div>
+          <div className="mb-3">
+            <QuantityInput 
+              quantity={quantity} 
+              onQuantityChange={handleQuantityChange} 
+            />
+          </div>
 
-        <div className="mb-3">
-          <PriceDisplay 
-            productPrice={productPrice} 
-            totalPrice={totalPrice} 
-          />
-        </div>
+          <div className="mb-3">
+            <RoomSelector 
+              rooms={rooms} 
+              roomNumber={roomNumber} 
+              onRoomChange={handleRoomChange} 
+            />
+          </div>
 
-        <button 
-          type="button" 
-          onClick={handleAddToOrder} 
-          className="mt-4 bg-[#CD9C8A] text-white py-2 px-4 rounded"
-        >
-          Agregar al pedido
-        </button>
-      </form>
-    </div>
+          <div className="mb-3">
+            <PriceDisplay 
+              productPrice={productPrice} 
+              totalPrice={totalPrice} 
+            />
+          </div>
 
-    <div className="ml-8 mt-2">
-      <h2 className="text-[#264653] text-xl font-semibold mb-3">Resumen de Orden</h2>
-      <div className="overflow-x-auto">
-        <OrderSummary orderItems={orderItems} />
+          <button 
+            type="button" 
+            onClick={handleAddToOrder} 
+            className="mt-4 bg-[#CD9C8A] text-white py-2 px-4 rounded"
+          >
+            Agregar al pedido
+          </button>
+        </form>
       </div>
+
+      <div className="ml-8 mt-2">
+        <h2 className="text-[#264653] text-xl font-semibold mb-3">Resumen de Orden</h2>
+        {showOrderSummary && (
+          <div className="overflow-x-auto">
+            <OrderSummary orderItems={orderItems} />
+          </div>
+        )}
+      </div>
+
+      <button 
+        onClick={handleConfirmOrder} 
+        className="mt-4 bg-green-600 text-white py-2 px-4 rounded"
+      >
+        Confirmar Pedido
+      </button>
+
+      {notification && <NotificationsForms message={notification} />}
     </div>
-  </div>
-);
-}
+  );
+};
 
 export default CreateOrder;

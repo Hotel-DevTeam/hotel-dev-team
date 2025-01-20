@@ -2,7 +2,7 @@ import { ISalesOrder, ISalesOrderLine } from "@/Interfaces/IMovements";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export const createSalesOrder = async (data: Partial<ISalesOrder>): Promise<ISalesOrder> => {
+export const createSalesOrder = async (data: ISalesOrder) => {
   const response = await fetch(`${apiUrl}/salesOrders`, {
     method: "POST",
     headers: {
@@ -20,7 +20,7 @@ export const createSalesOrder = async (data: Partial<ISalesOrder>): Promise<ISal
   return response.json(); 
 };
 
-export const createSalesOrderLine = async (data: Partial<ISalesOrderLine>): Promise<ISalesOrderLine> => {
+export const createSalesOrderLine = async (data: ISalesOrderLine) => {
   const response = await fetch(`${apiUrl}/salesOrderLines`, {
     method: "POST",
     headers: {
@@ -36,5 +36,20 @@ export const createSalesOrderLine = async (data: Partial<ISalesOrderLine>): Prom
   }
 
   return response.json();
+};
+
+export const fetchGetOrders = async () => {
+  const response = await fetch(`${apiUrl}/salesOrders`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al obtener las órdenes");
+  }
+
+  return await response.json();
 };
 

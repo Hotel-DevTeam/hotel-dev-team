@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 
 export class CreateCajaDto {
   @ApiProperty({ description: 'Saldo inicial de la caja', example: 1000 })
-  saldoInicial: number;
+  saldoInicial?: number;
 
   @ApiPropertyOptional({
     description: 'Lista de movimientos asociados a la caja',
