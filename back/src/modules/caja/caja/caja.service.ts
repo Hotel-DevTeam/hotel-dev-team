@@ -71,7 +71,7 @@ export class CajaService {
         ...data,
         usuario,
         ubicacion,
-        movimiento: movimientos,
+        movimiento: movimientos
       });
       console.log('Creando nueva caja:', newCaja);
 
@@ -90,7 +90,7 @@ export class CajaService {
         console.log('Movimientos actualizados con la caja:', movimientos);
       }
 
-      return savedCaja;
+      return {id: savedCaja.id};
     } catch (error) {
       console.error('Error al crear caja:', error);
       throw error;

@@ -39,4 +39,10 @@ export class CreateCajaDto {
     example: 'location-id',
   })
   ubicacionId: string;
+
+  @ApiPropertyOptional({
+    description: 'Saldo final o efectivo de cierre',
+    example: 1500,
+  })
+  saldoFinal?: number;
 }
