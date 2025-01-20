@@ -11,18 +11,91 @@ import {
 import { Reservation } from "../Interfaces/IReservation";
 import { IRoomId } from "../Interfaces/IReservation";
 import { roomsData } from "../Data/Data"; // Importar los datos de las habitaciones
+import Swal from "sweetalert2"; // Importar SweetAlert2 para el modal
 
 interface ReservationContextType {
   reservations: Reservation[];
-  rooms: IRoomId[]; // Tipo de rooms como IRoomId[]
-  finalizeReservation: (reservation: Reservation) => void;
+  rooms: IRoomId[]; // Tipo de rooms como IRoomId
+  addReservation: (newReservation: Reservation) => void;
   removeReservation: (id: string) => void;
-  addReservation: (reservation: Reservation) => void;
+  finalizeReservation: (reservation: Reservation) => void;
+  cancelReservation: (id: string, description: string) => void;
+  updatePrice: (id: string, newPrice: number) => void;
 }
 
 const ReservationContext = createContext<ReservationContextType | undefined>(
   undefined
 );
+
+export const ReservationProvider = ({ children }: { children: ReactNode }) => {
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [rooms, setRooms] = useState<IRoomId[]>(roomsData);
+
+  useEffect(() => {
+    // Cargar reservas del localStorage al iniciar
+    const savedReservations = localStorage.getItem("reservations");
+    if (savedReservations) {
+      setReservations(JSON.parse(savedReservations));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Guardar reservas en localStorage cada vez que cambian
+    localStorage.setItem("reservations", JSON.stringify(reservations));
+  }, [reservations]);
+
+  const addReservation = (newReservation: Reservation) => {
+    setReservations((prev) => [...prev, newReservation]);
+  };
+
+  const removeReservation = (id: string) => {
+    setReservations((prev) =>
+      prev.filter((reservation) => reservation.id !== id)
+    );
+  };
+
+  const finalizeReservation = (reservation: Reservation) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === reservation.id ? { ...res, status: "finalizada" } : res
+      )
+    );
+  };
+
+  const cancelReservation = (id: string, description: string) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id
+          ? { ...res, status: "cancelada", cancelDescription: description }
+          : res
+      )
+    );
+  };
+
+  const updatePrice = (id: string, newPrice: number) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id ? { ...res, totalPrice: newPrice } : res
+      )
+    );
+  };
+
+  return (
+    <ReservationContext.Provider
+      value={{
+        reservations,
+        rooms,
+        addReservation,
+        removeReservation,
+        finalizeReservation,
+        cancelReservation,
+        updatePrice,
+      }}
+    >
+      {children}
+    </ReservationContext.Provider>
+  );
+};
 
 export const useReservationContext = (): ReservationContextType => {
   const context = useContext(ReservationContext);
@@ -32,69 +105,4 @@ export const useReservationContext = (): ReservationContextType => {
     );
   }
   return context;
-};
-
-interface ReservationProviderProps {
-  children: ReactNode;
-}
-
-export const ReservationProvider: React.FC<ReservationProviderProps> = ({
-  children,
-}) => {
-  const [isClient, setIsClient] = useState(false);
-
-  // Llamar a este efecto solo cuando estemos en el cliente
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const [reservations, setReservations] = useState<Reservation[]>(() => {
-    const savedReservations = localStorage.getItem("reservations");
-    return savedReservations ? JSON.parse(savedReservations) : [];
-  });
-
-  const [rooms, setRooms] = useState<IRoomId[]>(roomsData); // Usar los datos importados directamente
-
-  useEffect(() => {
-    const saveReservationsToLocalStorage = (newReservations: Reservation[]) => {
-      if (isClient) {
-        localStorage.setItem("reservations", JSON.stringify(newReservations));
-      }
-    };
-
-    if (isClient) {
-      saveReservationsToLocalStorage(reservations);
-    }
-  }, [reservations, isClient]); // No es necesario agregar saveReservationsToLocalStorage como dependencia
-
-  const finalizeReservation = (reservation: Reservation) => {
-    const updatedReservations = reservations.map((res) =>
-      res.id === reservation.id ? { ...res, finalized: true } : res
-    );
-    setReservations(updatedReservations);
-  };
-
-  const removeReservation = (id: string) => {
-    const updatedReservations = reservations.filter((res) => res.id !== id);
-    setReservations(updatedReservations);
-  };
-
-  const addReservation = (reservation: Reservation) => {
-    const updatedReservations = [...reservations, reservation];
-    setReservations(updatedReservations);
-  };
-
-  return (
-    <ReservationContext.Provider
-      value={{
-        reservations,
-        rooms, // Proveer los rooms al contexto
-        finalizeReservation,
-        removeReservation,
-        addReservation,
-      }}
-    >
-      {children}
-    </ReservationContext.Provider>
-  );
 };
