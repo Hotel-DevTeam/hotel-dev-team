@@ -43,3 +43,25 @@ export const fetchCreateCaja = async (caja: ICreateCaja) => {
     throw error;
   }
 };
+
+//Actualizar caja
+export const fetchUpdateCaja = async (id: string, caja: ICreateCaja) => {
+  try {
+    const response = await fetch(`${apiUrl}/caja/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(caja),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al actualizar caja.');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error al actualizar la caja:", error);
+    throw error;
+  }
+};

@@ -1,50 +1,104 @@
-'use client'
+'use client';
 import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';  
 import { UserContext } from '@/context/UserContext';
+import { fetchUpdateCaja } from '../Fetchs/CajaFetch/CajaFetch'; 
+import { ICreateCaja } from '@/Interfaces/ICaja';
 
 const CashClosingForm: React.FC = () => {
-  const [efectivoCierre, setEfectivoCierre] = useState<string>(''); 
-  const [fechaHora, setFechaHora] = useState<string>(''); 
-  const [usuario, setUsuario] = useState<string>(''); 
-  const [ubicacion, setUbicacion] = useState<string>(''); 
-  const { logOut} = useContext(UserContext);
+  const [saldoInicial, setSaldoInicial] = useState<string>('');
+  const [ingresoEfectivo] = useState<number>(0);
+  const [ingresoTarjeta] = useState<number>(0);
+  const [cargoHabitacion] = useState<number>(0);
+  const [egresos] = useState<number>(0);
+  const [fechaHora, setFechaHora] = useState<string>('');
+  const [usuarioId, setUsuarioId] = useState<string>('');
+  const [ubicacionId, setUbicacionId] = useState<string>('');
+  const [usuarioEmail, setUsuarioEmail] = useState<string>('');
+  const [ubicacionNombre, setUbicacionNombre] = useState<string>('');
+  const [showErrorNotification, setShowErrorNotification] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const { logOut } = useContext(UserContext);
+  const router = useRouter();
 
-  const router = useRouter();  
   useEffect(() => {
     const now = new Date();
-    const formattedDate = now.toLocaleString();
+    const formattedDate = now.toLocaleString(); 
     setFechaHora(formattedDate);
-  
-    // Obtener los datos del localStorage
+
     const userData = localStorage.getItem('user');
     const locationData = localStorage.getItem('selectedLocation');
-  
-    // Verificar y acceder a los datos de usuario y ubicación
-    if (userData && locationData) {
-      const user = JSON.parse(userData).user; 
-      const location = JSON.parse(locationData);
-      setUsuario(user.email || ''); 
-      setUbicacion(location.name || ''); 
-    }
-  }, []);
-  
 
-  // Función para manejar el cambio en el efectivo de cierre
-  const handleEfectivoCierreChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (userData) {
+      const user = JSON.parse(userData).user; 
+      setUsuarioId(user.id || '');
+      setUsuarioEmail(user.email || '');
+    }
+
+    if (locationData) {
+      const location = JSON.parse(locationData);
+      setUbicacionId(location.id || '');
+      setUbicacionNombre(location.name || '');
+    }
+  }, []);  // Se ejecuta solo cuando el componente se monta
+
+  const handleSaldoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-       if (value === '' || !isNaN(parseFloat(value))) {
-      setEfectivoCierre(value);
+    if (value === '' || !isNaN(parseFloat(value))) {
+      setSaldoInicial(value);
     }
   };
 
-  // Función para manejar el envío del formulario
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
-    console.log('Formulario de cierre de caja enviado:', { efectivoCierre, fechaHora, usuario, ubicacion });
-    logOut();  
-    router.push("/");  
+
+    if (!saldoInicial || !fechaHora || !usuarioId || !ubicacionId) {
+      setErrorMessage("Por favor, complete todos los campos.");
+      setShowErrorNotification(true);
+      setTimeout(() => setShowErrorNotification(false), 3000);
+      return;
+    }
+
+    const cajaId = localStorage.getItem('cajaId');
+    if (!cajaId) {
+      setErrorMessage("No se encontró el ID de la caja.");
+      setShowErrorNotification(true);
+      setTimeout(() => setShowErrorNotification(false), 3000);
+      return;
+    }
+
+    const cajaData: ICreateCaja = {
+      saldoInicial: parseFloat(saldoInicial),
+      ingresoEfectivo: ingresoEfectivo,
+      ingresoTarjeta: ingresoTarjeta,
+      cargoHabitacion: cargoHabitacion,
+      egresos: egresos,
+      usuarioId: usuarioId,
+      ubicacionId: ubicacionId,
+    };
+
+    try {
+      // Llamada para actualizar la caja existente
+      const cajaResponse = await fetchUpdateCaja(cajaId, cajaData);
+
+      if (cajaResponse && cajaResponse.id) {
+        setNotificationMessage("Caja actualizada exitosamente.");
+        setShowNotification(true);
+        setTimeout(() => {
+          router.push("/");  
+        }, 2000);
+      } else {
+        setErrorMessage("Error al actualizar la caja.");
+        setShowErrorNotification(true);
+        setTimeout(() => setShowErrorNotification(false), 3000);
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Error desconocido.");
+      setShowErrorNotification(true);
+      setTimeout(() => setShowErrorNotification(false), 3000);
+    }
   };
 
   return (
@@ -52,22 +106,21 @@ const CashClosingForm: React.FC = () => {
       <h2 className="text-2xl font-semibold text-gray-800 text-center">Cierre de Caja</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Campo efectivo de cierre */}
+        {/* Formulario de saldo inicial */}
         <div>
-          <label htmlFor="efectivoCierre" className="block text-sm font-medium text-gray-700 mb-1">
-            Efectivo de Cierre
+          <label htmlFor="saldoInicial" className="block text-sm font-medium text-gray-700 mb-1">
+            Saldo Inicial
           </label>
           <input
             type="text" 
-            id="efectivoCierre"
-            value={efectivoCierre}
-            onChange={handleEfectivoCierreChange}
+            id="saldoInicial"
+            value={saldoInicial}
+            onChange={handleSaldoChange}
             className="mt-1 p-3 border border-gray-300 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ingrese el efectivo de cierre"
+            placeholder="Ingrese el saldo inicial"
           />
         </div>
 
-        {/* Campo fecha y hora */}
         <div>
           <label htmlFor="fechaHora" className="block text-sm font-medium text-gray-700 mb-1">
             Fecha y Hora Actual
@@ -81,7 +134,6 @@ const CashClosingForm: React.FC = () => {
           />
         </div>
 
-        {/* Campo usuario */}
         <div>
           <label htmlFor="usuario" className="block text-sm font-medium text-gray-700 mb-1">
             Usuario
@@ -89,13 +141,12 @@ const CashClosingForm: React.FC = () => {
           <input
             type="text"
             id="usuario"
-            value={usuario}
+            value={usuarioEmail}
             readOnly
             className="mt-1 p-3 border border-gray-300 rounded-md w-full bg-gray-100 text-gray-600 shadow-sm focus:outline-none"
           />
         </div>
 
-        {/* Campo ubicación */}
         <div>
           <label htmlFor="ubicacion" className="block text-sm font-medium text-gray-700 mb-1">
             Ubicación
@@ -103,11 +154,25 @@ const CashClosingForm: React.FC = () => {
           <input
             type="text"
             id="ubicacion"
-            value={ubicacion}
+            value={ubicacionNombre}
             readOnly
             className="mt-1 p-3 border border-gray-300 rounded-md w-full bg-gray-100 text-gray-600 shadow-sm focus:outline-none"
           />
         </div>
+
+
+        {/* Notificaciones de error o éxito */}
+        {showNotification && (
+          <div className="bg-green-200 text-green-800 p-2 rounded-md">
+            {notificationMessage}
+          </div>
+        )}
+
+        {showErrorNotification && (
+          <div className="bg-red-200 text-red-800 p-2 rounded-md">
+            {errorMessage}
+          </div>
+        )}
 
         {/* Botón para enviar el formulario */}
         <div className="flex justify-center">
@@ -115,7 +180,7 @@ const CashClosingForm: React.FC = () => {
             type="submit"
             className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition duration-200"
           >
-            Enviar
+            Actualizar Caja
           </button>
         </div>
       </form>

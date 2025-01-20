@@ -16,7 +16,7 @@ const Movements: React.FC = () => {
   // Llamada para obtener los movimientos de caja
   const getCashMovements = async () => {
     if (location?.id) {
-      const movements = await fetchCashMovements(); // Pasamos el ID de ubicación seleccionado
+      const movements = await fetchCashMovements(location.id); // Pasamos el ID de ubicación seleccionado
       setMovimientosCaja(movements);
     }
   };

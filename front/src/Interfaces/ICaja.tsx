@@ -11,7 +11,6 @@ export interface ICaja {
 
   export interface ICreateCaja {
     saldoInicial: number;
-    movimientoIds: string[];
     ingresoEfectivo: number;
     ingresoTarjeta: number;
     cargoHabitacion: number;

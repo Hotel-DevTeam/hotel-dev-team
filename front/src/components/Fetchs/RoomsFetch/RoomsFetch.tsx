@@ -6,7 +6,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchGetRooms = async (locationId: string, token: string): Promise<IRoom[]> => {
     try {
-      const response = await fetch(`${apiUrl}/rooms/${locationId}`, {
+      const response = await fetch(`${apiUrl}/location/${locationId}/rooms`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,

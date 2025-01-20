@@ -26,8 +26,8 @@ export const crearMovimiento = async (movimiento: ICreateMovement) => {
   
   
 // Ver movimientos
-export const fetchCashMovements = async () => {
-  const response = await fetch(`${apiUrl}/movimientos`, {
+export const fetchCashMovements = async (locationId:string) => {
+  const response = await fetch(`${apiUrl}/movimientos/${locationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

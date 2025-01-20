@@ -21,7 +21,7 @@ export const createSalesOrder = async (data: Partial<ISalesOrder>): Promise<ISal
 };
 
 export const createSalesOrderLine = async (data: Partial<ISalesOrderLine>): Promise<ISalesOrderLine> => {
-  const response = await fetch(`${apiUrl}/salesOrderlines`, {
+  const response = await fetch(`${apiUrl}/salesOrderLines`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

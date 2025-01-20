@@ -7,7 +7,8 @@ interface RoomSelectorProps {
   }
   
   const RoomSelector: React.FC<RoomSelectorProps> = ({ rooms, roomNumber, onRoomChange }) => (
-    <div className="mb-4">
+   
+  <div className="mb-4">
       <label htmlFor="roomNumber" className="block text-[#264653] text-sm font-bold mb-2">
         Número de Habitación:
       </label>
