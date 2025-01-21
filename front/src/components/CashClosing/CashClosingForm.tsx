@@ -110,7 +110,7 @@ const CashClosingForm: React.FC = () => {
         {/* Formulario de saldo inicial */}
         <div>
           <label htmlFor="saldoFinal" className="block text-sm font-medium text-gray-700 mb-1">
-            Saldo Inicial
+            Saldo Final
           </label>
           <input
             type="text" 

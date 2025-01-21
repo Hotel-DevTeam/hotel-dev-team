@@ -1,7 +1,8 @@
-import { OrderItem } from "@/Interfaces/interfaces";
+
+import { IOrderItem } from "@/Interfaces/IOrders";
 
 interface OrderSummaryProps {
-    orderItems: OrderItem[];
+    orderItems: IOrderItem[];
   }
   
   const OrderSummary: React.FC<OrderSummaryProps> = ({ orderItems }) => (
@@ -22,7 +23,7 @@ interface OrderSummaryProps {
               <tr key={index} className="border-b">
                 <td className="py-2 px-4 text-center">{item.product.nombre}</td>
                 <td className="py-2 px-4 text-center">{item.quantity}</td>
-                <td className="py-2 px-4 text-center">${item.totalPrice}</td>
+                <td className="py-2 px-4 text-center">${item.totalAmount}</td>
               </tr>
             ))}
           </tbody>

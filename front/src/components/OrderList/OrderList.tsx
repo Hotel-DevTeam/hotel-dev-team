@@ -14,6 +14,7 @@ interface Location {
 
 interface OrderLine {
   id: string;
+  productId:string;
   quantity: number;
   unitPrice: string;
   lineTotal: string;
@@ -43,6 +44,7 @@ const OrderPage = () => {
     const loadOrders = async () => {
       try {
         const data = await fetchGetOrders();
+        console.log("data:",  data)
         setOrders(data);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Error desconocido");
@@ -108,19 +110,18 @@ const OrderPage = () => {
             className="bg-white shadow-lg rounded-md p-6 max-w-xs w-full flex flex-col items-center"
           >
             <div className="space-y-3 mb-4 text-center">
-              <p className="text-sm text-gray-600 mb-2">Estado: <span className="font-bold">{order.status}</span></p>
-              <p className="text-sm text-gray-600 mb-2">Monto Total: <span className="font-bold">${order.totalAmount}</span></p>
-              <p className="text-sm text-gray-600 mb-4">Fecha: <span className="font-bold">{new Date(order.date).toLocaleDateString()}</span></p>
-            </div>
-
             <h3 className="font-bold text-xl mt-6 mb-2 text-[#CD9C8A]">Líneas de Pedido</h3>
             {order.orderLines.map((line) => (
               <div key={line.id} className="space-y-2 mb-4">
                 <p className="text-sm text-gray-600">Cantidad: <span className="font-bold">{line.quantity}</span></p>
                 <p className="text-sm text-gray-600">Precio Unitario: <span className="font-bold">${line.unitPrice}</span></p>
                 <p className="text-sm text-gray-600">Total de Línea: <span className="font-bold">${line.lineTotal}</span></p>
+              <p className="text-sm text-gray-600 mb-2">Estado: <span className="font-bold">{order.status}</span></p>
+              <p className="text-sm text-gray-600 mb-4">Fecha: <span className="font-bold">{new Date(order.date).toLocaleDateString()}</span></p>
               </div>
             ))}
+            </div>
+
 
             <div>
               <button

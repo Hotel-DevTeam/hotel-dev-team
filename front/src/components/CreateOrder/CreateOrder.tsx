@@ -13,7 +13,8 @@ import { useLocationContext } from '@/context/LocationContext';
 import { useOrderContext } from '@/context/OrderContext';
 import { UserContext } from '@/context/UserContext';
 import { NotificationsForms } from '../Notifications/NotificationsForms';
-import { createSalesOrder } from '../Fetchs/OrdersFetch/IOrdersFetch';
+import { createSalesOrder, createSalesOrderLine } from '../Fetchs/OrdersFetch/IOrdersFetch';
+import { IOrderItem, ISalesOrderLines, ISalesOrders } from '@/Interfaces/IOrders';
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
@@ -27,7 +28,7 @@ const CreateOrder: React.FC = () => {
   const [roomNumber, setRoomNumber] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
   const [totalPrice, setTotalPrice] = useState<string>('0.00');
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
   const [notification, setNotification] = useState<string>('');
 
   const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
@@ -40,16 +41,19 @@ const CreateOrder: React.FC = () => {
   };
 
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedProductId = e.target.value;
+    const selectedProductId = e.target.value; // El valor que contiene el ID del producto
     setSelectedProduct(selectedProductId);
   
+    // Buscar el producto completo por ID en el array de productos
     const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
+    
     if (selectedProduct) {
-      setProductPrice(selectedProduct.precio);
+      setProductPrice(selectedProduct.precio); // Actualizar el precio del producto seleccionado
     } else {
-      setProductPrice(0);
+      setProductPrice(0); // Si no se encuentra el producto, poner el precio a 0
     }
   };
+  
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -117,50 +121,82 @@ const CreateOrder: React.FC = () => {
       return;
     }
   
-    const newOrderItem: OrderItem = {
-      product: selectedProductObj,
+    const newOrderItem: IOrderItem = {
+      product: selectedProductObj,  // Asegúrate de que el producto tiene el id correctamente
       roomId: roomNumber,
       quantity: parseInt(quantity, 10),
-      totalPrice: (selectedProductObj.precio * parseInt(quantity, 10)).toFixed(2),
-      price: selectedProductObj.precio
+      totalAmount: selectedProductObj.precio * parseInt(quantity, 10),
+      price: selectedProductObj.precio,
     };
+
+console.log('Datos a enviar:', newOrderItem);
   
-    setOrderItems(prevItems => [...prevItems, newOrderItem]);
+    setOrderItems(prevItems => [...prevItems, newOrderItem]); // Actualiza la lista de elementos
     setShowOrderSummary(true);
     setSelectedProduct('');
     setQuantity('1');
     setRoomNumber('');
   };
-
- 
-
+  
+  
   const handleConfirmOrder = async () => {
     if (!location || orderItems.length === 0) {
       setNotification('Por favor, selecciona productos y una ubicación antes de confirmar el pedido.');
       return;
     }
-
-    const orderData = {
-      userId: user,
-      locationId: location.id,
+  
+    const orderData: ISalesOrders = {
+      usuarioId: user,
+      ubicacionId: location.id,
       status: 'confirmed',
-      totalAmount: parseFloat(totalPrice),
+      totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0), 
     };
-
+  
     console.log('Datos a enviar:', orderData);
-
+  
     try {
+      // Crear la orden principal
       const createdOrder = await createSalesOrder(orderData);
       console.log('Orden de venta creada:', createdOrder);
+  
+      // Crear las líneas de la orden
+      const orderLinesPromises = orderItems.map((item) => {
+        const orderLineData: ISalesOrderLines = {
+          productId: item.product.id,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          orderId: createdOrder.id, 
+        };
+        console.log("Línea de la orden a enviar:", orderLineData); // Verifica si el productId está correcto
+        return createSalesOrderLine(orderLineData);
+      });
+      
+  
+      // Esperar a que se creen todas las líneas
+      await Promise.all(orderLinesPromises);
+  
+      setNotification('Pedido confirmado');
+      resetForm(); // Limpia los datos después de confirmar la orden
     } catch (error) {
-      console.error('Error al crear la orden de venta:', error);
+      console.error('Error al crear la orden de venta o las líneas:', error);
+      setNotification('Hubo un problema al confirmar el pedido');
     }
   };
+  
+  const resetForm = () => {
+    setOrderItems([]);
+    setSelectedProduct('');
+    setQuantity('1');
+    setRoomNumber('');
+    setTotalPrice('0.00');
+    setShowOrderSummary(false);
+  };
+    
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
       <div className="ml-8 mt-2">
-        <h1 className="text-2xl font-bold text-center mb-6">Crear Orden</h1>
+        <h1 className="text-2xl text-[#264653] font-bold text-center mb-6">Crear Orden</h1>
         <form className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
           <div className="mb-3">
             <ProductSelector 
@@ -211,12 +247,17 @@ const CreateOrder: React.FC = () => {
         )}
       </div>
 
-      <button 
-        onClick={handleConfirmOrder} 
-        className="mt-4 bg-green-600 text-white py-2 px-4 rounded"
-      >
-        Confirmar Pedido
-      </button>
+     
+      {orderItems.length > 0 && (
+      <div className="flex justify-end">
+        <button 
+          onClick={handleConfirmOrder} 
+          className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
+        >
+          Confirmar Pedido
+        </button>
+      </div>
+    )}
 
       {notification && <NotificationsForms message={notification} />}
     </div>

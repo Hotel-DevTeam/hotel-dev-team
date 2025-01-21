@@ -1,13 +1,24 @@
+import { IProduct } from "./IUser";
+
 export interface ISalesOrders {
     usuarioId: string;
    ubicacionId: string;
-   status: "confirmed";
+   status: string;
    totalAmount: number
  }
 
  export interface ISalesOrderLines {
-       productId: string;
-        quantity: number;
-        unitPrice: number;
-        orderId:string;
+  id?:string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  orderId:string;
        }
+
+       export interface IOrderItem {
+        product: IProduct;
+        quantity: number;
+        price:number;
+        totalAmount:number;   
+        roomId:string;
+      }

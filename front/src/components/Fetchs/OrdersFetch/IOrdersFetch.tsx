@@ -1,8 +1,9 @@
-import { ISalesOrder, ISalesOrderLine } from "@/Interfaces/IMovements";
+import { ISalesOrderLines } from "@/Interfaces/IOrders";
+import { ISalesOrders } from "@/Interfaces/IOrders";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export const createSalesOrder = async (data: ISalesOrder) => {
+export const createSalesOrder = async (data: ISalesOrders) => {
   const response = await fetch(`${apiUrl}/salesOrders`, {
     method: "POST",
     headers: {
@@ -20,7 +21,7 @@ export const createSalesOrder = async (data: ISalesOrder) => {
   return response.json(); 
 };
 
-export const createSalesOrderLine = async (data: ISalesOrderLine) => {
+export const createSalesOrderLine = async (data: ISalesOrderLines) => {
   const response = await fetch(`${apiUrl}/salesOrderLines`, {
     method: "POST",
     headers: {
