@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
-import { OrderProvider } from "@/context/OrderContext";
 import { ReservationProvider } from "@/context/reservationContext";
 import Navbar from "@/components/NavBar/NavBar";
-import { LocationContext, LocationProvider } from "@/context/LocationContext";
+import { LocationProvider } from "@/context/LocationContext";
 
 
 const geistSans = localFont({
@@ -37,10 +36,8 @@ export default function RootLayout({
         <UserProvider>
           <LocationProvider>
             <ReservationProvider>
-            <OrderProvider>
               <Navbar />
               {children}
-            </OrderProvider>
           </ReservationProvider>
             </LocationProvider>
             </UserProvider>

@@ -28,11 +28,12 @@ const CardProduct: React.FC<ICardProductProps> = ({
   const handleSave = () => {
     if (editedProduct.nombre && editedProduct.foto && editedProduct.ubicacion) {
       onEditSubmit(editedProduct); // Siempre definido
-      onSaveEdit?.(); // Verifica si está definido
+      onSaveEdit?.(editedProduct); // Pasa el objeto editedProduct como argumento
     } else {
       alert("Por favor, complete los campos de nombre, foto y ubicación.");
     }
   };
+  
 
   const handleToggleStatus = () => {
     if (onToggleStatus && product.id) {

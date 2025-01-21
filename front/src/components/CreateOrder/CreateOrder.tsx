@@ -10,7 +10,6 @@ import { OrderItem } from '@/Interfaces/interfaces';
 import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import { useLocationContext } from '@/context/LocationContext';
-import { useOrderContext } from '@/context/OrderContext';
 import { UserContext } from '@/context/UserContext';
 import { NotificationsForms } from '../Notifications/NotificationsForms';
 import { createSalesOrder, createSalesOrderLine } from '../Fetchs/OrdersFetch/IOrdersFetch';
@@ -18,7 +17,6 @@ import { IOrderItem, ISalesOrderLines, ISalesOrders } from '@/Interfaces/IOrders
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
-  const { addOrder } = useOrderContext();
   const { location } = useLocationContext();  
   const [user, setUser] = useState<string>('');
   const [products, setProducts] = useState<IProduct[]>([]);

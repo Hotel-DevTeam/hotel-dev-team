@@ -166,11 +166,7 @@ export default function RegisterForm() {
                         </button>
                     </div>
 
-                    <div className="flex justify-center">
-                        <Link href="/login" className="text-sm text-gray-500 hover:underline">
-                            ¿Ya posees cuenta? Haz clic para ingresar
-                        </Link>
-                    </div>
+                  
 
                     {showNotification && (
                         <div className="absolute top-12 left-0 right-0 mx-auto w-max">

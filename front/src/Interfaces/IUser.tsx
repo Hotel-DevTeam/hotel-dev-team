@@ -102,7 +102,7 @@ export interface ICardProductProps {
   onDelete: (id: string) => void; 
   isEditing: boolean; 
   onEditSubmit: (updatedProduct: IProduct) => void; 
-  onSaveEdit: () => void; 
+  onSaveEdit: (updatedProduct: IProduct) => void; 
 }
 
 
