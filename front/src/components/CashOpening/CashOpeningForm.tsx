@@ -67,6 +67,7 @@ const CashOpeningForm: React.FC = () => {
       egresos: egresos,
       usuarioId: usuarioId,
       ubicacionId: ubicacionId,
+      saldoFinal: parseFloat(saldoInicial)
     };
 
     try {

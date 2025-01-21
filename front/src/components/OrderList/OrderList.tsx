@@ -14,7 +14,7 @@ interface Location {
 
 interface OrderLine {
   id: string;
-  productId:string;
+  productId: string;
   quantity: number;
   unitPrice: string;
   lineTotal: string;
@@ -44,7 +44,7 @@ const OrderPage = () => {
     const loadOrders = async () => {
       try {
         const data = await fetchGetOrders();
-        console.log("data:",  data)
+        console.log("data:", data);
         setOrders(data);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Error desconocido");
@@ -74,10 +74,10 @@ const OrderPage = () => {
   const filteredOrders = orders
     .filter((order) => {
       if (!filterDate) return true;
-      const orderDate = new Date(order.date).toISOString().split("T")[0]; // Normaliza la fecha de la orden
-      return orderDate === filterDate; // Compara con la fecha seleccionada
+      const orderDate = new Date(order.date).toISOString().split("T")[0];
+      return orderDate === filterDate;
     })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Ordenar de más reciente a más antigua
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   if (loading) {
     return <div className="text-center text-xl text-gray-600">Cargando...</div>;
@@ -110,18 +110,16 @@ const OrderPage = () => {
             className="bg-white shadow-lg rounded-md p-6 max-w-xs w-full flex flex-col items-center"
           >
             <div className="space-y-3 mb-4 text-center">
-            <h3 className="font-bold text-xl mt-6 mb-2 text-[#CD9C8A]">Líneas de Pedido</h3>
-            {order.orderLines.map((line) => (
-              <div key={line.id} className="space-y-2 mb-4">
-                <p className="text-sm text-gray-600">Cantidad: <span className="font-bold">{line.quantity}</span></p>
-                <p className="text-sm text-gray-600">Precio Unitario: <span className="font-bold">${line.unitPrice}</span></p>
-                <p className="text-sm text-gray-600">Total de Línea: <span className="font-bold">${line.lineTotal}</span></p>
-              <p className="text-sm text-gray-600 mb-2">Estado: <span className="font-bold">{order.status}</span></p>
-              <p className="text-sm text-gray-600 mb-4">Fecha: <span className="font-bold">{new Date(order.date).toLocaleDateString()}</span></p>
-              </div>
-            ))}
+              <h3 className="font-bold text-xl mt-6 mb-2 text-[#CD9C8A]">Líneas de Pedido</h3>
+              {order.orderLines.map((line) => (
+                <div key={line.id} className="space-y-2 mb-4">
+                  <p className="text-sm text-gray-600">Cantidad: <span className="font-bold">{line.quantity}</span></p>
+                  <p className="text-sm text-gray-600">Precio Unitario: <span className="font-bold">${line.unitPrice}</span></p>
+                  <p className="text-sm text-gray-600">Total: <span className="font-bold">${line.lineTotal}</span></p>
+                  <p className="text-sm text-gray-600 mb-4">Fecha: <span className="font-bold">{new Date(order.date).toLocaleDateString()}</span></p>
+                </div>
+              ))}
             </div>
-
 
             <div>
               <button

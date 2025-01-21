@@ -6,7 +6,6 @@ import RoomSelector from './RoomSelector';
 import PriceDisplay from './PriceDisplay';
 import OrderSummary from './OrderSummary';
 import { IProduct, IRoom } from '@/Interfaces/IUser';
-import { OrderItem } from '@/Interfaces/interfaces';
 import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import { useLocationContext } from '@/context/LocationContext';
@@ -14,6 +13,7 @@ import { UserContext } from '@/context/UserContext';
 import { NotificationsForms } from '../Notifications/NotificationsForms';
 import { createSalesOrder, createSalesOrderLine } from '../Fetchs/OrdersFetch/IOrdersFetch';
 import { IOrderItem, ISalesOrderLines, ISalesOrders } from '@/Interfaces/IOrders';
+import HandleCajaComponent from './ConfirmOrder';
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
@@ -25,9 +25,31 @@ const CreateOrder: React.FC = () => {
   const [rooms, setRooms] = useState<IRoom[]>([]); 
   const [roomNumber, setRoomNumber] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
-  const [totalPrice, setTotalPrice] = useState<string>('0.00');
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
   const [notification, setNotification] = useState<string>('');
+  const [showCajaComponent, setShowCajaComponent] = useState(false);
+  const [orderData, setOrderData] = useState<ISalesOrders | null>(null);  // Para almacenar los datos de la orden
+  
+  const handleCloseCaja = () => {
+    // Ocultar el componente de caja
+    setShowCajaComponent(false);
+  };
+
+  const handleCajaConfirmed = () => {
+    // Lógica adicional después de confirmar la actualización de la caja
+    if (orderData) {
+      createSalesOrder(orderData).then((createdOrder) => {
+        console.log("Orden de venta creada:", createdOrder);
+        setNotification('Pedido confirmado');
+        resetForm();
+      }).catch(error => {
+        console.error('Error al crear la orden de venta:', error);
+        setNotification('Hubo un problema al confirmar el pedido');
+      });
+    }
+    setShowCajaComponent(false);
+  };
 
   const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
 
@@ -39,16 +61,14 @@ const CreateOrder: React.FC = () => {
   };
 
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedProductId = e.target.value; // El valor que contiene el ID del producto
+    const selectedProductId = e.target.value;
     setSelectedProduct(selectedProductId);
-  
-    // Buscar el producto completo por ID en el array de productos
     const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
     
     if (selectedProduct) {
-      setProductPrice(selectedProduct.precio); // Actualizar el precio del producto seleccionado
+      setProductPrice(selectedProduct.precio);
     } else {
-      setProductPrice(0); // Si no se encuentra el producto, poner el precio a 0
+      setProductPrice(0);
     }
   };
   
@@ -94,7 +114,7 @@ const CreateOrder: React.FC = () => {
   useEffect(() => {
     if (selectedProduct && productPrice && quantity) {
       const calculatedPrice = productPrice * parseFloat(quantity);
-      setTotalPrice(calculatedPrice.toFixed(2));
+      setTotalAmount(Number(calculatedPrice.toFixed(2)));
     }
   }, [quantity, productPrice, selectedProduct]);
 
@@ -120,24 +140,21 @@ const CreateOrder: React.FC = () => {
     }
   
     const newOrderItem: IOrderItem = {
-      product: selectedProductObj,  // Asegúrate de que el producto tiene el id correctamente
+      product: selectedProductObj,
       roomId: roomNumber,
       quantity: parseInt(quantity, 10),
       totalAmount: selectedProductObj.precio * parseInt(quantity, 10),
       price: selectedProductObj.precio,
     };
 
-console.log('Datos a enviar:', newOrderItem);
-  
-    setOrderItems(prevItems => [...prevItems, newOrderItem]); // Actualiza la lista de elementos
+    setOrderItems(prevItems => [...prevItems, newOrderItem]);
     setShowOrderSummary(true);
     setSelectedProduct('');
     setQuantity('1');
     setRoomNumber('');
   };
   
-  
-  const handleConfirmOrder = async () => {
+  const handleConfirmOrder = () => {
     if (!location || orderItems.length === 0) {
       setNotification('Por favor, selecciona productos y una ubicación antes de confirmar el pedido.');
       return;
@@ -147,49 +164,22 @@ console.log('Datos a enviar:', newOrderItem);
       usuarioId: user,
       ubicacionId: location.id,
       status: 'confirmed',
-      totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0), 
+      totalAmount: parseFloat(totalAmount.toFixed(2)), 
     };
   
-    console.log('Datos a enviar:', orderData);
+    setOrderData(orderData);  
+    setShowCajaComponent(true);
   
-    try {
-      // Crear la orden principal
-      const createdOrder = await createSalesOrder(orderData);
-      console.log('Orden de venta creada:', createdOrder);
-  
-      // Crear las líneas de la orden
-      const orderLinesPromises = orderItems.map((item) => {
-        const orderLineData: ISalesOrderLines = {
-          productId: item.product.id,
-          quantity: item.quantity,
-          unitPrice: item.price,
-          orderId: createdOrder.id, 
-        };
-        console.log("Línea de la orden a enviar:", orderLineData); // Verifica si el productId está correcto
-        return createSalesOrderLine(orderLineData);
-      });
-      
-  
-      // Esperar a que se creen todas las líneas
-      await Promise.all(orderLinesPromises);
-  
-      setNotification('Pedido confirmado');
-      resetForm(); // Limpia los datos después de confirmar la orden
-    } catch (error) {
-      console.error('Error al crear la orden de venta o las líneas:', error);
-      setNotification('Hubo un problema al confirmar el pedido');
-    }
   };
-  
+
   const resetForm = () => {
     setOrderItems([]);
     setSelectedProduct('');
     setQuantity('1');
     setRoomNumber('');
-    setTotalPrice('0.00');
+    setTotalAmount(0);
     setShowOrderSummary(false);
   };
-    
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
@@ -222,7 +212,7 @@ console.log('Datos a enviar:', newOrderItem);
           <div className="mb-3">
             <PriceDisplay 
               productPrice={productPrice} 
-              totalPrice={totalPrice} 
+              totalAmount={totalAmount} 
             />
           </div>
 
@@ -245,7 +235,6 @@ console.log('Datos a enviar:', newOrderItem);
         )}
       </div>
 
-     
       {orderItems.length > 0 && (
       <div className="flex justify-end">
         <button 
@@ -255,6 +244,15 @@ console.log('Datos a enviar:', newOrderItem);
           Confirmar Pedido
         </button>
       </div>
+    )}
+
+    {showCajaComponent && orderData && (
+      <HandleCajaComponent
+        orderData={orderData}  // Pasa los datos de la orden al componente
+        onClose={handleCloseCaja}
+        onConfirm={handleCajaConfirmed}
+        totalAmount={totalAmount}
+      />
     )}
 
       {notification && <NotificationsForms message={notification} />}

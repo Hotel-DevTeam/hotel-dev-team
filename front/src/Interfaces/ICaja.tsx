@@ -12,6 +12,7 @@ export interface ICaja {
 
   export interface ICreateCaja {
     saldoInicial: number;
+    saldoFinal: number;
     ingresoEfectivo: number;
     ingresoTarjeta: number;
     cargoHabitacion: number;
@@ -22,11 +23,12 @@ export interface ICaja {
   
   
   export interface ICloseCaja {
+    saldoInicial?: number;
     saldoFinal: number;
     ingresoEfectivo: number;
     ingresoTarjeta: number;
     cargoHabitacion: number;
     egresos: number;
-    usuarioId: string;
-    ubicacionId: string;
+    usuarioId?: string;
+    ubicacionId?: string;
   }

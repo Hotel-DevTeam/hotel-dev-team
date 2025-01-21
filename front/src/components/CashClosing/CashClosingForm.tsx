@@ -118,7 +118,7 @@ const CashClosingForm: React.FC = () => {
             value={saldoFinal}
             onChange={handleSaldoChange}
             className="mt-1 p-3 border border-gray-300 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ingrese el saldo inicial"
+            placeholder="Ingrese el saldo final"
           />
         </div>
 

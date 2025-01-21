@@ -20,24 +20,32 @@ export const createSalesOrder = async (data: ISalesOrders) => {
 
   return response.json(); 
 };
-
 export const createSalesOrderLine = async (data: ISalesOrderLines) => {
-  const response = await fetch(`${apiUrl}/salesOrderLines`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  console.log("Datos que se envían al backend:", JSON.stringify(data)); 
+  try {
+    const response = await fetch(`${apiUrl}/salesOrderLines`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!response.ok) {
-    throw new Error(
-      "Error al crear la línea de detalle. Por favor, verifica los datos."
-    );
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error("Error en la respuesta del backend:", result);
+      throw new Error("Error al crear la línea de detalle.");
+    }
+
+    console.log("Respuesta del backend:", result);
+    return result;
+  } catch (error) {
+    console.error("Error al enviar la solicitud:", error);
+    throw error;
   }
-
-  return response.json();
 };
+
 
 export const fetchGetOrders = async () => {
   const response = await fetch(`${apiUrl}/salesOrders`, {

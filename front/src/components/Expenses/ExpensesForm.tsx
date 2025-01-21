@@ -5,6 +5,8 @@ import { IProduct } from "@/Interfaces/IUser";
 import { ICreateMovement, TipoMovimiento } from "@/Interfaces/IMovements";
 import { crearMovimiento } from "../Fetchs/MovementsFetch.tsx/MovementsFetch";
 import { NotificationsForms } from "../Notifications/NotificationsForms";
+import { fetchFindBoxById, fetchUpdateCaja } from "../Fetchs/CajaFetch/CajaFetch";
+import { ICloseCaja } from "@/Interfaces/ICaja";
 
 const ExpensesForm: React.FC = () => {
   const { token } = useContext(UserContext);
@@ -100,30 +102,57 @@ const ExpensesForm: React.FC = () => {
   
     // Verifica el objeto antes de enviarlo
     console.log("Datos a enviar al servidor:", JSON.stringify(movimiento, null, 2));
-  try {
-    const response = await crearMovimiento(movimiento);
-    if (response) {
-      console.log("Movimiento creado exitosamente:", response);
-      setNotificationMessage("Se ha registrado el movimiento gasto");
-      setShowNotification(true);
-    
-      // Espera 500ms para mostrar la notificación antes de limpiar el formulario
-      setTimeout(() => {
-        setSelectedProduct('');
-        setAmount('1');
-        setDescripcion('');
-        setShowNotification(false);
-      }, 1500);
-    }
-     else {
+  
+    try {
+      const response = await crearMovimiento(movimiento);
+      if (response) {
+        console.log("Movimiento creado exitosamente:", response);
+        setNotificationMessage("Se ha registrado el movimiento gasto");
+        setShowNotification(true);
+  
+        // Obtener el ID de la caja del localStorage
+        const cajaId = localStorage.getItem('cajaId');
+        if (cajaId) {
+          try {
+            // Obtener la caja actual
+            const caja = await fetchFindBoxById(cajaId);
+            if (caja) {
+              // Actualizar los valores de egresos y saldoFinal
+              const cajaActualizada: ICloseCaja = {
+                ...caja,
+                egresos: caja.egresos + parseFloat(amount),
+                saldoFinal: (caja.saldoFinal ?? 0) - parseFloat(amount),
+               
+              };
+  
+              // Actualizar la caja
+              const updateResponse = await fetchUpdateCaja(cajaId, cajaActualizada);
+              if (updateResponse) {
+                console.log("Caja actualizada con éxito");
+              }
+            }
+          } catch (error) {
+            console.error("Error al obtener o actualizar la caja:", error);
+          }
+        }
+  
+        // Espera 500ms para mostrar la notificación antes de limpiar el formulario
+        setTimeout(() => {
+          setSelectedProduct('');
+          setAmount('1');
+          setDescripcion('');
+          setShowNotification(false);
+        }, 1500);
+      } else {
         setErrors({ ...errors, general: "Movimiento inválido. Por favor, revisa los datos ingresados." });
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Error desconocido.");
+      setShowErrorNotification(true);
+      setTimeout(() => setShowErrorNotification(false), 3000);
     }
-  } catch (error) {
-    setErrorMessage(error instanceof Error ? error.message : "Error desconocido.");
-    setShowErrorNotification(true);
-    setTimeout(() => setShowErrorNotification(false), 3000);
-  }
   };
+  
   
 return(
 <div className="flex items-center justify-center min-h-screen">
