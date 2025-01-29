@@ -8,4 +8,5 @@ export const roomsData: IRoomId[] = [
   { id: 4, roomNumber: "4" },
   { id: 5, roomNumber: "5" },
   { id: 6, roomNumber: "6" },
+  { id: 7, roomNumber: "Departamento" },
 ];

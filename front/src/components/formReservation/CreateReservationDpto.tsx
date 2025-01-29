@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+// src/components/CreateReservationHotel.tsx
 
-import { useState, useEffect } from "react";
+"use client";
+import { useState } from "react";
 import { useReservationContext } from "@/context/reservationContext";
 import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
 import CurrencyConverterForm from "../DollarComponents/DollarReservation"; // Importamos el componente
 
-const CreateReservation: React.FC = () => {
+const CreateReservationDpto: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
   const [checkInDate, setCheckInDate] = useState<string>("");
   const [checkOutDate, setCheckOutDate] = useState<string>("");
-  const [roomId, setRoomId] = useState<number | null>(null);
+  const [roomId, setRoomId] = useState<number>(7); // Preseleccionamos el ID del departamento
   const [adultCount, setAdultCount] = useState<number>(1);
   const [childCount, setChildCount] = useState<number>(0);
   const [passengerType, setPassengerType] = useState<string>("adulto");
@@ -69,7 +70,6 @@ const CreateReservation: React.FC = () => {
     // Limpiar los campos del formulario
     setCheckInDate("");
     setCheckOutDate("");
-    setRoomId(null);
     setAdultCount(1);
     setChildCount(0);
     setPassengerType("adulto");
@@ -90,7 +90,7 @@ const CreateReservation: React.FC = () => {
         Crear Reserva
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Fecha de entrada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -117,28 +117,18 @@ const CreateReservation: React.FC = () => {
           />
         </div>
 
-        {/* Número de habitación */}
-        {/* Número de habitación */}
+        {/* Departamento (Solo departamento 7) */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Número de habitación:
+            Departamento:
           </label>
           <select
-            value={roomId || ""}
-            onChange={(e) => setRoomId(Number(e.target.value))}
+            value={roomId}
+            onChange={(e) => {}}
+            disabled
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           >
-            <option value="">Selecciona una habitación</option>
-            {/* Verifica si rooms está disponible antes de intentar mapearlo */}
-            {rooms && rooms.length > 0 ? (
-              rooms.map((room) => (
-                <option key={room.id} value={room.id}>
-                  {room.roomNumber}
-                </option>
-              ))
-            ) : (
-              <option disabled>No hay habitaciones disponibles</option>
-            )}
+            <option value={7}>Departamento</option>
           </select>
         </div>
 
@@ -217,16 +207,15 @@ const CreateReservation: React.FC = () => {
             Precio total:
           </label>
           <input
-            type="text" // Usamos el tipo "text" en lugar de "number"
+            type="text"
             value={totalPrice || ""}
             onChange={(e) => {
-              // Validamos que el valor sea un número
               const newValue = e.target.value;
               if (/^\d*\.?\d*$/.test(newValue)) {
                 handleTotalPriceChange(Number(newValue) || 0);
               }
             }}
-            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
+            inputMode="decimal"
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
@@ -237,17 +226,29 @@ const CreateReservation: React.FC = () => {
             Depósito:
           </label>
           <input
-            type="text" // Usamos el tipo "text" en lugar de "number"
+            type="text"
             value={deposit || ""}
             onChange={(e) => {
-              // Validamos que el valor sea un número
               const newValue = e.target.value;
               if (/^\d*\.?\d*$/.test(newValue)) {
                 handleDepositChange(Number(newValue) || 0);
               }
             }}
-            inputMode="decimal" // Facilita la entrada de números decimales en dispositivos móviles
+            inputMode="decimal"
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Saldo restante en pesos */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Saldo restante en pesos:
+          </label>
+          <input
+            type="text"
+            value={remainingBalance || ""}
+            readOnly
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] bg-gray-200"
           />
         </div>
 
@@ -281,4 +282,4 @@ const CreateReservation: React.FC = () => {
   );
 };
 
-export default CreateReservation;
+export default CreateReservationDpto;

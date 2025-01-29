@@ -1,9 +1,9 @@
-import CreateReservation from "@/components/formReservation/CreateReservation";
+import CreateReservationHotel from "../../components/formReservation/CreateReservationHotel";
 
 function Page() {
   return (
     <div>
-      <CreateReservation />
+      <CreateReservationHotel />
     </div>
   );
 }

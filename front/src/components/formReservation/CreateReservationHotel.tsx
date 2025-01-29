@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
 import CurrencyConverterForm from "../DollarComponents/DollarReservation"; // Importamos el componente
 
-const CreateReservation: React.FC = () => {
+const CreateReservationHotel: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
   const [checkInDate, setCheckInDate] = useState<string>("");
   const [checkOutDate, setCheckOutDate] = useState<string>("");
@@ -129,11 +129,13 @@ const CreateReservation: React.FC = () => {
           >
             <option value="">Selecciona una habitación</option>
             {rooms && rooms.length > 0 ? (
-              rooms.map((room) => (
-                <option key={room.id} value={room.id}>
-                  {room.roomNumber}
-                </option>
-              ))
+              rooms
+                .filter((room) => room.id !== 7) // Filtra el ID 7
+                .map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.roomNumber}
+                  </option>
+                ))
             ) : (
               <option disabled>No hay habitaciones disponibles</option>
             )}
@@ -290,4 +292,4 @@ const CreateReservation: React.FC = () => {
   );
 };
 
-export default CreateReservation;
+export default CreateReservationHotel;

@@ -1,30 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
+
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 import { roomsData } from "../../Data/Data"; // Importamos roomsData
-import CurrencyModal from "../DollarComponents/DollarModal"; // Importamos el nuevo modal
+import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
 
 const ReservationsList: React.FC = () => {
   const { reservations, finalizeReservation, cancelReservation, updatePrice } =
     useReservationContext();
   const [filter, setFilter] = useState<
-    "all" | "finalized" | "unfinalized" | "inProgress"
+    "all" | "finalized" | "inProgress" | "cancelled"
   >("all");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Estado para controlar el modal
-  const [modalData, setModalData] = useState<{
-    pesosAmount: number;
-    depositAmount: number;
-  } | null>(null);
+  const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
 
+  // Filtrar reservas y categorizar como "en progreso" si no están canceladas ni finalizadas
   const filteredReservations = reservations.filter((reservation) => {
     if (filter === "finalized") return reservation.status === "finalizada";
-    if (filter === "unfinalized") return reservation.status !== "finalizada";
     if (filter === "inProgress") return reservation.status === "en progreso";
-    if (selectedRoom) {
-      return String(reservation.roomId) === selectedRoom;
-    }
+    if (filter === "cancelled") return reservation.status === "cancelada";
     return true;
   });
 
@@ -53,6 +50,7 @@ const ReservationsList: React.FC = () => {
 
   const handleCancelReservation = (reservation: Reservation) => {
     if (reservation.status === "cancelada") return;
+
     Swal.fire({
       title: "¿Cancelar esta reserva?",
       text: "Por favor, ingresa una descripción de la razón para cancelar.",
@@ -65,7 +63,9 @@ const ReservationsList: React.FC = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        cancelReservation(reservation.id, result.value);
+        const cancellationReason = result.value;
+        cancelReservation(reservation.id, cancellationReason);
+        reservation.cancellationReason = cancellationReason;
         Swal.fire("Cancelada", "La reserva ha sido cancelada.", "success");
       }
     });
@@ -77,18 +77,11 @@ const ReservationsList: React.FC = () => {
     );
     const updatedPrice = reservation.totalPrice * dollarRate.rate;
     updatePrice(reservation.id, updatedPrice);
-
-    // Abre el modal con la cantidad en pesos y el depósito
-    setModalData({
-      pesosAmount: reservation.totalPrice,
-      depositAmount: reservation.deposit,
-    });
-    setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalData(null); // Limpiamos los datos del modal
+  // Función para manejar la apertura del formulario
+  const togglePriceForm = (reservationId: string | null) => {
+    setShowPriceForm(showPriceForm === reservationId ? null : reservationId);
   };
 
   return (
@@ -97,15 +90,15 @@ const ReservationsList: React.FC = () => {
         Lista de Reservas
       </h2>
 
-      {/* Contenedor de filtros */}
+      {/* Filtros de Estado y Habitación */}
       <div className="flex gap-8 mb-6">
-        {/* Filtros */}
+        {/* Filtro de Estado */}
         <div className="w-1/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             Filtrar por Estado
           </h3>
           <div className="flex flex-col gap-6">
-            {["all", "finalized", "unfinalized", "inProgress"].map((status) => (
+            {["all", "finalized", "inProgress", "cancelled"].map((status) => (
               <label
                 key={status}
                 className="flex items-center gap-3 cursor-pointer text-gray-700"
@@ -120,8 +113,8 @@ const ReservationsList: React.FC = () => {
                       e.target.value as
                         | "all"
                         | "finalized"
-                        | "unfinalized"
                         | "inProgress"
+                        | "cancelled"
                     )
                   }
                   className="form-radio text-orange-500 focus:ring-orange-500"
@@ -131,8 +124,8 @@ const ReservationsList: React.FC = () => {
                     ? "Todas"
                     : status === "finalized"
                     ? "Finalizadas"
-                    : status === "unfinalized"
-                    ? "No Finalizadas"
+                    : status === "cancelled"
+                    ? "Canceladas"
                     : "En Progreso"}
                 </span>
               </label>
@@ -140,7 +133,7 @@ const ReservationsList: React.FC = () => {
           </div>
         </div>
 
-        {/* Filtro por habitación */}
+        {/* Filtro por Habitación */}
         <div className="w-3/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             Filtrar por Habitación
@@ -153,19 +146,19 @@ const ReservationsList: React.FC = () => {
             <option value="">Filtra por habitación</option>
             {roomsData.map((room) => (
               <option key={room.id} value={room.roomNumber.toString()}>
-                Habitación {room.roomNumber}
+                {room.id === 7
+                  ? "Departamento"
+                  : `Habitación ${room.roomNumber}`}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Tarjetas de reservas */}
+      {/* Lista de Reservas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredReservations.map((reservation) => {
           const room = roomsData.find((room) => room.id === reservation.roomId);
-
-          // Cambiar clases según estado de la reserva
           let cardClass =
             "bg-white p-6 rounded-lg shadow-lg border border-gray-200";
           let buttonClass =
@@ -201,13 +194,18 @@ const ReservationsList: React.FC = () => {
                 <div className="font-semibold text-gray-800">
                   Saldo Restante: ${reservation.remainingBalance} ARS
                 </div>
+                {reservation.status === "cancelada" &&
+                  reservation.cancellationReason && (
+                    <div className="mt-2 text-gray-500 font-semibold">
+                      Motivo de la cancelación: {reservation.cancellationReason}
+                    </div>
+                  )}
               </div>
 
-              {/* Botones */}
               <div className="flex gap-4 mt-4">
                 <button
                   className={buttonClass}
-                  onClick={() => handlePriceChange(reservation)}
+                  onClick={() => togglePriceForm(reservation.id)}
                 >
                   Ver Precio Actualizado
                 </button>
@@ -233,14 +231,22 @@ const ReservationsList: React.FC = () => {
         })}
       </div>
 
-      {/* Modal de conversión */}
-      {modalData && (
-        <CurrencyModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          pesosAmount={modalData.pesosAmount}
-          depositAmount={modalData.depositAmount}
-        />
+      {/* Mostrar el formulario de precio actualizado fuera de las tarjetas */}
+      {showPriceForm && (
+        <div className="mt-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <CurrencyForm
+            pesosAmount={
+              filteredReservations.find(
+                (reservation) => reservation.id === showPriceForm
+              )?.totalPrice || 0
+            }
+            depositAmount={
+              filteredReservations.find(
+                (reservation) => reservation.id === showPriceForm
+              )?.deposit || 0
+            }
+          />
+        </div>
       )}
     </div>
   );
