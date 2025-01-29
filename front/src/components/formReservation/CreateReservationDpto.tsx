@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useReservationContext } from "@/context/reservationContext";
 import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
-import CurrencyConverterForm from "../formReservation/DollarReservation"; // Importamos el componente
+import CurrencyConverterForm from "./DollarReservation"; // Importamos el componente
 
 const CreateReservation: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
