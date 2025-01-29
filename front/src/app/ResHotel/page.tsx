@@ -1,4 +1,4 @@
-import CreateReservation from "@/components/formReservation/CreateReservationHotel";
+import CreateReservation from "@/components/formReservation/CreateReservation";
 
 function Page() {
   return (

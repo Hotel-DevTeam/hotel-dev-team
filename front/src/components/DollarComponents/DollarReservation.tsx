@@ -6,6 +6,7 @@ import { fetchDollarRate } from "../Fetchs/DollarFetch/fetchDollarRate"; // Aseg
 interface CurrencyConverterFormProps {
   pesosAmount: number;
   depositAmount: number;
+  onClose?: () => void;
 }
 
 const CurrencyConverterForm: React.FC<CurrencyConverterFormProps> = ({
