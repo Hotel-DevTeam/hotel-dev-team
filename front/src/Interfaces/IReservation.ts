@@ -16,6 +16,7 @@ export interface Reservation {
   finalized: boolean;
   comments: string;
   status?: string;
+  cancellationReason?: string;
 }
 
 export interface Room {

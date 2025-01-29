@@ -62,7 +62,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 <div className="flex justify-between">
                   <p className="text-[#264653]">
                     <strong>Saldo pendiente:</strong> $
-                    {reservation.remainingBalance} USD
+                    {reservation.remainingBalance}
                   </p>
                 </div>
                 {reservationText && (

@@ -110,13 +110,13 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
           <li className="border-b">
-          <Link
-            href={"/expenses"}
-            className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-          >
-            Gastos
-          </Link>
-        </li>
+            <Link
+              href={"/expenses"}
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Gastos
+            </Link>
+          </li>
           <li
             className="border-b cursor-pointer"
             onClick={() => setSubMenuOpen(!isSubMenuOpen)} // Toggle del submenú
@@ -145,27 +145,24 @@ const Navbar: React.FC = () => {
               </ul>
             )}
           </li>
-          
 
           <li className="border-b">
-              <button
-                className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-             onClick={handleLogOut}
-          >
-            Cerrar sesión
-          </button>
-        </li>
-        
-        {/* Panel Admin */}
-        {isAdmin && (
-          <Link href="/adminDashboard">
-            <button className="w-full text-left bg-[#CD9C8A] text-white hover:bg-[#b77f6d] transition duration-200 rounded px-4 py-2">
-              Panel Admin
+            <button
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+              onClick={handleLogOut}
+            >
+              Cerrar sesión
             </button>
-          </Link>
-        )}
-           
-       
+          </li>
+
+          {/* Panel Admin */}
+          {isAdmin && (
+            <Link href="/adminDashboard">
+              <button className="w-full text-left bg-[#CD9C8A] text-white hover:bg-[#b77f6d] transition duration-200 rounded px-4 py-2">
+                Panel Admin
+              </button>
+            </Link>
+          )}
         </ul>
       )}
 
@@ -211,7 +208,7 @@ const Navbar: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/ResDepartamento"
+                  href="/ResDpto"
                   className="block px-4 py-2 hover:bg-[#E9C46A] transition"
                 >
                   Departamento
@@ -236,7 +233,7 @@ const Navbar: React.FC = () => {
                   href="/ReservationList"
                   className="block px-4 py-2 hover:bg-[#E9C46A] transition"
                 >
-                  Reservas
+                  Hotel
                 </Link>
               </li>
               <li>
@@ -244,14 +241,14 @@ const Navbar: React.FC = () => {
                   href="/Reservations"
                   className="block px-4 py-2 hover:bg-[#E9C46A] transition"
                 >
-                  Historial
+                  Departamento
                 </Link>
               </li>
             </ul>
           )}
         </li>
 
-          {/* Botón de Cerrar sesión */}
+        {/* Botón de Cerrar sesión */}
         <li>
           <button
             onClick={handleLogOut}
@@ -261,7 +258,7 @@ const Navbar: React.FC = () => {
           </button>
         </li>
 
-      {/* Panel Admin */}
+        {/* Panel Admin */}
         {isAdmin && (
           <Link href="/adminDashboard">
             <button className="w-full text-left bg-[#CD9C8A] text-white hover:bg-[#b77f6d] transition duration-200 rounded px-4 py-2">
