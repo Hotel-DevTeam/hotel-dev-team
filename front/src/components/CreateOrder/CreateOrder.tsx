@@ -6,6 +6,7 @@ import RoomSelector from './RoomSelector';
 import PriceDisplay from './PriceDisplay';
 import OrderSummary from './OrderSummary';
 import { IProduct, IRoom } from '@/Interfaces/IUser';
+import { OrderItem } from '@/Interfaces/interfaces';
 import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import { useLocationContext } from '@/context/LocationContext';
@@ -25,33 +26,31 @@ const CreateOrder: React.FC = () => {
   const [rooms, setRooms] = useState<IRoom[]>([]); 
   const [roomNumber, setRoomNumber] = useState('');
   const [productPrice, setProductPrice] = useState<number>(0);
-  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<string>('0.00');
   const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
   const [notification, setNotification] = useState<string>('');
-  const [showCajaComponent, setShowCajaComponent] = useState(false);
-  const [orderData, setOrderData] = useState<ISalesOrders | null>(null);  // Para almacenar los datos de la orden
-  
-  const handleCloseCaja = () => {
-    // Ocultar el componente de caja
-    setShowCajaComponent(false);
-  };
-
-  const handleCajaConfirmed = () => {
-    // Lógica adicional después de confirmar la actualización de la caja
-    if (orderData) {
-      createSalesOrder(orderData).then((createdOrder) => {
-        console.log("Orden de venta creada:", createdOrder);
-        setNotification('Pedido confirmado');
-        resetForm();
-      }).catch(error => {
-        console.error('Error al crear la orden de venta:', error);
-        setNotification('Hubo un problema al confirmar el pedido');
-      });
-    }
-    setShowCajaComponent(false);
-  };
-
   const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
+  
+  // Estado para mostrar el modal de método de pago
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Abre el modal para seleccionar el método de pago
+  const handleOpenPaymentModal = () => {
+    setShowPaymentModal(true);
+  };
+
+  // Cierra el modal
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+  };
+
+  // Función que se llama cuando se confirma el pago desde el modal
+  const handlePaymentConfirmed = () => {
+    // Aquí se confirma el pago y se cierra el modal,
+    // luego se procede a confirmar el pedido
+    handleConfirmOrder();
+    setShowPaymentModal(false);
+  };
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -61,18 +60,19 @@ const CreateOrder: React.FC = () => {
   };
 
   const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedProductId = e.target.value;
+    const selectedProductId = e.target.value; // El valor que contiene el ID del producto
     setSelectedProduct(selectedProductId);
+  
+    // Buscar el producto completo por ID en el array de productos
     const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
     
     if (selectedProduct) {
-      setProductPrice(selectedProduct.precio);
+      setProductPrice(selectedProduct.precio); // Actualizar el precio del producto seleccionado
     } else {
-      setProductPrice(0);
+      setProductPrice(0); // Si no se encuentra el producto, poner el precio a 0
     }
   };
   
-
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -114,12 +114,16 @@ const CreateOrder: React.FC = () => {
   useEffect(() => {
     if (selectedProduct && productPrice && quantity) {
       const calculatedPrice = productPrice * parseFloat(quantity);
-      setTotalAmount(Number(calculatedPrice.toFixed(2)));
+      setTotalPrice(calculatedPrice.toFixed(2));
     }
   }, [quantity, productPrice, selectedProduct]);
 
   const handleRoomChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRoomNumber(e.target.value);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setOrderItems(prevItems => prevItems.filter((_, i) => i !== index));
   };
 
   const handleAddToOrder = () => {
@@ -140,21 +144,24 @@ const CreateOrder: React.FC = () => {
     }
   
     const newOrderItem: IOrderItem = {
-      product: selectedProductObj,
+      product: selectedProductObj,  // Asegúrate de que el producto tiene el id correctamente
       roomId: roomNumber,
       quantity: parseInt(quantity, 10),
       totalAmount: selectedProductObj.precio * parseInt(quantity, 10),
       price: selectedProductObj.precio,
     };
 
-    setOrderItems(prevItems => [...prevItems, newOrderItem]);
+    console.log('Datos a enviar:', newOrderItem);
+  
+    setOrderItems(prevItems => [...prevItems, newOrderItem]); // Actualiza la lista de elementos
     setShowOrderSummary(true);
     setSelectedProduct('');
     setQuantity('1');
     setRoomNumber('');
   };
+
   
-  const handleConfirmOrder = () => {
+  const handleConfirmOrder = async () => {
     if (!location || orderItems.length === 0) {
       setNotification('Por favor, selecciona productos y una ubicación antes de confirmar el pedido.');
       return;
@@ -164,21 +171,54 @@ const CreateOrder: React.FC = () => {
       usuarioId: user,
       ubicacionId: location.id,
       status: 'confirmed',
-      totalAmount: parseFloat(totalAmount.toFixed(2)), 
+      totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0), 
     };
   
-    setOrderData(orderData);  
-    setShowCajaComponent(true);
+    console.log('Datos a enviar:', orderData);
   
+    try {
+      // Crear la orden principal
+      const createdOrder = await createSalesOrder(orderData);
+      console.log('Orden de venta creada:', createdOrder);
+  
+      // Crear las líneas de la orden
+      const orderLinesPromises = orderItems.map((item) => {
+        const orderLineData: ISalesOrderLines = {
+          productId: item.product.id,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          orderId: createdOrder.id, 
+        };
+        console.log("Línea de la orden a enviar:", orderLineData);
+        return createSalesOrderLine(orderLineData);
+      });
+      
+      // Esperar a que se creen todas las líneas
+      await Promise.all(orderLinesPromises);
+  
+      setNotification('Pedido confirmado');
+      resetForm(); // Limpia los datos después de confirmar la orden
+    } catch (error) {
+      console.error('Error al crear la orden de venta o las líneas:', error);
+      setNotification('Hubo un problema al confirmar el pedido');
+    }
   };
-
+  
   const resetForm = () => {
     setOrderItems([]);
     setSelectedProduct('');
     setQuantity('1');
     setRoomNumber('');
-    setTotalAmount(0);
+    setTotalPrice('0.00');
     setShowOrderSummary(false);
+  };
+
+  // Definimos orderData para pasarlo al modal
+  const orderData: ISalesOrders = {
+    usuarioId: user,
+    ubicacionId: location ? location.id : '',
+    status: 'confirmed',
+    totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0),
   };
 
   return (
@@ -193,14 +233,12 @@ const CreateOrder: React.FC = () => {
               onProductChange={handleProductChange} 
             />
           </div>
-
           <div className="mb-3">
             <QuantityInput 
               quantity={quantity} 
               onQuantityChange={handleQuantityChange} 
             />
           </div>
-
           <div className="mb-3">
             <RoomSelector 
               rooms={rooms} 
@@ -208,14 +246,12 @@ const CreateOrder: React.FC = () => {
               onRoomChange={handleRoomChange} 
             />
           </div>
-
           <div className="mb-3">
             <PriceDisplay 
               productPrice={productPrice} 
-              totalAmount={totalAmount} 
+              totalPrice={totalPrice} 
             />
           </div>
-
           <button 
             type="button" 
             onClick={handleAddToOrder} 
@@ -230,30 +266,31 @@ const CreateOrder: React.FC = () => {
         <h2 className="text-[#264653] text-xl font-semibold mb-3">Resumen de Orden</h2>
         {showOrderSummary && (
           <div className="overflow-x-auto">
-            <OrderSummary orderItems={orderItems} />
+              <OrderSummary orderItems={orderItems} onRemoveItem={handleRemoveItem} />
           </div>
         )}
       </div>
 
       {orderItems.length > 0 && (
-      <div className="flex justify-end">
-        <button 
-          onClick={handleConfirmOrder} 
-          className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
-        >
-          Confirmar Pedido
-        </button>
-      </div>
-    )}
+        <div className="flex justify-end">
+          {/* Al hacer clic se abre el modal para seleccionar el método de pago */}
+          <button 
+            onClick={handleOpenPaymentModal} 
+            className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
+          >
+            Confirmar Pedido
+          </button>
+        </div>
+      )}
 
-    {showCajaComponent && orderData && (
-      <HandleCajaComponent
-        orderData={orderData}  // Pasa los datos de la orden al componente
-        onClose={handleCloseCaja}
-        onConfirm={handleCajaConfirmed}
-        totalAmount={totalAmount}
-      />
-    )}
+      {showPaymentModal && (
+        <HandleCajaComponent
+          onClose={handleClosePaymentModal}
+          onConfirm={handlePaymentConfirmed}
+          totalAmount={parseFloat(totalPrice)}
+          orderData={orderData}
+        />
+      )}
 
       {notification && <NotificationsForms message={notification} />}
     </div>
