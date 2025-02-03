@@ -14,6 +14,7 @@ import { UserContext } from '@/context/UserContext';
 import { NotificationsForms } from '../Notifications/NotificationsForms';
 import { createSalesOrder, createSalesOrderLine } from '../Fetchs/OrdersFetch/IOrdersFetch';
 import { IOrderItem, ISalesOrderLines, ISalesOrders } from '@/Interfaces/IOrders';
+import HandleCajaComponent from './ConfirmOrder';
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
@@ -28,8 +29,28 @@ const CreateOrder: React.FC = () => {
   const [totalPrice, setTotalPrice] = useState<string>('0.00');
   const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
   const [notification, setNotification] = useState<string>('');
-
   const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
+  
+  // Estado para mostrar el modal de método de pago
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  // Abre el modal para seleccionar el método de pago
+  const handleOpenPaymentModal = () => {
+    setShowPaymentModal(true);
+  };
+
+  // Cierra el modal
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+  };
+
+  // Función que se llama cuando se confirma el pago desde el modal
+  const handlePaymentConfirmed = () => {
+    // Aquí se confirma el pago y se cierra el modal,
+    // luego se procede a confirmar el pedido
+    handleConfirmOrder();
+    setShowPaymentModal(false);
+  };
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -52,7 +73,6 @@ const CreateOrder: React.FC = () => {
     }
   };
   
-
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -102,6 +122,10 @@ const CreateOrder: React.FC = () => {
     setRoomNumber(e.target.value);
   };
 
+  const handleRemoveItem = (index: number) => {
+    setOrderItems(prevItems => prevItems.filter((_, i) => i !== index));
+  };
+
   const handleAddToOrder = () => {
     if (!location) {
       setNotification('Por favor, selecciona una ubicación antes de agregar productos.');
@@ -127,7 +151,7 @@ const CreateOrder: React.FC = () => {
       price: selectedProductObj.precio,
     };
 
-console.log('Datos a enviar:', newOrderItem);
+    console.log('Datos a enviar:', newOrderItem);
   
     setOrderItems(prevItems => [...prevItems, newOrderItem]); // Actualiza la lista de elementos
     setShowOrderSummary(true);
@@ -135,7 +159,7 @@ console.log('Datos a enviar:', newOrderItem);
     setQuantity('1');
     setRoomNumber('');
   };
-  
+
   
   const handleConfirmOrder = async () => {
     if (!location || orderItems.length === 0) {
@@ -165,11 +189,10 @@ console.log('Datos a enviar:', newOrderItem);
           unitPrice: item.price,
           orderId: createdOrder.id, 
         };
-        console.log("Línea de la orden a enviar:", orderLineData); // Verifica si el productId está correcto
+        console.log("Línea de la orden a enviar:", orderLineData);
         return createSalesOrderLine(orderLineData);
       });
       
-  
       // Esperar a que se creen todas las líneas
       await Promise.all(orderLinesPromises);
   
@@ -189,7 +212,14 @@ console.log('Datos a enviar:', newOrderItem);
     setTotalPrice('0.00');
     setShowOrderSummary(false);
   };
-    
+
+  // Definimos orderData para pasarlo al modal
+  const orderData: ISalesOrders = {
+    usuarioId: user,
+    ubicacionId: location ? location.id : '',
+    status: 'confirmed',
+    totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0),
+  };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
@@ -203,14 +233,12 @@ console.log('Datos a enviar:', newOrderItem);
               onProductChange={handleProductChange} 
             />
           </div>
-
           <div className="mb-3">
             <QuantityInput 
               quantity={quantity} 
               onQuantityChange={handleQuantityChange} 
             />
           </div>
-
           <div className="mb-3">
             <RoomSelector 
               rooms={rooms} 
@@ -218,14 +246,12 @@ console.log('Datos a enviar:', newOrderItem);
               onRoomChange={handleRoomChange} 
             />
           </div>
-
           <div className="mb-3">
             <PriceDisplay 
               productPrice={productPrice} 
               totalPrice={totalPrice} 
             />
           </div>
-
           <button 
             type="button" 
             onClick={handleAddToOrder} 
@@ -240,22 +266,31 @@ console.log('Datos a enviar:', newOrderItem);
         <h2 className="text-[#264653] text-xl font-semibold mb-3">Resumen de Orden</h2>
         {showOrderSummary && (
           <div className="overflow-x-auto">
-            <OrderSummary orderItems={orderItems} />
+              <OrderSummary orderItems={orderItems} onRemoveItem={handleRemoveItem} />
           </div>
         )}
       </div>
 
-     
       {orderItems.length > 0 && (
-      <div className="flex justify-end">
-        <button 
-          onClick={handleConfirmOrder} 
-          className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
-        >
-          Confirmar Pedido
-        </button>
-      </div>
-    )}
+        <div className="flex justify-end">
+          {/* Al hacer clic se abre el modal para seleccionar el método de pago */}
+          <button 
+            onClick={handleOpenPaymentModal} 
+            className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
+          >
+            Confirmar Pedido
+          </button>
+        </div>
+      )}
+
+      {showPaymentModal && (
+        <HandleCajaComponent
+          onClose={handleClosePaymentModal}
+          onConfirm={handlePaymentConfirmed}
+          totalAmount={parseFloat(totalPrice)}
+          orderData={orderData}
+        />
+      )}
 
       {notification && <NotificationsForms message={notification} />}
     </div>

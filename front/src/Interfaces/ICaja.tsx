@@ -27,6 +27,6 @@ export interface ICaja {
     ingresoTarjeta: number;
     cargoHabitacion: number;
     egresos: number;
-    usuarioId: string;
-    ubicacionId: string;
+    usuarioId?: string;
+    ubicacionId?: string;
   }
