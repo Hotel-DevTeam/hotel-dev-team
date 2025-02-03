@@ -1,7 +1,9 @@
+import CreateReservationDpto from "@/components/formReservation/CreateReservationDpto";
+
 function Page() {
   return (
     <>
-      <p>Departamento</p>
+      <CreateReservationDpto />
     </>
   );
 }

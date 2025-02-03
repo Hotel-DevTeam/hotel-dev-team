@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { fetchDollarRate } from "../Fetchs/DollarFetch/fetchDollarRate"; // Asegúrate de importar la función para obtener la tasa
 
 interface CurrencyConverterFormProps {
+  isOpen?: boolean;
   pesosAmount: number;
   depositAmount: number;
+  onClose?: () => void;
 }
 
 const CurrencyConverterForm: React.FC<CurrencyConverterFormProps> = ({
