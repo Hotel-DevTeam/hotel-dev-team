@@ -17,12 +17,20 @@ const ReservationsList: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
 
-  // Filtrar reservas y categorizar como "en progreso" si no están canceladas ni finalizadas
+  // Filtrar reservas por estado y habitación
   const filteredReservations = reservations.filter((reservation) => {
-    if (filter === "finalized") return reservation.status === "finalizada";
-    if (filter === "inProgress") return reservation.status === "en progreso";
-    if (filter === "cancelled") return reservation.status === "cancelada";
-    return true;
+    // Filtro por estado
+    const statusFilter =
+      filter === "all" ||
+      (filter === "finalized" && reservation.status === "finalizada") ||
+      (filter === "inProgress" && reservation.status === "en progreso") ||
+      (filter === "cancelled" && reservation.status === "cancelada");
+
+    // Filtro por habitación
+    const roomFilter =
+      selectedRoom === "" || reservation.roomId === parseInt(selectedRoom, 10);
+
+    return statusFilter && roomFilter;
   });
 
   const handleFinalizeReservation = (reservation: Reservation) => {
@@ -145,7 +153,7 @@ const ReservationsList: React.FC = () => {
           >
             <option value="">Filtra por habitación</option>
             {roomsData.map((room) => (
-              <option key={room.id} value={room.roomNumber.toString()}>
+              <option key={room.id} value={room.id.toString()}>
                 {room.id === 7
                   ? "Departamento"
                   : `Habitación ${room.roomNumber}`}

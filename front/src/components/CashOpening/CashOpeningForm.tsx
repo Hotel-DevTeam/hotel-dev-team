@@ -1,16 +1,16 @@
-'use client'
-import { ICreateCaja } from '@/Interfaces/ICaja';
-import React, { useState, useEffect } from 'react';
-import { fetchCreateCaja } from '../Fetchs/CajaFetch/CajaFetch';
-import { useRouter } from 'next/navigation';
+"use client";
+import { ICreateCaja } from "@/Interfaces/ICaja";
+import React, { useState, useEffect } from "react";
+import { fetchCreateCaja } from "../Fetchs/CajaFetch/CajaFetch";
+import { useRouter } from "next/navigation";
 
 const CashOpeningForm: React.FC = () => {
-  const [saldoInicial, setSaldoInicial] = useState<string>(''); 
-  const [fechaHora, setFechaHora] = useState<string>(''); 
-  const [usuarioId, setUsuarioId] = useState('');
-  const [usuarioEmail, setUsuarioEmail] = useState('');
-  const [ubicacionId, setUbicacionId] = useState('');
-  const [ubicacionNombre, setUbicacionNombre] = useState('');
+  const [saldoInicial, setSaldoInicial] = useState<string>("");
+  const [fechaHora, setFechaHora] = useState<string>("");
+  const [usuarioId, setUsuarioId] = useState("");
+  const [usuarioEmail, setUsuarioEmail] = useState("");
+  const [ubicacionId, setUbicacionId] = useState("");
+  const [ubicacionNombre, setUbicacionNombre] = useState("");
   const [ingresoEfectivo] = useState<number>(0);
   const [ingresoTarjeta] = useState<number>(0);
   const [cargoHabitacion] = useState<number>(0);
@@ -18,33 +18,33 @@ const CashOpeningForm: React.FC = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [showErrorNotification, setShowErrorNotification] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
     const now = new Date();
-    const formattedDate = now.toLocaleString(); 
+    const formattedDate = now.toLocaleString();
     setFechaHora(formattedDate);
 
-    const userData = localStorage.getItem('user');
-    const locationData = localStorage.getItem('selectedLocation');
+    const userData = localStorage.getItem("user");
+    const locationData = localStorage.getItem("selectedLocation");
 
     if (userData) {
-      const user = JSON.parse(userData).user; 
-      setUsuarioId(user.id || '');
-      setUsuarioEmail(user.email || '');
+      const user = JSON.parse(userData).user;
+      setUsuarioId(user.id || "");
+      setUsuarioEmail(user.email || "");
     }
 
     if (locationData) {
       const location = JSON.parse(locationData);
-      setUbicacionId(location.id || '');
-      setUbicacionNombre(location.name || '');
+      setUbicacionId(location.id || "");
+      setUbicacionNombre(location.name || "");
     }
   }, []);
 
   const handleSaldoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (value === '' || !isNaN(parseFloat(value))) {
+    if (value === "" || !isNaN(parseFloat(value))) {
       setSaldoInicial(value);
     }
   };
@@ -67,21 +67,20 @@ const CashOpeningForm: React.FC = () => {
       egresos: egresos,
       usuarioId: usuarioId,
       ubicacionId: ubicacionId,
-      saldoFinal: parseFloat(saldoInicial)
+      saldoFinal: parseFloat(saldoInicial),
     };
 
     try {
       const cajaResponse = await fetchCreateCaja(cajaData);
-    if (cajaResponse && cajaResponse.id) {
-    localStorage.setItem('cajaId', cajaResponse.id.toString());
-    }
-
+      if (cajaResponse && cajaResponse.id) {
+        localStorage.setItem("cajaId", cajaResponse.id.toString());
+      }
 
       if (cajaResponse) {
         setNotificationMessage("Caja creada exitosamente.");
         setShowNotification(true);
         setTimeout(() => {
-          router.push("/Calendar");
+          router.push("/ResHotel");
         }, 2000);
       } else {
         setErrorMessage("Error al crear la caja.");
@@ -89,7 +88,9 @@ const CashOpeningForm: React.FC = () => {
         setTimeout(() => setShowErrorNotification(false), 3000);
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Error desconocido.");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Error desconocido."
+      );
       setShowErrorNotification(true);
       setTimeout(() => setShowErrorNotification(false), 3000);
     }
@@ -97,11 +98,16 @@ const CashOpeningForm: React.FC = () => {
 
   return (
     <div className="max-w-lg mt-20 mx-auto p-6 bg-white shadow-lg rounded-lg space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">Apertura de Caja</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+        Apertura de Caja
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="saldoInicial" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="saldoInicial"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Saldo Inicial
           </label>
           <input
@@ -115,7 +121,10 @@ const CashOpeningForm: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="fechaHora" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="fechaHora"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Fecha y Hora Actual
           </label>
           <input
@@ -128,7 +137,10 @@ const CashOpeningForm: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="usuario" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="usuario"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Usuario
           </label>
           <input
@@ -141,7 +153,10 @@ const CashOpeningForm: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="ubicacion" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="ubicacion"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Ubicación
           </label>
           <input
