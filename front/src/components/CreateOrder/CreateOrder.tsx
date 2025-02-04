@@ -146,8 +146,12 @@ const CreateOrder: React.FC = () => {
       totalAmount: selectedProductObj.precio * parseInt(quantity, 10),
       price: selectedProductObj.precio,
     };
-
+  
     setOrderItems(prevItems => [...prevItems, newOrderItem]);
+  
+    // SUMA el precio del nuevo producto al total general
+    setTotalAmount(prevTotal => prevTotal + newOrderItem.totalAmount);
+  
     setShowOrderSummary(true);
     setSelectedProduct('');
     setQuantity('1');

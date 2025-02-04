@@ -10,29 +10,11 @@ import { IUserN } from "@/Interfaces/IUser";
 const Navbar: React.FC = () => {
   const { isLogged, logOut, isAdmin } = useContext(UserContext);
   const router = useRouter();
-  const [isReservasMenuOpen, setReservasMenuOpen] = useState(false);
-  const [isVerReservasMenuOpen, setVerReservasMenuOpen] = useState(false);
-
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
   const [isSubMenuOpen, setSubMenuOpen] = useState(false); // Nuevo estado para el submenú
-  const orderMenuRef = useRef<HTMLUListElement | null>(null);
-  const reservationMenuRef = useRef<HTMLUListElement | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
 
-  const toggleMenu = (menu: "reservas" | "verReservas" | "ordenes") => {
-    if (menu === "reservas") {
-      setReservasMenuOpen(!isReservasMenuOpen);
-      setVerReservasMenuOpen(false);
-    } else if (menu === "verReservas") {
-      setVerReservasMenuOpen(!isVerReservasMenuOpen);
-      setReservasMenuOpen(false);
-    }
-  };
-
   const closeMenus = () => {
-    setReservasMenuOpen(false);
-    setVerReservasMenuOpen(false);
     setSubMenuOpen(false); // Cerrar el submenú
   };
 
@@ -146,6 +128,26 @@ const Navbar: React.FC = () => {
             )}
           </li>
 
+          {/* Enlace directo a Reservas (Hotel) */}
+          <li className="border-b">
+            <Link
+              href="/ResHotel"
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Reservas
+            </Link>
+          </li>
+
+          {/* Enlace directo a Ver Reservas */}
+          <li className="border-b">
+            <Link
+              href="/ReservationList"
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Ver Reservas
+            </Link>
+          </li>
+
           <li className="border-b">
             <button
               className="block px-4 py-2 hover:bg-[#E9C46A] transition"
@@ -192,60 +194,25 @@ const Navbar: React.FC = () => {
             Gastos
           </Link>
         </li>
-        <li className="relative" onClick={() => toggleMenu("reservas")}>
-          <button className="w-full text-left hover:text-[#F4A261] transition duration-200">
+
+        {/* Enlace directo a Reservas (Hotel) */}
+        <li>
+          <Link
+            href="/ResHotel"
+            className="hover:text-[#F4A261] transition duration-200"
+          >
             Reservas
-          </button>
-          {isReservasMenuOpen && (
-            <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
-              <li>
-                <Link
-                  href="/ResHotel"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Hotel
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ResDpto"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Departamento
-                </Link>
-              </li>
-            </ul>
-          )}
+          </Link>
         </li>
 
-        {/* Ver Reservas */}
-        <li className="relative">
-          <button
-            className="w-full text-left hover:text-[#F4A261] transition duration-200"
-            onClick={() => toggleMenu("verReservas")}
+        {/* Enlace directo a Ver Reservas */}
+        <li>
+          <Link
+            href="/ReservationList"
+            className="hover:text-[#F4A261] transition duration-200"
           >
             Ver Reservas
-          </button>
-          {isVerReservasMenuOpen && (
-            <ul className="absolute left-0 mt-2 bg-white shadow-md w-max z-50">
-              <li>
-                <Link
-                  href="/ReservationList"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Hotel
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/Reservations"
-                  className="block px-4 py-2 hover:bg-[#E9C46A] transition"
-                >
-                  Departamento
-                </Link>
-              </li>
-            </ul>
-          )}
+          </Link>
         </li>
 
         {/* Botón de Cerrar sesión */}
