@@ -12,7 +12,6 @@ interface HandleCajaProps {
 const HandleCajaComponent: React.FC<HandleCajaProps> = ({
     onClose,
     onConfirm,
-    orderData,
     totalAmount,  // Usa el total recibido como prop
 }) => {
     const [paymentMethod, setPaymentMethod] = useState<"efectivo" | "tarjeta">("efectivo");

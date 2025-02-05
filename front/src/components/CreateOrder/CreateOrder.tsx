@@ -6,7 +6,6 @@ import RoomSelector from './RoomSelector';
 import PriceDisplay from './PriceDisplay';
 import OrderSummary from './OrderSummary';
 import { IProduct, IRoom } from '@/Interfaces/IUser';
-import { OrderItem } from '@/Interfaces/interfaces';
 import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
 import { useLocationContext } from '@/context/LocationContext';

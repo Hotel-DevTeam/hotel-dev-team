@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';  
 import { UserContext } from '@/context/UserContext';
 import { fetchUpdateCaja } from '../Fetchs/CajaFetch/CajaFetch'; 
-import { ICloseCaja, ICreateCaja } from '@/Interfaces/ICaja';
+import { ICloseCaja } from '@/Interfaces/ICaja';
 
 const CashClosingForm: React.FC = () => {
   const [saldoFinal, setsaldoFinal] = useState<string>('');

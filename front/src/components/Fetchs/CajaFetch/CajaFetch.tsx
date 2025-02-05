@@ -1,4 +1,5 @@
 import { ICaja, ICloseCaja, ICreateCaja } from "@/Interfaces/ICaja";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
