@@ -48,7 +48,7 @@ export default function CreateLocation() {
         setNotificationMessage("Ubicación creada exitosamente");
         setShowNotification(true);
         setTimeout(() => {
-          router.push("/location");
+          router.push("/HotelRes");
         }, 2000);
       }
     } catch (error) {
