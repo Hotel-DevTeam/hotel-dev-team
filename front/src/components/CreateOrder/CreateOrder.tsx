@@ -78,19 +78,21 @@ const CreateOrder: React.FC = () => {
       const user = JSON.parse(userData).user;
       setUser(user.id || '');
     }
-
+  
+    if (!token) return; 
+  
     const fetchProducts = async () => {
       try {
-        if (!token) return;
         const data = await fetchGetProducts(token);
         setProducts(data);
       } catch (error) {
-        console.error("Error al obtener los productos:", error);
+        console.error('Error al obtener los productos:', error);
       }
     };
-
+  
     fetchProducts();
   }, [token]);
+  
 
   useEffect(() => {
     const loadRooms = async () => {

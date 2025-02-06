@@ -10,9 +10,11 @@ export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
       }
       const data: ICaja[] = await response.json();
       return data;
-    } catch (err) {
-      throw new Error('Ocurrió un error inesperado.');
-    }
+    }  catch (err) {
+        console.error('Error:', err);
+        throw new Error('Ocurrió un error inesperado.');
+      }
+      
   };
   
   export const fetchFindBoxById = async (id: string): Promise<ICaja> => {
@@ -24,8 +26,10 @@ export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
       const data: ICaja = await response.json();
       return data;
     } catch (err) {
+      console.error('Error:', err);
       throw new Error('Ocurrió un error inesperado.');
     }
+    
   };
 
 

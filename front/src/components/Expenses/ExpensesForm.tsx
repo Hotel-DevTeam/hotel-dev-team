@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { fetchGetProducts } from "../Fetchs/ProductsFetchs/ProductsFetchs";
-import { UserContext } from "@/context/UserContext"; // El contexto de Usuario
+import { UserContext } from "@/context/UserContext"; 
 import { IProduct } from "@/Interfaces/IUser"; 
 import { ICreateMovement, TipoMovimiento } from "@/Interfaces/IMovements";
 import { crearMovimiento } from "../Fetchs/MovementsFetch.tsx/MovementsFetch";
@@ -8,9 +8,19 @@ import { NotificationsForms } from "../Notifications/NotificationsForms";
 import { fetchFindBoxById, fetchUpdateCaja } from "../Fetchs/CajaFetch/CajaFetch";
 import { ICloseCaja } from "@/Interfaces/ICaja";
 
+
+interface IUserMovement {
+  id: string;
+  name: string;
+  password: string;
+  email: string;
+  role: string;
+  isAdmin?: boolean;
+}
+
 const ExpensesForm: React.FC = () => {
   const { token } = useContext(UserContext);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<IUserMovement | null>(null);
   const [ubicacion, setUbicacion] = useState<{ id: string, name: string } | null>(null); // Cambiado para guardar objeto {id, name}
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
