@@ -11,34 +11,36 @@ const Movements: React.FC = () => {
   const [selectedEstado, setSelectedEstado] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const { location } = useLocationContext(); 
+  const { location } = useLocationContext(); // Obtenemos la ubicación seleccionada desde el contexto
 
-
+  // Llamada para obtener los movimientos de caja
   const getCashMovements = async () => {
     if (location?.id) {
-      const movements = await fetchCashMovements(location.id);
+      const movements = await fetchCashMovements(location.id); // Pasamos el ID de ubicación seleccionado
       setMovimientosCaja(movements);
     }
   };
 
- 
+  // Llamamos a getCashMovements cuando el componente se monta o cuando cambia la ubicación
   useEffect(() => {
     getCashMovements();
-  }, [location, getCashMovements]);
-  
+  }, [location]);
 
-  
+  // Filtrar movimientos según los filtros seleccionados
   useEffect(() => {
     let filtered = [...movimientosCaja];
 
+    // Filtrado por tipo de movimiento
     if (selectedTipo) {
       filtered = filtered.filter((movimiento: IMovimientoCaja) => movimiento.tipoMovimiento === selectedTipo);
     }
 
+    // Filtrado por estado
     if (selectedEstado) {
       filtered = filtered.filter((movimiento: IMovimientoCaja) => movimiento.estado === selectedEstado);
     }
 
+    // Filtrado por fecha
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
 

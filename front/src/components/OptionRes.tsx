@@ -29,8 +29,7 @@ export default function  OptionRest() {
     if (storedLocation) {
       setLocation(JSON.parse(storedLocation));
     }
-  }, [setLocation]);
-  
+  }, []);
 
   useEffect(() => {
     const getLocations = async () => {
