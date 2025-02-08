@@ -1,17 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from '@/context/UserContext';
 import { useReservationContext } from "@/context/reservationContext";
+import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
+import { useLocationContext } from '@/context/LocationContext';
 import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
 import CurrencyConverterForm from "../DollarComponents/DollarReservation"; // Importamos el componente
+import { IRoom } from '@/Interfaces/IUser';
 
 const CreateReservationHotel: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
+  const { token } = useContext(UserContext);
+  const { location } = useLocationContext();
+  const [roomss, setRooms] = useState<IRoom[]>([]); 
   const [checkInDate, setCheckInDate] = useState<string>("");
   const [checkOutDate, setCheckOutDate] = useState<string>("");
-  const [roomId, setRoomId] = useState<number | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
   const [adultCount, setAdultCount] = useState<number>(1);
   const [childCount, setChildCount] = useState<number>(0);
   const [passengerType, setPassengerType] = useState<string>("adulto");
@@ -81,6 +88,24 @@ const CreateReservationHotel: React.FC = () => {
     setTotalPrice(0);
   };
 
+  useEffect(() => {
+      const loadRooms = async () => {
+        try {
+          if (location) {
+            if (!token) return;
+            const roomsData = await fetchGetRooms(location.id, token);
+            setRooms(roomsData);
+          } else {
+            console.error("No location selected");
+          }
+        } catch (error) {
+          console.error("Error al obtener las habitaciones:", error);
+        }
+      };
+  
+      loadRooms();
+    }, [location]);
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -124,16 +149,16 @@ const CreateReservationHotel: React.FC = () => {
           </label>
           <select
             value={roomId || ""}
-            onChange={(e) => setRoomId(Number(e.target.value))}
+            onChange={(e) => setRoomId(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           >
             <option value="">Selecciona una habitación</option>
-            {rooms && rooms.length > 0 ? (
-              rooms
-                .filter((room) => room.id !== 7) // Filtra el ID 7
+            {roomss && roomss.length > 0 ? (
+              roomss
+                // .filter((room) => room.id !== 7) // Filtra el ID 7
                 .map((room) => (
                   <option key={room.id} value={room.id}>
-                    {room.roomNumber}
+                    {room.name}
                   </option>
                 ))
             ) : (

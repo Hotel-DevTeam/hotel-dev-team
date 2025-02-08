@@ -17,7 +17,7 @@ import HandleCajaComponent from './ConfirmOrder';
 
 const CreateOrder: React.FC = () => {
   const { token } = useContext(UserContext);
-  const { location } = useLocationContext();  
+  const { location } = useLocationContext();
   const [user, setUser] = useState<string>('');
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');

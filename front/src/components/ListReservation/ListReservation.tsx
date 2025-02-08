@@ -9,7 +9,7 @@ import { roomsData } from "../../Data/Data"; // Importamos roomsData
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
 
 const ReservationsList: React.FC = () => {
-  const { reservations, finalizeReservation, cancelReservation, updatePrice } =
+  const { rooms, reservations, finalizeReservation, cancelReservation, updatePrice } =
     useReservationContext();
   const [filter, setFilter] = useState<
     "all" | "finalized" | "inProgress" | "cancelled"
@@ -28,7 +28,7 @@ const ReservationsList: React.FC = () => {
 
     // Filtro por habitación
     const roomFilter =
-      selectedRoom === "" || reservation.roomId === parseInt(selectedRoom, 10);
+      selectedRoom === "" || reservation.roomId === selectedRoom;
 
     return statusFilter && roomFilter;
   });
@@ -152,11 +152,9 @@ const ReservationsList: React.FC = () => {
             className="w-full p-3 rounded-md border border-gray-300 bg-gray-50 text-gray-700 focus:ring-2 focus:ring-orange-500"
           >
             <option value="">Filtra por habitación</option>
-            {roomsData.map((room) => (
+            {rooms.map((room) => (              
               <option key={room.id} value={room.id.toString()}>
-                {room.id === 7
-                  ? "Departamento"
-                  : `Habitación ${room.roomNumber}`}
+                {`Habitación ${room.name}`}
               </option>
             ))}
           </select>
@@ -166,7 +164,7 @@ const ReservationsList: React.FC = () => {
       {/* Lista de Reservas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredReservations.map((reservation) => {
-          const room = roomsData.find((room) => room.id === reservation.roomId);
+          const room = rooms.find((room) => room.id === reservation.roomId);
           let cardClass =
             "bg-white p-6 rounded-lg shadow-lg border border-gray-200";
           let buttonClass =
@@ -187,7 +185,7 @@ const ReservationsList: React.FC = () => {
           return (
             <div key={reservation.id} className={cardClass}>
               <div className="text-lg font-semibold text-gray-800">
-                Habitación: {room ? room.roomNumber : "No especificada"}
+                Habitación: {room ? room.name : "No especificada"}
               </div>
               <div className="text-gray-600 mt-2">
                 <div>Check-in: {reservation.checkInDate}</div>
