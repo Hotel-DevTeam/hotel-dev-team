@@ -2,7 +2,7 @@ export interface Reservation {
   id: string;
   checkInDate: string;
   checkOutDate: string;
-  roomId: number | null;
+  roomId: string | null;
   passengers: string;
   passengerCount: number;
   passengerType?: string;
