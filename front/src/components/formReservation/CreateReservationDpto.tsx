@@ -12,7 +12,7 @@ const CreateReservationDpto: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
   const [checkInDate, setCheckInDate] = useState<string>("");
   const [checkOutDate, setCheckOutDate] = useState<string>("");
-  const [roomId, setRoomId] = useState<number>(7); // Preseleccionamos el ID del departamento
+  const [roomId, setRoomId] = useState<string>(''); // Preseleccionamos el ID del departamento
   const [adultCount, setAdultCount] = useState<number>(1);
   const [childCount, setChildCount] = useState<number>(0);
   const [passengerType, setPassengerType] = useState<string>("adulto");
