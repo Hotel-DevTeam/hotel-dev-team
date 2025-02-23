@@ -76,6 +76,7 @@ const Calendar: React.FC = () => {
         // const checkOut = dayjs(res.checkOutDate).format("YYYY-MM-DD");
         const checkIn = res.checkInDate.slice(0, 10);
         const checkOut = res.checkOutDate.slice(0, 10);
+        console.log(checkIn, checkOut, formattedDay)
         if (checkIn === formattedDay) {
           dayColorClass = "bg-green-300"; // Check-in
         }
