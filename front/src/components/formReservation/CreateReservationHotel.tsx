@@ -4,12 +4,14 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from '@/context/UserContext';
 import { useReservationContext } from "@/context/reservationContext";
-import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
+import { fetchGetRoomById, fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { useLocationContext } from '@/context/LocationContext';
 import Swal from "sweetalert2";
 import { Reservation } from "../../Interfaces/IReservation";
 import CurrencyConverterForm from "../DollarComponents/DollarReservation"; // Importamos el componente
 import { IRoom } from '@/Interfaces/IUser';
+import { fetchGetLocation } from "../Fetchs/LocaationsFetch/LocationsFetch";
+import { CreateReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
 
 const CreateReservationHotel: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
@@ -23,6 +25,12 @@ const CreateReservationHotel: React.FC = () => {
   const [childCount, setChildCount] = useState<number>(0);
   const [passengerType, setPassengerType] = useState<string>("adulto");
   const [reservationMethod, setReservationMethod] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [lastname, setLastname] = useState<string>("");
+  const [identification, setIdentification] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [birthday, setBirthday] = useState<string>("");
   const [breakfast, setBreakfast] = useState<boolean>(false);
   const [deposit, setDeposit] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
@@ -39,31 +47,44 @@ const CreateReservationHotel: React.FC = () => {
     setRemainingBalance(totalPrice - amount);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newReservation: Reservation = {
-      id: new Date().toISOString(),
+    const selectedLocation = JSON.parse(localStorage.getItem("selectedLocation") || '');
+
+    // const locationInfo = await fetchGetLocation(selectedLocation.id, token || '')
+    const roomsData = await fetchGetRoomById(roomId || '', token || '');
+    
+    const newReservation = {
+      checkIn: false,
       checkInDate,
+      checkOut: false,
       checkOutDate,
-      roomId,
-      passengers: `Adultos: ${adultCount}, Niños: ${childCount}`,
-      passengerCount: adultCount + childCount,
-      passengerType,
-      reservationMethod,
-      breakfastIncluded: breakfast,
-      totalPrice,
-      deposit,
-      remainingBalance,
-      finalized: false,
-      comments,
-      totalPriceUSD: 0,
-      depositUSD: 0,
+      pax: {
+        name,
+        lastname,
+        dniPassport: identification,
+        email,
+        phone,
+        birthdate: birthday,
+        isActive: true
+      },
+      PaxNum: adultCount + childCount,
+      paxType: 1,
+      bookingPlatform: reservationMethod,
+      ubicacion:{name: selectedLocation.name},
+      roomType:{name: roomsData[0].name},
+      breakfast,
+      priceArg: totalPrice,
+      priceUsd: 0,
+      depositArg: deposit,
+      depositUsd: 0,
+      balance: remainingBalance,
+      completed: false,
+      notasAdicionales: [comments],
     };
 
-    console.log("New Reservation Data:", newReservation);
-
-    addReservation(newReservation);
+    // addReservation(newReservation);
 
     Swal.fire({
       title: "Reserva creada",
@@ -73,11 +94,17 @@ const CreateReservationHotel: React.FC = () => {
       confirmButtonText: "Aceptar",
     });
 
-    // Limpiar los campos del formulario
+    CreateReservation(newReservation)
     setCheckInDate("");
     setCheckOutDate("");
     setRoomId(null);
     setAdultCount(1);
+    setName("");
+    setLastname("");
+    setIdentification("");
+    setEmail("");
+    setPhone("");
+    setBirthday("");
     setChildCount(0);
     setPassengerType("adulto");
     setReservationMethod("");
@@ -116,6 +143,78 @@ const CreateReservationHotel: React.FC = () => {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Nombre */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Nombre:
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+        {/* Apellido */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Apellido:
+          </label>
+          <input
+            type="text"
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+        {/* Identificación */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Identificación:
+          </label>
+          <input
+            type="text"
+            value={identification}
+            onChange={(e) => setIdentification(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+        {/* E-mail */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            E-Mail:
+          </label>
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+        {/* Número de teléfono */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Celular:
+          </label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+        {/* Fecha de Nacimiento */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Fecha de Nacimiento:
+          </label>
+          <input
+            type="date"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
         {/* Fecha de entrada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">

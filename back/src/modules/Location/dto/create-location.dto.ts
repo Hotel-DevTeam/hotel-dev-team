@@ -12,7 +12,7 @@ export class CreateLocationDto {
   @IsString()
   address: string;
 
-  @ApiProperty({ description: 'img Url' })
+  @ApiProperty({ description: 'img Url', example: 'https://res.cloudinary.com/dju6fgtcl/image/upload/v1731508529/depto_tse3cr.jpg' })
   @IsString()
   imgUrl: string;
 

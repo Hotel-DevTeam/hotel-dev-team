@@ -81,4 +81,22 @@ export class RoomController {
   ): Promise<Room[]> {
     return this.roomService.getRoomsByLocation(locationId);
   }
+
+
+  @Get('room/:roomId')
+  @ApiOperation({
+    summary: 'Obtener habitación por ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Traer ubicación por ID.',
+  })
+  @ApiResponse({ status: 404, description: 'Ubicación no encontrada.' })
+  async getRoomById(
+    @Param('roomId') roomId: string,
+  ): Promise<Room[]> {
+    console.log(roomId, 'bbb');
+    
+    return this.roomService.getRoomsById(roomId);
+  }
 }

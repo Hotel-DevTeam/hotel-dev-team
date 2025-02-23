@@ -1,22 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 import { roomsData } from "../../Data/Data"; // Importamos roomsData
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
+import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { log } from "console";
 
 const ReservationsList: React.FC = () => {
-  const { rooms, reservations, finalizeReservation, cancelReservation, updatePrice } =
+  const { rooms, finalizeReservation, cancelReservation, updatePrice } =
     useReservationContext();
   const [filter, setFilter] = useState<
     "all" | "finalized" | "inProgress" | "cancelled"
   >("all");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+
+  useEffect(() => {
+      const loadOrders = async () => {
+        try {
+          const data = await fetchGetReservtions();
+          setReservations(data.reservations);
+        } catch (error) {
+          setError(error instanceof Error ? error.message : "Error desconocido");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadOrders();
+    }, []);
+  
   // Filtrar reservas por estado y habitación
   const filteredReservations = reservations.filter((reservation) => {
     // Filtro por estado
@@ -83,7 +104,7 @@ const ReservationsList: React.FC = () => {
     const dollarRate = await fetch("/api/get-dollar-rate").then((res) =>
       res.json()
     );
-    const updatedPrice = reservation.totalPrice * dollarRate.rate;
+    const updatedPrice = reservation.priceArg * dollarRate.rate;
     updatePrice(reservation.id, updatedPrice);
   };
 
@@ -101,7 +122,7 @@ const ReservationsList: React.FC = () => {
       {/* Filtros de Estado y Habitación */}
       <div className="flex gap-8 mb-6">
         {/* Filtro de Estado */}
-        <div className="w-1/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        {/* <div className="w-1/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             Filtrar por Estado
           </h3>
@@ -139,10 +160,10 @@ const ReservationsList: React.FC = () => {
               </label>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Filtro por Habitación */}
-        <div className="w-3/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        {/* <div className="w-3/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
             Filtrar por Habitación
           </h3>
@@ -158,8 +179,8 @@ const ReservationsList: React.FC = () => {
               </option>
             ))}
           </select>
-        </div>
-      </div>
+        </div>*/}
+      </div> 
 
       {/* Lista de Reservas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -185,20 +206,20 @@ const ReservationsList: React.FC = () => {
           return (
             <div key={reservation.id} className={cardClass}>
               <div className="text-lg font-semibold text-gray-800">
-                Habitación: {room ? room.name : "No especificada"}
+                Habitación: {reservation.room ? reservation.room.name : "No especificada"}
               </div>
               <div className="text-gray-600 mt-2">
                 <div>Check-in: {reservation.checkInDate}</div>
-                <div>Check-out: {reservation.checkOutDate}</div>
-                <div>Pasajeros: {reservation.passengers}</div>
+                <div>Check-out: {reservation.checkOutDate}</div> 
+                <div>Pasajero: {reservation.pax.name} {reservation.pax.lastname}</div>
                 <div className="font-semibold text-gray-800">
-                  Precio Total: ${reservation.totalPrice} ARS
+                  Precio Total: ${reservation.priceArg} ARS
                 </div>
                 <div className="font-semibold text-gray-800">
-                  Depósito: ${reservation.deposit} ARS
+                  Depósito: ${reservation.depositArg} ARS
                 </div>
                 <div className="font-semibold text-gray-800">
-                  Saldo Restante: ${reservation.remainingBalance} ARS
+                  Saldo Restante: ${reservation.balance} ARS
                 </div>
                 {reservation.status === "cancelada" &&
                   reservation.cancellationReason && (
@@ -218,7 +239,7 @@ const ReservationsList: React.FC = () => {
 
                 <button
                   className={buttonClass}
-                  onClick={() => handleFinalizeReservation(reservation)}
+                  onClick={() => CompleteReservation(reservation.id)}
                 >
                   {reservation.status === "finalizada"
                     ? "Finalizada"
@@ -227,7 +248,7 @@ const ReservationsList: React.FC = () => {
 
                 <button
                   className={buttonClass}
-                  onClick={() => handleCancelReservation(reservation)}
+                  onClick={() => CancelReservation(reservation.id)}
                 >
                   Cancelar
                 </button>
@@ -244,12 +265,12 @@ const ReservationsList: React.FC = () => {
             pesosAmount={
               filteredReservations.find(
                 (reservation) => reservation.id === showPriceForm
-              )?.totalPrice || 0
+              )?.priceArg || 0
             }
             depositAmount={
               filteredReservations.find(
                 (reservation) => reservation.id === showPriceForm
-              )?.deposit || 0
+              )?.depositArg || 0
             }
           />
         </div>

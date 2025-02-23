@@ -1,27 +1,9 @@
-export interface Reservation {
-  id: string;
-  checkInDate: string;
-  checkOutDate: string;
-  roomId: string | null;
-  passengers: string;
-  passengerCount: number;
-  passengerType?: string;
-  reservationMethod: string;
-  breakfastIncluded: boolean;
-  totalPrice: number;
-  totalPriceUSD: number;
-  deposit: number;
-  depositUSD: number;
-  remainingBalance: number;
-  finalized: boolean;
-  comments: string;
-  status?: string;
-  cancellationReason?: string;
-}
-
+import { Pax } from "./IPax";
+ 
 export interface Room {
   id: number;
   roomNumber: string;
+  name: string;
   description: string;
   capacity: number;
   price: number;
@@ -35,3 +17,50 @@ export interface IRoomId {
 }
 
 // app/Interfaces/IReservation.ts
+
+export interface Reservation {
+  id: string;
+  checkInDate: string;
+  checkOutDate: string;
+  roomId: string | null;
+  name: string;
+  passengers: string;
+  identification: string;
+  pax: Pax;
+  room: Room;
+  passengerCount: number;
+  passengerType?: string;
+  reservationMethod: string;
+  breakfastIncluded: boolean;
+  priceArg: number;
+  priceUsd: number;
+  depositArg: number;
+  depositUsd: number;
+  balance: number;
+  finalized: boolean;
+  comments: string;
+  status?: string;
+  cancellationReason?: string;
+}
+
+export interface CreateReservationDto {
+  checkIn: boolean; // Indica si el huésped ingresó al hotel
+  checkInDate: string; // Fecha de ingreso
+  checkOut: boolean; // Indica si el huésped se retiró del hotel
+  checkOutDate: string; // Fecha de egreso
+  pax: {email: string}; // Información del pasajero
+  PaxNum: number; // Número de pasajeros
+  paxType: number; // Tipo de pasajero (ej. 1 para adulto, 2 para niño)
+  bookingPlatform: string; // Plataforma origen de la reserva (ej. 'Booking.com')
+  ubicacion: {name: string}; // Ubicación de la reserva
+  roomType: {name: string}; // Tipo de habitación
+  breakfast: boolean; // Indica si incluye desayuno
+  priceArg: number; // Precio en pesos argentinos
+  priceUsd: number; // Precio en dólares
+  depositArg: number; // Depósito/seña en pesos argentinos
+  depositUsd: number; // Depósito/seña en dólares
+  balance: number; // Saldo restante
+  completed: boolean; // Indica si la reserva está completada
+  notasAdicionales: string[]; // Detalles extra sobre el pax o la reserva
+}
+

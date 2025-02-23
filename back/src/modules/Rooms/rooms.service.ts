@@ -17,4 +17,8 @@ export class RoomService {
   async getRoomsByLocation(locationId: string): Promise<Room[]> {
     return this.roomsRepository.getRoomsByLocation(locationId);
   }
+
+  async getRoomsById(roomId: string): Promise<Room[]> {    
+    return this.roomsRepository.getRoomsById(roomId);
+  }
 }

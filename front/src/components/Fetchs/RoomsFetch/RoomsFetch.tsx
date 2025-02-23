@@ -25,3 +25,25 @@ export const fetchGetRooms = async (locationId: string, token: string): Promise<
       throw error;
     }
   };
+
+export const fetchGetRoomById = async (roomId: string, token: string): Promise<IRoom[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/rooms/room/${roomId}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error("Error al obtener la habitacion");
+    }
+    
+    const data: IRoom[] = await response.json(); 
+    return data;
+  } catch (error) {
+    console.error("Error fetching rooms:", error);
+    throw error;
+  }
+};

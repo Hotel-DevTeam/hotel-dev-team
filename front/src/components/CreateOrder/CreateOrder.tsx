@@ -110,7 +110,7 @@ const CreateOrder: React.FC = () => {
     };
 
     loadRooms();
-  }, [location]);
+  }, [location, token]);
 
   useEffect(() => {
     if (selectedProduct && productPrice && quantity) {

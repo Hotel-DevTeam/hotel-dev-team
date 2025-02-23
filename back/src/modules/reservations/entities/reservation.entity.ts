@@ -18,8 +18,21 @@ export class Reservation {
   checkIn: boolean;
 
   @Column()
+  @ApiProperty({ description: 'Fecha de ingreso' })
+  checkInDate: Date;
+
+  @Column()
   @ApiProperty({ description: 'Indica si el huésped se retiró del hotel' })
   checkOut: boolean;
+
+  @Column()
+  @ApiProperty({ description: 'Fecha de Egreso' })
+  checkOutDate: Date;
+
+
+  @Column()
+  @ApiProperty({ description: 'Completa' })
+  completed: boolean;
 
   @ManyToOne(() => Pax, (pax) => pax.reservations)
   @ApiProperty({ description: 'Pasajero asociado a la reserva' })

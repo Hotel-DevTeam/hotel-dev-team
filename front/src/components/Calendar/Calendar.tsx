@@ -1,15 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useReservationContext } from "@/context/reservationContext";
 import dayjs from "dayjs";
 import ReservationModal from "./ReservationModal";
+import { fetchGetReservtions } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { Reservation } from "@/Interfaces/IReservation";
 
 const Calendar: React.FC = () => {
-  const { reservations } = useReservationContext();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(dayjs());
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        const data = await fetchGetReservtions();
+        setReservations(data.reservations);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "Error desconocido");
+      } finally {
+        setLoading(false); // Esto asegura que el estado de loading se cambie cuando termine la carga
+      }
+    };
+
+    loadOrders();
+  }, []);
 
   const handleDayClick = (day: string) => {
     setSelectedDate(day); 
@@ -32,6 +51,10 @@ const Calendar: React.FC = () => {
   };
 
   const renderCalendar = () => {
+    if (loading) {
+      return <div>Loading...</div>; // Muestra un mensaje o spinner mientras se cargan los datos
+    }
+
     const daysInMonth = currentMonth.daysInMonth();
     const startOfMonth = currentMonth.startOf("month").day();
     const calendarDays = [];
@@ -57,11 +80,8 @@ const Calendar: React.FC = () => {
         if (checkOut === formattedDay) {
           dayColorClass = "bg-red-300"; // Check-out
         }
-        console.log(checkOut)
-        console.log(checkIn)
-        console.log(formattedDay)
         if (checkOut === formattedDay && checkIn === formattedDay) {
-          dayColorClass = "bg-blue-300"; // Check-out
+          dayColorClass = "bg-blue-300"; // Check-in y Check-out el mismo día
         }
       });
 
