@@ -44,33 +44,29 @@ const Calendar: React.FC = () => {
 
   const getReservationsForDay = (day: string) => {
     return reservations.filter((res) => {
-      const checkIn = dayjs(res.checkInDate).format("YYYY-MM-DD");
-      const checkOut = dayjs(res.checkOutDate).format("YYYY-MM-DD");
-      return checkIn <= day && checkOut >= day;
+      const checkIn = res.checkInDate.slice(0, 10);
+      const checkOut = res.checkOutDate.slice(0, 10);
+      return checkIn == day || checkOut == day;
     });
   };
 
   const renderCalendar = () => {
     if (loading) {
-      return <div>Loading...</div>; // Muestra un mensaje o spinner mientras se cargan los datos
+      return <div>Loading...</div>;
     }
 
     const daysInMonth = currentMonth.daysInMonth();
     const startOfMonth = currentMonth.startOf("month").day();
     const calendarDays = [];
 
-    // Rellenar los primeros días en blanco hasta el inicio del mes
     for (let i = 0; i < startOfMonth; i++) {
       calendarDays.push(<div key={`empty-${i}`} className="w-1/7 h-16"></div>);
     }
 
-    // Crear los días del calendario
     for (let day = 1; day <= daysInMonth; day++) {
       const formattedDay = currentMonth.date(day).format("YYYY-MM-DD");
-      console.log(day)
       const reservationsForDay = getReservationsForDay(formattedDay);
 
-      // Colores para el día con reserva
       let dayColorClass = "";
       reservationsForDay.forEach((res) => {
         // const checkIn = dayjs(res.checkInDate).format("YYYY-MM-DD");
