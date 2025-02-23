@@ -67,6 +67,7 @@ const Calendar: React.FC = () => {
     // Crear los días del calendario
     for (let day = 1; day <= daysInMonth; day++) {
       const formattedDay = currentMonth.date(day).format("YYYY-MM-DD");
+      console.log(day)
       const reservationsForDay = getReservationsForDay(formattedDay);
 
       // Colores para el día con reserva
@@ -76,7 +77,7 @@ const Calendar: React.FC = () => {
         // const checkOut = dayjs(res.checkOutDate).format("YYYY-MM-DD");
         const checkIn = res.checkInDate.slice(0, 10);
         const checkOut = res.checkOutDate.slice(0, 10);
-        console.log(checkIn, checkOut, formattedDay)
+        console.log('Check-In, Check-Out, FormattedDay',checkIn, checkOut, formattedDay)
         if (checkIn === formattedDay) {
           dayColorClass = "bg-green-300"; // Check-in
         }
