@@ -72,8 +72,10 @@ const Calendar: React.FC = () => {
       // Colores para el día con reserva
       let dayColorClass = "";
       reservationsForDay.forEach((res) => {
-        const checkIn = dayjs(res.checkInDate).format("YYYY-MM-DD");
-        const checkOut = dayjs(res.checkOutDate).format("YYYY-MM-DD");
+        // const checkIn = dayjs(res.checkInDate).format("YYYY-MM-DD");
+        // const checkOut = dayjs(res.checkOutDate).format("YYYY-MM-DD");
+        const checkIn = res.checkInDate.slice(0, 10);
+        const checkOut = res.checkOutDate.slice(0, 10);
         if (checkIn === formattedDay) {
           dayColorClass = "bg-green-300"; // Check-in
         }
