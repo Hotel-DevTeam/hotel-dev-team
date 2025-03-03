@@ -1,101 +1,107 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
-import { Reservation, Room } from "../Interfaces/IReservation";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Reservation } from "../Interfaces/IReservation";
+import { IRoomId } from "../Interfaces/IReservation";
+import { IRoom } from '@/Interfaces/IUser';
+// import { roomsData } from "../Data/Data"; // Importar los datos de las habitaciones
+import { fetchGetRooms } from '../components/Fetchs/RoomsFetch/RoomsFetch';
+import { UserContext } from '@/context/UserContext';
+import { useLocationContext } from '@/context/LocationContext';
+import Swal from "sweetalert2"; // Importar SweetAlert2 para el modal
 
-interface ReservationContextProps {
+interface ReservationContextType {
   reservations: Reservation[];
-  rooms: Room[];
-  addReservation: (reservation: Reservation) => void;
+  rooms: IRoom[]; // Tipo de rooms como IRoomId
+  addReservation: (newReservation: Reservation) => void;
+  removeReservation: (id: string) => void;
   finalizeReservation: (reservation: Reservation) => void;
-  removeReservation: (id: string) => void; // Función para eliminar reservas
+  cancelReservation: (id: string, description: string) => void;
+  updatePrice: (id: string, newPrice: number) => void;
 }
 
-interface ReservationProviderProps {
-  children: React.ReactNode;
-}
-
-const ReservationContext = createContext<ReservationContextProps | undefined>(
+const ReservationContext = createContext<ReservationContextType | undefined>(
   undefined
 );
 
-export const useReservationContext = (): ReservationContextProps => {
-  const context = useContext(ReservationContext);
-  if (!context) {
-    throw new Error(
-      "useReservationContext must be used within a ReservationProvider"
-    );
-  }
-  return context;
-};
-
-export const ReservationProvider: React.FC<ReservationProviderProps> = ({
-  children,
-}) => {
-  const [isClient, setIsClient] = useState(false);
+export const ReservationProvider = ({ children }: { children: ReactNode }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([
-    {
-      id: 1,
-      roomNumber: "101",
-      description: "Habitación estándar",
-      price: 100,
-      capacity: 2,
-      priceUSD: 100,
-      breakfastIncluded: true,
-    },
-    {
-      id: 2,
-      roomNumber: "102",
-      description: "Habitación deluxe",
-      price: 150,
-      capacity: 2,
-      priceUSD: 150,
-      breakfastIncluded: false,
-    },
-  ]);
+  // const [rooms, setRooms] = useState<IRoomId[]>([]);
+  const [rooms, setRooms] = useState<IRoom[]>([]);
+  const { token } = useContext(UserContext);
+  const { location } = useLocationContext();
 
   useEffect(() => {
-    setIsClient(true);
+    // Cargar reservas del localStorage al iniciar
+    const savedReservations = localStorage.getItem("reservations");
+    if (savedReservations) {
+      setReservations(JSON.parse(savedReservations));
+    }
   }, []);
 
   useEffect(() => {
-    if (isClient) {
-      const savedReservations = localStorage.getItem("reservations");
-      const savedRooms = localStorage.getItem("rooms");
-
-      if (savedReservations) {
-        setReservations(JSON.parse(savedReservations));
-      }
-
-      if (savedRooms) {
-        setRooms(JSON.parse(savedRooms));
-      }
-    }
-  }, [isClient]);
+        const loadRooms = async () => {
+          try {
+            if (location) {
+              if (!token) return;
+              const roomsData = await fetchGetRooms(location.id, token);  
+              setRooms(roomsData);
+            } else {
+              console.error("No location selected");
+            }
+          } catch (error) {
+            console.error("Error al obtener las habitaciones:", error);
+          }
+        };
+    
+        loadRooms();
+      }, [location]);
 
   useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("reservations", JSON.stringify(reservations));
-      localStorage.setItem("rooms", JSON.stringify(rooms));
-    }
-  }, [reservations, rooms, isClient]);
+    // Guardar reservas en localStorage cada vez que cambian
+    localStorage.setItem("reservations", JSON.stringify(reservations));
+  }, [reservations]);
 
-  const addReservation = (reservation: Reservation) => {
-    setReservations((prevReservations) => [...prevReservations, reservation]);
+  const addReservation = (newReservation: Reservation) => {
+    setReservations((prev) => [...prev, newReservation]);
+  };
+
+  const removeReservation = (id: string) => {
+    setReservations((prev) =>
+      prev.filter((reservation) => reservation.id !== id)
+    );
   };
 
   const finalizeReservation = (reservation: Reservation) => {
-    setReservations((prevReservations) =>
-      prevReservations.map((r) =>
-        r.id === reservation.id ? { ...r, finalized: true } : r
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === reservation.id ? { ...res, status: "finalizada" } : res
       )
     );
   };
 
-  const removeReservation = (id: string) => {
-    setReservations((prevReservations) =>
-      prevReservations.filter((reservation) => reservation.id !== id)
+  const cancelReservation = (id: string, description: string) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id
+          ? { ...res, status: "cancelada", cancelDescription: description }
+          : res
+      )
+    );
+  };
+
+  const updatePrice = (id: string, newPrice: number) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id ? { ...res, totalPrice: newPrice } : res
+      )
     );
   };
 
@@ -105,11 +111,23 @@ export const ReservationProvider: React.FC<ReservationProviderProps> = ({
         reservations,
         rooms,
         addReservation,
+        removeReservation,
         finalizeReservation,
-        removeReservation, // Exponemos la función para eliminar reservas
+        cancelReservation,
+        updatePrice,
       }}
     >
       {children}
     </ReservationContext.Provider>
   );
+};
+
+export const useReservationContext = (): ReservationContextType => {
+  const context = useContext(ReservationContext);
+  if (!context) {
+    throw new Error(
+      "useReservationContext must be used within a ReservationProvider"
+    );
+  }
+  return context;
 };

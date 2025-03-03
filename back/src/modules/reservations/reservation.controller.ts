@@ -117,4 +117,52 @@ export class ReservationsController {
       createReservationDto,
     );
   }
+
+  @Patch(':id/cancel')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'La reserva fue cancelada exitosamente.',
+    type: Reservation,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No se encontró la reserva con el ID proporcionado.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'La reserva ya estaba cancelada.',
+  })
+  async cancelReservation(@Param('id') id: string) {
+    const cancelledReservation =
+      await this.reservationService.cancelReservation(id);
+    return {
+      message: 'Reserva cancelada exitosamente',
+      reservation: cancelledReservation,
+    };
+  }
+
+  @Patch(':id/complete')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'La reserva fue finalizada exitosamente.',
+    type: Reservation,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No se encontró la reserva con el ID proporcionado.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'La reserva ya estaba finalizada.',
+  })
+  async completeReservation(@Param('id') id: string) {
+    const cancelledReservation =
+      await this.reservationService.finalizeReservation(id);
+    return {
+      message: 'Reserva finalizada exitosamente',
+      reservation: cancelledReservation,
+    };
+  }
 }

@@ -2,7 +2,6 @@
 import { IUserRegister,Role } from '@/Interfaces/IUser';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import { validationRegister } from '@/utils/validationFormRegister';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useState } from 'react';
 import { UserContext } from '@/context/UserContext';
@@ -43,7 +42,7 @@ export default function RegisterForm() {
                 setNotificationMessage("Registro exitoso");
                 setShowNotification(true);
                 setTimeout(async () => {
-                    router.push("/location");
+                    router.push("/adminDashboard");
                 }, 2000);
             } else {
                 setErrors({ ...errors, general: "Registro inválido. Por favor, revisa los datos ingresados." });
@@ -63,8 +62,7 @@ export default function RegisterForm() {
                         ¡Bienvenido a HotelDev!
                     </h1>
                     <p className="mt-2 text-gray-500">
-                  
-                  cdcd      Crea tu cuenta para realizar reservas
+                         Crea tu cuenta para realizar reservas
                     </p>
                 </div>
 
@@ -161,17 +159,13 @@ export default function RegisterForm() {
                         <button
                          disabled={Object.keys(errors).length > 0}
                             type="submit"
-                            className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                            className="inline-block rounded bg-[#FF5100] border border-[#FF5100] px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-[#FF5100] focus:outline-none focus:ring active:text-[#FF5100] transition-all duration-300"
                         >
-                            Registrarme
+                            Registrar
                         </button>
                     </div>
 
-                    <div className="flex justify-center">
-                        <Link href="/login" className="text-sm text-gray-500 hover:underline">
-                            ¿Ya posees cuenta? Haz clic para ingresar
-                        </Link>
-                    </div>
+                  
 
                     {showNotification && (
                         <div className="absolute top-12 left-0 right-0 mx-auto w-max">

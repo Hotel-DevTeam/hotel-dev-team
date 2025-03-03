@@ -1,30 +1,61 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
+import { roomsData } from "../../Data/Data"; // Importamos roomsData
+import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
+import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { log } from "console";
 
 const ReservationsList: React.FC = () => {
-  const { reservations, rooms, finalizeReservation, removeReservation } =
+  const { rooms, finalizeReservation, cancelReservation, updatePrice } =
     useReservationContext();
-  const [filter, setFilter] = useState<"all" | "finalized" | "unfinalized">(
-    "all"
-  );
+  const [filter, setFilter] = useState<
+    "all" | "finalized" | "inProgress" | "cancelled"
+  >("all");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+
+  useEffect(() => {
+      const loadOrders = async () => {
+        try {
+          const data = await fetchGetReservtions();
+          setReservations(data.reservations);
+        } catch (error) {
+          setError(error instanceof Error ? error.message : "Error desconocido");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadOrders();
+    }, []);
+  
+  // Filtrar reservas por estado y habitación
   const filteredReservations = reservations.filter((reservation) => {
-    if (filter === "finalized") return reservation.finalized;
-    if (filter === "unfinalized") return !reservation.finalized;
-    if (selectedRoom) {
-      // Filtramos por habitación si se ha seleccionado una
-      const room = rooms.find((room) => room.id === reservation.roomId);
-      return room?.roomNumber === selectedRoom;
-    }
-    return true;
+    // Filtro por estado
+    const statusFilter =
+      filter === "all" ||
+      (filter === "finalized" && reservation.status === "finalizada") ||
+      (filter === "inProgress" && reservation.status === "en progreso") ||
+      (filter === "cancelled" && reservation.status === "cancelada");
+
+    // Filtro por habitación
+    const roomFilter =
+      selectedRoom === "" || reservation.roomId === selectedRoom;
+
+    return statusFilter && roomFilter;
   });
 
   const handleFinalizeReservation = (reservation: Reservation) => {
+    if (reservation.status === "finalizada") return;
     Swal.fire({
       title: "¿Finalizar esta reserva?",
       text: "Una vez finalizada no podrás revertir esta acción.",
@@ -46,162 +77,204 @@ const ReservationsList: React.FC = () => {
     });
   };
 
-  const handleRemoveReservation = (id: string) => {
+  const handleCancelReservation = (reservation: Reservation) => {
+    if (reservation.status === "cancelada") return;
+
     Swal.fire({
-      title: "¿Eliminar esta reserva?",
-      text: "Esta acción no se puede deshacer.",
-      icon: "warning",
+      title: "¿Cancelar esta reserva?",
+      text: "Por favor, ingresa una descripción de la razón para cancelar.",
+      input: "textarea",
+      inputPlaceholder: "Descripción",
       showCancelButton: true,
       confirmButtonColor: "#FF5100",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
+      confirmButtonText: "Sí, cancelar",
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        removeReservation(id);
-        Swal.fire(
-          "Eliminada",
-          "La reserva ha sido eliminada exitosamente.",
-          "success"
-        );
+        const cancellationReason = result.value;
+        cancelReservation(reservation.id, cancellationReason);
+        reservation.cancellationReason = cancellationReason;
+        Swal.fire("Cancelada", "La reserva ha sido cancelada.", "success");
       }
     });
   };
 
+  const handlePriceChange = async (reservation: Reservation) => {
+    const dollarRate = await fetch("/api/get-dollar-rate").then((res) =>
+      res.json()
+    );
+    const updatedPrice = reservation.priceArg * dollarRate.rate;
+    updatePrice(reservation.id, updatedPrice);
+  };
+
+  // Función para manejar la apertura del formulario
+  const togglePriceForm = (reservationId: string | null) => {
+    setShowPriceForm(showPriceForm === reservationId ? null : reservationId);
+  };
+
   return (
-    <div className="m-4 space-y-4">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">
+    <div className="m-6 space-y-6">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">
         Lista de Reservas
       </h2>
 
-      {/* Filtro con radio buttons y selección de habitación */}
-      <div className="flex justify-center gap-6 mb-4">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="filter"
-            value="all"
-            checked={filter === "all"}
-            onChange={(e) =>
-              setFilter(e.target.value as "all" | "finalized" | "unfinalized")
-            }
-            className="form-radio text-orange-400 focus:ring-orange-500"
-          />
-          <span className="text-gray-700 font-medium">Todas</span>
-        </label>
+      {/* Filtros de Estado y Habitación */}
+      <div className="flex gap-8 mb-6">
+        {/* Filtro de Estado */}
+        {/* <div className="w-1/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Filtrar por Estado
+          </h3>
+          <div className="flex flex-col gap-6">
+            {["all", "finalized", "inProgress", "cancelled"].map((status) => (
+              <label
+                key={status}
+                className="flex items-center gap-3 cursor-pointer text-gray-700"
+              >
+                <input
+                  type="radio"
+                  name="filter"
+                  value={status}
+                  checked={filter === status}
+                  onChange={(e) =>
+                    setFilter(
+                      e.target.value as
+                        | "all"
+                        | "finalized"
+                        | "inProgress"
+                        | "cancelled"
+                    )
+                  }
+                  className="form-radio text-orange-500 focus:ring-orange-500"
+                />
+                <span className="text-lg">
+                  {status === "all"
+                    ? "Todas"
+                    : status === "finalized"
+                    ? "Finalizadas"
+                    : status === "cancelled"
+                    ? "Canceladas"
+                    : "En Progreso"}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div> */}
 
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="filter"
-            value="finalized"
-            checked={filter === "finalized"}
-            onChange={(e) =>
-              setFilter(e.target.value as "all" | "finalized" | "unfinalized")
-            }
-            className="form-radio text-orange-400 focus:ring-orange-500"
-          />
-          <span className="text-gray-700 font-medium">Finalizadas</span>
-        </label>
+        {/* Filtro por Habitación */}
+        {/* <div className="w-3/4 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Filtrar por Habitación
+          </h3>
+          <select
+            value={selectedRoom}
+            onChange={(e) => setSelectedRoom(e.target.value)}
+            className="w-full p-3 rounded-md border border-gray-300 bg-gray-50 text-gray-700 focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="">Filtra por habitación</option>
+            {rooms.map((room) => (              
+              <option key={room.id} value={room.id.toString()}>
+                {`Habitación ${room.name}`}
+              </option>
+            ))}
+          </select>
+        </div>*/}
+      </div> 
 
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="filter"
-            value="unfinalized"
-            checked={filter === "unfinalized"}
-            onChange={(e) =>
-              setFilter(e.target.value as "all" | "finalized" | "unfinalized")
-            }
-            className="form-radio text-orange-400 focus:ring-orange-500"
-          />
-          <span className="text-gray-700 font-medium">No Finalizadas</span>
-        </label>
-      </div>
-
-      {/* Filtro por habitación */}
-      <div className="mb-4">
-        <select
-          value={selectedRoom}
-          onChange={(e) => setSelectedRoom(e.target.value)}
-          className="block mx-auto p-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-        >
-          <option value="">Filtra por habitación</option>
-          {rooms.map((room) => (
-            <option key={room.id} value={room.roomNumber}>
-              Habitación {room.roomNumber}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Contenedor flex para tarjetas */}
-      <div className="flex flex-wrap gap-6">
+      {/* Lista de Reservas */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredReservations.map((reservation) => {
-          // Encontramos la habitación asociada a la reserva
           const room = rooms.find((room) => room.id === reservation.roomId);
+          let cardClass =
+            "bg-white p-6 rounded-lg shadow-lg border border-gray-200";
+          let buttonClass =
+            "bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 hover:text-white";
+
+          if (reservation.status === "finalizada") {
+            cardClass =
+              "bg-green-50 p-6 rounded-lg shadow-lg border border-green-200";
+            buttonClass =
+              "bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 hover:text-white";
+          } else if (reservation.status === "cancelada") {
+            cardClass =
+              "bg-red-50 p-6 rounded-lg shadow-lg border border-red-200";
+            buttonClass =
+              "bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:text-white";
+          }
 
           return (
-            <div
-              key={reservation.id}
-              className="bg-[#CD9C8A] p-6 rounded-lg shadow-lg transition transform hover:scale-105 w-72"
-            >
-              {/* Habitación destacada */}
-              <div className="text-white font-semibold text-xl mb-2">
-                Habitación: {room ? room.roomNumber : "No especificada"}
+            <div key={reservation.id} className={cardClass}>
+              <div className="text-lg font-semibold text-gray-800">
+                Habitación: {reservation.room ? reservation.room.name : "No especificada"}
+              </div>
+              <div className="text-gray-600 mt-2">
+                <div>Check-in: {reservation.checkInDate}</div>
+                <div>Check-out: {reservation.checkOutDate}</div> 
+                <div>Pasajero: {reservation.pax.name} {reservation.pax.lastname}</div>
+                <div className="font-semibold text-gray-800">
+                  Precio Total: ${reservation.priceArg} ARS
+                </div>
+                <div className="font-semibold text-gray-800">
+                  Depósito: ${reservation.depositArg} ARS
+                </div>
+                <div className="font-semibold text-gray-800">
+                  Saldo Restante: ${reservation.balance} ARS
+                </div>
+                {reservation.status === "cancelada" &&
+                  reservation.cancellationReason && (
+                    <div className="mt-2 text-gray-500 font-semibold">
+                      Motivo de la cancelación: {reservation.cancellationReason}
+                    </div>
+                  )}
               </div>
 
-              <div className="text-white font-semibold text-lg">
-                Check-in: {reservation.checkInDate}
-              </div>
-              <div className="text-white text-md">
-                Check-out: {reservation.checkOutDate}
-              </div>
-              <div className="text-white text-md">
-                Pasajeros: {reservation.passengers}
-              </div>
-              <div className="text-white text-md">
-                Precio Total: $USD {reservation.totalPrice}
-              </div>
-
-              <div className="text-white text-md">
-                Desayuno: {reservation.breakfastIncluded ? "Sí" : "No"}
-              </div>
-              <div className="text-white text-md">
-                Depósito: $USD {reservation.deposit}
-              </div>
-
-              <div className="text-white text-md">
-                Saldo Pendiente: $USD {reservation.remainingBalance}
-              </div>
-              <div className="text-white text-md">
-                Comentarios: {reservation.comments}
-              </div>
-
-              <div className="mt-4 flex gap-4">
+              <div className="flex gap-4 mt-4">
                 <button
-                  onClick={() => handleFinalizeReservation(reservation)}
-                  disabled={reservation.finalized}
-                  className="bg-orange-400 text-white px-6 py-2 rounded-md hover:text-orange-600 hover:bg-white disabled:bg-gray-400"
+                  className={buttonClass}
+                  onClick={() => togglePriceForm(reservation.id)}
                 >
-                  {reservation.finalized ? "Finalizado" : "Finalizar Reserva"}
+                  Ver Precio Actualizado
                 </button>
 
-               
                 <button
-                  onClick={() =>
-                    //handleRemoveReservation(parseInt(reservation.id, 10))
-                    handleRemoveReservation(reservation.id)
-                  } 
-                  className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
+                  className={buttonClass}
+                  onClick={() => CompleteReservation(reservation.id)}
                 >
-                  Eliminar
+                  {reservation.status === "finalizada"
+                    ? "Finalizada"
+                    : "Finalizar"}
+                </button>
+
+                <button
+                  className={buttonClass}
+                  onClick={() => CancelReservation(reservation.id)}
+                >
+                  Cancelar
                 </button>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Mostrar el formulario de precio actualizado fuera de las tarjetas */}
+      {showPriceForm && (
+        <div className="mt-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <CurrencyForm
+            pesosAmount={
+              filteredReservations.find(
+                (reservation) => reservation.id === showPriceForm
+              )?.priceArg || 0
+            }
+            depositAmount={
+              filteredReservations.find(
+                (reservation) => reservation.id === showPriceForm
+              )?.depositArg || 0
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

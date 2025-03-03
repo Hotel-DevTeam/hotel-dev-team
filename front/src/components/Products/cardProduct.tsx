@@ -5,13 +5,11 @@ import { IProduct, ICardProductProps } from "@/Interfaces/IUser";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
 
 const CardProduct: React.FC<ICardProductProps> = ({
   product,
   onToggleStatus,
   onEdit,
-  onDelete,
   isEditing,
   onEditSubmit,
   onSaveEdit,
@@ -30,33 +28,32 @@ const CardProduct: React.FC<ICardProductProps> = ({
   const handleSave = () => {
     if (editedProduct.nombre && editedProduct.foto && editedProduct.ubicacion) {
       onEditSubmit(editedProduct); // Siempre definido
-      onSaveEdit?.(editedProduct); // Verifica si está definido
+      onSaveEdit?.(editedProduct); // Pasa el objeto editedProduct como argumento
     } else {
       alert("Por favor, complete los campos de nombre, foto y ubicación.");
     }
   };
+  
 
   const handleToggleStatus = () => {
     if (onToggleStatus && product.id) {
-      onToggleStatus(product.id); // Argumento explícito
+      onToggleStatus(product.id); 
     }
   };
 
   const handleEdit = () => {
     if (onEdit && product.id) {
-      onEdit(product.id); // Argumento explícito
+      onEdit(product.id); 
     }
   };
 
-  const handleDelete = () => {
-    if (onDelete && product.id) {
-      onDelete(product.id); // Argumento explícito
-    }
-  };
 
   return (
     <div className="border m-4 rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
       <Link href={`/adminDashboard/products/${product.id || "#"}`}>
+        <h2 className="bg-[#c49f92] text-white inline-block px-2 py-1 rounded-md shadow-md">
+          {product.ubicacion?.name || "Ubicación no disponible"}
+        </h2>
         <div className="w-full h-48 relative cursor-pointer overflow-hidden rounded-t-xl flex justify-center items-center">
           <Image
             src={product.foto || "/default-image.jpg"} // Default image if foto is undefined
@@ -67,9 +64,6 @@ const CardProduct: React.FC<ICardProductProps> = ({
             className="object-contain transform transition-transform duration-300 hover:scale-110"
           />
         </div>
-        <h2 className="bg-black text-white inline-block px-2 py-1 rounded-md shadow-md">
-          {product.ubicacion?.name || "Ubicación no disponible"}
-        </h2>
       </Link>
 
       <div className="flex flex-col items-center text-center mt-3">
@@ -128,18 +122,13 @@ const CardProduct: React.FC<ICardProductProps> = ({
         ) : (
           <button
             onClick={handleEdit} // Aquí se pasa la función envolvente
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-300"
+            className="px-4 py-2 bg-[#c49f92] text-white rounded-lg hover:bg-[#866b62] transition-colors duration-300"
           >
             Editar
           </button>
         )}
 
-        <button
-          onClick={handleDelete} // Aquí se pasa la función envolvente
-          className="p-2 rounded-full bg-gray-600 hover:bg-gray-900 transition-colors duration-300"
-        >
-          <FaTrashAlt className="text-white" size={20} />
-        </button>
+        
       </div>
     </div>
   );

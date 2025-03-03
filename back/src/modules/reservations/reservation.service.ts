@@ -6,8 +6,10 @@ import {
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
+import { Room } from 'src/modules/Rooms/entities/rooms.entity';
 import { Repository } from 'typeorm';
 import { Pax } from 'src/modules/pax/entity/pax.entity';
+import { Status } from './status.enum';
 
 @Injectable()
 export class ReservationService {
@@ -16,11 +18,13 @@ export class ReservationService {
     private readonly reservationsRepository: Repository<Reservation>,
     @InjectRepository(Pax)
     private paxRepository: Repository<Pax>,
+    @InjectRepository(Room)
+    private roomRepository: Repository<Room>,
   ) {}
   async getReservations(page: number, limit: number, completed?: boolean) {
     try {
       const query =
-        this.reservationsRepository.createQueryBuilder('reservation');
+        this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room');
       if (completed !== undefined) {
         query.where('reservation.completed = :completed', { completed });
       }
@@ -82,6 +86,9 @@ export class ReservationService {
     let visitor = await this.paxRepository.findOne({
       where: { email: createReservationDto.pax.email },
     });
+    let room = await this.roomRepository.findOne({
+      where: { name: createReservationDto.roomType.name},
+    });
 
     if (!visitor) {
       visitor = this.paxRepository.create({
@@ -98,7 +105,60 @@ export class ReservationService {
     const reservation = this.reservationsRepository.create({
       ...createReservationDto,
       pax: visitor,
+      room
     });
-    return await this.reservationsRepository.save(reservation);
+    let pingo = await this.reservationsRepository.save(reservation);
+    return pingo
+  }
+
+  async cancelReservation(id: string) {
+    const findReservation = await this.getReservationById(id);
+    if (!findReservation) {
+      throw new NotFoundException('Error al buscar la reserva por ID');
+    }
+
+    if (
+      findReservation.status === Status.Cancelled ||
+      findReservation.status === Status.Completed
+    ) {      
+      throw new BadRequestException(
+        'La reserva ya está cancelada o ha sido completada',
+      );
+    }
+
+    findReservation.status = Status.Cancelled;
+    if (!findReservation.notasAdicionales) {
+      findReservation.notasAdicionales = [];
+    }
+    findReservation.notasAdicionales.push('Reserva cancelada');
+    await this.reservationsRepository.save(findReservation);
+
+    return findReservation;
+  }
+
+
+  async finalizeReservation(id: string) {
+    const findReservation = await this.getReservationById(id);
+    if (!findReservation) {
+      throw new NotFoundException('Error al buscar la reserva por ID');
+    }
+
+    if (
+      findReservation.status === Status.Cancelled ||
+      findReservation.status === Status.Completed
+    ) {      
+      throw new BadRequestException(
+        'La reserva ya está cancelada o ha sido completada',
+      );
+    }
+
+    findReservation.status = Status.Completed;
+    if (!findReservation.notasAdicionales) {
+      findReservation.notasAdicionales = [];
+    }
+    findReservation.notasAdicionales.push('Reserva completada');
+    await this.reservationsRepository.save(findReservation);
+
+    return findReservation;
   }
 }

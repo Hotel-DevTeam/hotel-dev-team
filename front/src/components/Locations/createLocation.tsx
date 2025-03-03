@@ -48,7 +48,8 @@ export default function CreateLocation() {
         setNotificationMessage("Ubicación creada exitosamente");
         setShowNotification(true);
         setTimeout(() => {
-          router.push("/location");
+
+          router.push("/OptionRes");
         }, 2000);
       }
     } catch (error) {

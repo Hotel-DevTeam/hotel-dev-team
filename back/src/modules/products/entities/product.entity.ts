@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tipo } from '../products.enum';
-import { IsEnum, IsUrl } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsUrl } from 'class-validator';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Caja } from 'src/modules/caja/caja/entities/caja.entity';
 
@@ -25,6 +25,9 @@ export class Product {
   @Column()
   nombre: string;
 
+  @Column()
+  precio: number;
+
   @Column({
     default: true,
   })
@@ -39,4 +42,9 @@ export class Product {
 
   @ManyToOne(() => Location, (location) => location.products)
   ubicacion: Location;
+
+  @Column()
+  @IsString()
+  @IsNotEmpty()
+  ubicacionId: string;
 }

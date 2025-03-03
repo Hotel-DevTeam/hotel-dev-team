@@ -1,14 +1,20 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Movimiento } from '../../movimientos/entities/movimiento.entity';
+import { IsOptional, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateCajaDto {
   @ApiProperty({ description: 'Saldo inicial de la caja', example: 1000 })
-  saldoInicial: number;
+  saldoInicial?: number;
 
-  @ApiProperty({
-    description: 'IDs de los movimientos asociados a la caja',
-    type: [String],
+  @ApiPropertyOptional({
+    description: 'Lista de movimientos asociados a la caja',
+    type: [Movimiento],
   })
-  movimientoIds: string[];
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => Movimiento)
+  movimiento?: Movimiento[];
 
   @ApiProperty({ description: 'Ingreso en efectivo', example: 500 })
   ingresoEfectivo: number;
@@ -33,4 +39,10 @@ export class CreateCajaDto {
     example: 'location-id',
   })
   ubicacionId: string;
+
+  @ApiPropertyOptional({
+    description: 'Saldo final o efectivo de cierre',
+    example: 1500,
+  })
+  saldoFinal?: number;
 }

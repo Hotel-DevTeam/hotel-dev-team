@@ -64,7 +64,7 @@ export default function LocationProducts() {
             onDelete={() => handleDelete(product.id)}
             onSaveEdit={handleSaveEdit}
 
-          />
+          /> 
         ))}
       </div>
     </div>

@@ -29,4 +29,10 @@ export class RoomsRepository {
       relations: ['reservations'],
     });
   }
+
+  async getRoomsById(roomId: string): Promise<Room[]> {    
+    return await this.roomRepository.find({
+      where: { id: roomId }
+    });
+  }
 }

@@ -26,7 +26,7 @@ export class CajaService {
   ) {}
 
   async createCaja(createCajaDto: CreateCajaDto) {
-    const { usuarioId, ubicacionId, movimientoIds, ...data } = createCajaDto;
+    const { usuarioId, ubicacionId, movimiento: movimientoIds, ...data } = createCajaDto;
 
     try {
       console.log('Recibiendo datos para crear caja:', createCajaDto);
@@ -51,15 +51,18 @@ export class CajaService {
       }
       console.log('Ubicación encontrada:', ubicacion);
 
-      // Buscar movimientos
-      const movimientos = await this.movimientoRepository.findBy({
-        id: In(movimientoIds),
-      });
-      if (!movimientos || movimientos.length === 0) {
-        console.log(
-          `No se encontraron movimientos con los IDs: ${movimientoIds}`,
-        );
-        throw new NotFoundException('Movimientos no encontrados');
+      // Buscar movimientos si existen
+      let movimientos = [];
+      if (movimientoIds && movimientoIds.length > 0) {
+        movimientos = await this.movimientoRepository.findBy({
+          id: In(movimientoIds),
+        });
+        if (!movimientos.length) {
+          console.log(
+            `No se encontraron movimientos con los IDs: ${movimientoIds}`,
+          );
+          throw new NotFoundException('Movimientos no encontrados');
+        }
       }
       console.log('Movimientos encontrados:', movimientos);
 
@@ -68,7 +71,7 @@ export class CajaService {
         ...data,
         usuario,
         ubicacion,
-        movimiento: movimientos,
+        movimiento: movimientos
       });
       console.log('Creando nueva caja:', newCaja);
 
@@ -78,22 +81,43 @@ export class CajaService {
 
       // Actualizar los movimientos con la relación con la caja
       for (const movimiento of movimientos) {
-        movimiento.caja = savedCaja; // Asignar la instancia de caja a cada movimiento
+        movimiento.caja = savedCaja;
       }
 
       // Guardar los movimientos actualizados
-      await this.movimientoRepository.save(movimientos);
-      console.log('Movimientos actualizados con la caja:', movimientos);
+      if (movimientos.length > 0) {
+        await this.movimientoRepository.save(movimientos);
+        console.log('Movimientos actualizados con la caja:', movimientos);
+      }
 
-      return savedCaja;
+      return {id: savedCaja.id};
     } catch (error) {
       console.error('Error al crear caja:', error);
       throw error;
     }
   }
 
-  async findAll() {
-    return await this.cajaRepository.find();
+  async findAll(filters?: { locationId?: string; tipoMovimiento?: string }) {
+    const { locationId, tipoMovimiento } = filters || {};
+    
+    const query = this.cajaRepository.createQueryBuilder('caja')
+      .leftJoinAndSelect('caja.movimiento', 'movimiento')
+      .leftJoinAndSelect('caja.ubicacion', 'ubicacion');
+
+    if (locationId) {
+      query.andWhere('ubicacion.id = :locationId', { locationId });
+    }
+
+    if (tipoMovimiento) {
+      query.andWhere('movimiento.tipo = :tipoMovimiento', { tipoMovimiento });
+    }
+
+    const cajas = await query.getMany();
+    if (!cajas.length) {
+      throw new NotFoundException('No se encontraron cajas con los filtros proporcionados');
+    }
+
+    return cajas;
   }
 
   async findOneById(id: string) {
@@ -116,3 +140,4 @@ export class CajaService {
     return this.cajaRepository.save(updatedCaja);
   }
 }
+

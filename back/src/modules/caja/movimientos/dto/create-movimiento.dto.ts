@@ -9,8 +9,8 @@ export class CreateMovimientoDto {
     description: 'Usuario que realiza el movimiento',
     type: () => Users,
   })
-  usuario: Users; //ver lógica usuario logeado para poder sacar del dto
-
+  usuario: Users; 
+  
   @ApiProperty({
     description: 'Monto del movimiento',
     example: 100.5,
@@ -37,7 +37,7 @@ export class CreateMovimientoDto {
   @ApiProperty({
     description: 'Ubicación del movimiento',
   })
-  ubicacion: Location; //ver lógica ubicacion usuario logeado
+  ubicacion: Location; 
 
   @ApiProperty({
     description: 'Tipo de movimiento',

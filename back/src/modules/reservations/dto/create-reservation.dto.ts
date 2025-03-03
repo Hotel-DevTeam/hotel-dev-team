@@ -11,10 +11,22 @@ export class CreateReservationDto {
   checkIn: boolean;
 
   @ApiProperty({
+    description: 'Fecha de Ingreso',
+    example: '2024-02-10',
+  })
+  checkInDate: Date;
+
+  @ApiProperty({
     description: 'Indica si el huésped se retiró del hotel',
     example: false,
   })
   checkOut: boolean;
+
+  @ApiProperty({
+    description: 'Fecha de Egreso',
+    example: '2024-02-25',
+  })
+  checkOutDate: Date;
 
   @ApiProperty({ description: 'Información del pasajero', type: CreatePaxDto })
   pax: CreatePaxDto;
@@ -66,4 +78,10 @@ export class CreateReservationDto {
     example: true,
   })
   completed: boolean;
+
+  @ApiProperty({
+    description: 'Detalles extra sobre el pax o la reserva',
+    example: ['Pax en silla de ruedas', 'Reserva cancelada'],
+  })
+  notasAdicionales: string[];
 }

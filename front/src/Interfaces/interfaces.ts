@@ -1,3 +1,5 @@
+import { IProduct } from "./IUser";
+
 export interface User {
   id: number;
   firstName: string;
@@ -7,9 +9,9 @@ export interface User {
 
 export interface Product {
   id: number;
-  name: string;
-  price: number; 
-  category: "bebidas" | "alimentos" | "servicio";
+  nombre: string;
+  price?: number; 
+  category?: "bebidas" | "alimentos" | "servicio";
 }
 
 export interface Room {
@@ -19,9 +21,17 @@ export interface Room {
 }
 
 export interface Order {
-  product: Product;
+  productId: string;  
+  quantity: number;   
+  unitPrice: number;
+  orderId: string;  
+}
+
+
+export interface OrderItem {
+  product: IProduct;
   quantity: number;
-  user: string;
-  roomNumber: string;
-  date: string;
+  price:number;
+  totalPrice:number;   
+  roomId:string;
 }

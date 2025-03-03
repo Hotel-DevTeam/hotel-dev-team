@@ -3,7 +3,6 @@ import { NotificationsForms } from "@/components/Notifications/NotificationsForm
 import { UserContext } from "@/context/UserContext";
 import { ILoginClientProps } from "@/Interfaces/IUser";
 import { validationLogin } from "@/utils/validationFormLogin";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 
@@ -48,7 +47,7 @@ export default function LoginForm({ setToken }: ILoginClientProps) {
             setNotificationMessage("Has ingresado correctamente");
             setShowNotification(true);
             setTimeout(() => setShowNotification(false), 3000);
-            router.push("/location");
+            router.push("/OptionRes");
           } else {
             setNotificationMessage("Usuario Inválido");
             setShowNotification(true);
@@ -139,15 +138,6 @@ export default function LoginForm({ setToken }: ILoginClientProps) {
             >
               Ingresar
             </button>
-          </div>
-
-          <div className="flex justify-center">
-            <Link
-              href="/register"
-              className="text-center text-sm text-[#CD9C8A] hover:cursor-pointer hover:font-bold"
-            >
-              ¿No posees cuenta? Haz clic para registrarte
-            </Link>
           </div>
 
           {showNotification && (

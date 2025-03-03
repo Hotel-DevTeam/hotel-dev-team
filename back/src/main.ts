@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
     //origin: 'http://localhost:3001', // Origen permitido
-    methods: 'GET,POST,PUT,DELETE,OPTIONS', // Métodos permitidos
+    methods: 'GET,POST,PUT,DELETE,OPTIONS,PATCH', // Métodos permitidos
     credentials: true,
   });
 
@@ -34,7 +34,7 @@ async function bootstrap() {
     console.log('Database seeding completed');
     await app.close(); // Cierra la aplicación después de sembrar
   } else {
-    await app.listen(3000); // Inicia la aplicación normalmente
+    await app.listen(process.env.API_PORT); // Inicia la aplicación normalmente
   }
 }
 bootstrap();

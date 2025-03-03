@@ -19,6 +19,11 @@ export class SalesOrderLine {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   lineTotal: number;
 
-  @ManyToOne(() => SalesOrder, (order) => order.orderLines)
+  @Column()
+  orderId: string;
+
+  @ManyToOne(() => SalesOrder, (salesOrder) => salesOrder.orderLines, {
+    onDelete: 'CASCADE',
+  })
   order: SalesOrder;
 }

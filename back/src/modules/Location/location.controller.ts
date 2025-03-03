@@ -62,6 +62,7 @@ export class LocationController {
   async getLocationById(
     @Param('locationId') locationId: string,
   ): Promise<Location> {
+    console.log('pri')
     return await this.locationService.getLocationById(locationId);
   }
 

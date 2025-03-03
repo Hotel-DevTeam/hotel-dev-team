@@ -1,177 +1,300 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-"use client";
-
-import React, { useState } from "react";
-import { useOrderContext } from "../../context/OrderContext";
-import { products, users, rooms } from "../../helpers/helpers";
-import Swal from "sweetalert2";
+"use client"
+import React, { useState, useEffect, useContext } from 'react';
+import ProductSelector from './ProductSelector';
+import QuantityInput from './QuantityInput';
+import RoomSelector from './RoomSelector';
+import PriceDisplay from './PriceDisplay';
+import OrderSummary from './OrderSummary';
+import { IProduct, IRoom } from '@/Interfaces/IUser';
+import { fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
+import { fetchGetProducts } from '../Fetchs/ProductsFetchs/ProductsFetchs';
+import { useLocationContext } from '@/context/LocationContext';
+import { UserContext } from '@/context/UserContext';
+import { NotificationsForms } from '../Notifications/NotificationsForms';
+import { createSalesOrder, createSalesOrderLine } from '../Fetchs/OrdersFetch/IOrdersFetch';
+import { IOrderItem, ISalesOrderLines, ISalesOrders } from '@/Interfaces/IOrders';
+import HandleCajaComponent from './ConfirmOrder';
 
 const CreateOrder: React.FC = () => {
-  const { addOrder } = useOrderContext();
-  const [selectedProductId, setSelectedProductId] = useState<number>(0);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [user, setUser] = useState<string>("");
-  const [roomNumber, setRoomNumber] = useState<string>("");
-  const [paidAmount, setPaidAmount] = useState<number>(0); // Aquí se define el estado de 'paidAmount'
+  const { token } = useContext(UserContext);
+  const { location } = useLocationContext();
+  const [user, setUser] = useState<string>('');
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
+  const [rooms, setRooms] = useState<IRoom[]>([]); 
+  const [roomNumber, setRoomNumber] = useState('');
+  const [productPrice, setProductPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<string>('0.00');
+  const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
+  const [notification, setNotification] = useState<string>('');
+  const [showOrderSummary, setShowOrderSummary] = useState<boolean>(false);
+  
+  // Estado para mostrar el modal de método de pago
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const product = products.find((p) => p.id === selectedProductId);
-    if (product) {
-      addOrder(product, quantity, user, roomNumber);
+  // Abre el modal para seleccionar el método de pago
+  const handleOpenPaymentModal = () => {
+    setShowPaymentModal(true);
+  };
 
-      await Swal.fire({
-        title: "Orden Agregada!",
-        text: `Se ha agregado con éxito la orden de ${quantity} unidades de ${product.name}.`,
-        icon: "success",
-        confirmButtonText: "Aceptar",
-      });
+  // Cierra el modal
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+  };
 
-      setSelectedProductId(0);
-      setQuantity(1);
-      setUser("");
-      setRoomNumber("");
-      setPaidAmount(0); // Resetea el monto pagado después de enviar la orden
+  // Función que se llama cuando se confirma el pago desde el modal
+  const handlePaymentConfirmed = () => {
+    // Aquí se confirma el pago y se cierra el modal,
+    // luego se procede a confirmar el pedido
+    handleConfirmOrder();
+    setShowPaymentModal(false);
+  };
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value === '' || !isNaN(parseFloat(value))) {
+      setQuantity(value);
     }
   };
 
-  const totalPrice = selectedProductId
-    ? products.find((p) => p.id === selectedProductId)?.price! * quantity
-    : 0;
+  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProductId = e.target.value; // El valor que contiene el ID del producto
+    setSelectedProduct(selectedProductId);
+  
+    // Buscar el producto completo por ID en el array de productos
+    const selectedProduct = products.find((product) => product.id.toString() === selectedProductId);
+    
+    if (selectedProduct) {
+      setProductPrice(selectedProduct.precio); // Actualizar el precio del producto seleccionado
+    } else {
+      setProductPrice(0); // Si no se encuentra el producto, poner el precio a 0
+    }
+  };
+  
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData).user;
+      setUser(user.id || '');
+    }
+  
+    if (!token) return; 
+  
+    const fetchProducts = async () => {
+      try {
+        const data = await fetchGetProducts(token);
+        setProducts(data);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+  
+    fetchProducts();
+  }, [token]);
+  
+
+  useEffect(() => {
+    const loadRooms = async () => {
+      try {
+        if (location) {
+          if (!token) return;
+          const roomsData = await fetchGetRooms(location.id, token);  
+          setRooms(roomsData);
+        } else {
+          console.error("No location selected");
+        }
+      } catch (error) {
+        console.error("Error al obtener las habitaciones:", error);
+      }
+    };
+
+    loadRooms();
+  }, [location, token]);
+
+  useEffect(() => {
+    if (selectedProduct && productPrice && quantity) {
+      const calculatedPrice = productPrice * parseFloat(quantity);
+      setTotalPrice(calculatedPrice.toFixed(2));
+    }
+  }, [quantity, productPrice, selectedProduct]);
+
+  const handleRoomChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRoomNumber(e.target.value);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setOrderItems(prevItems => prevItems.filter((_, i) => i !== index));
+  };
+
+  const handleAddToOrder = () => {
+    if (!location) {
+      setNotification('Por favor, selecciona una ubicación antes de agregar productos.');
+      return;
+    }
+  
+    if (!selectedProduct || !roomNumber) {
+      setNotification('Por favor, selecciona un producto y una habitación.');
+      return;
+    }
+  
+    const selectedProductObj = products.find(p => p.id.toString() === selectedProduct);
+    if (!selectedProductObj) {
+      setNotification('Producto no encontrado.');
+      return;
+    }
+  
+    const newOrderItem: IOrderItem = {
+      product: selectedProductObj,  // Asegúrate de que el producto tiene el id correctamente
+      roomId: roomNumber,
+      quantity: parseInt(quantity, 10),
+      totalAmount: selectedProductObj.precio * parseInt(quantity, 10),
+      price: selectedProductObj.precio,
+    };
+
+    console.log('Datos a enviar:', newOrderItem);
+  
+    setOrderItems(prevItems => [...prevItems, newOrderItem]); // Actualiza la lista de elementos
+    setShowOrderSummary(true);
+    setSelectedProduct('');
+    setQuantity('1');
+    setRoomNumber('');
+  };
+
+  
+  const handleConfirmOrder = async () => {
+    if (!location || orderItems.length === 0) {
+      setNotification('Por favor, selecciona productos y una ubicación antes de confirmar el pedido.');
+      return;
+    }
+  
+    const orderData: ISalesOrders = {
+      usuarioId: user,
+      ubicacionId: location.id,
+      status: 'confirmed',
+      totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0), 
+    };
+  
+    console.log('Datos a enviar:', orderData);
+  
+    try {
+      // Crear la orden principal
+      const createdOrder = await createSalesOrder(orderData);
+      console.log('Orden de venta creada:', createdOrder);
+  
+      // Crear las líneas de la orden
+      const orderLinesPromises = orderItems.map((item) => {
+        const orderLineData: ISalesOrderLines = {
+          productId: item.product.id,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          orderId: createdOrder.id, 
+        };
+        console.log("Línea de la orden a enviar:", orderLineData);
+        return createSalesOrderLine(orderLineData);
+      });
+      
+      // Esperar a que se creen todas las líneas
+      await Promise.all(orderLinesPromises);
+  
+      setNotification('Pedido confirmado');
+      resetForm(); // Limpia los datos después de confirmar la orden
+    } catch (error) {
+      console.error('Error al crear la orden de venta o las líneas:', error);
+      setNotification('Hubo un problema al confirmar el pedido');
+    }
+  };
+  
+  const resetForm = () => {
+    setOrderItems([]);
+    setSelectedProduct('');
+    setQuantity('1');
+    setRoomNumber('');
+    setTotalPrice('0.00');
+    setShowOrderSummary(false);
+  };
+
+  // Definimos orderData para pasarlo al modal
+  const orderData: ISalesOrders = {
+    usuarioId: user,
+    ubicacionId: location ? location.id : '',
+    status: 'confirmed',
+    totalAmount: orderItems.reduce((acc, item) => acc + item.totalAmount, 0),
+  };
 
   return (
-    // Asegúrate de envolver todo en un 'return'
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded px-8 py-6 mb-4"
-    >
-      <h2 className="text-lg font-semibold text-[#264653] mb-4">Crear Orden</h2>
-
-      <div className="mb-4">
-        <label
-          htmlFor="product"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Producto:
-        </label>
-        <select
-          id="product"
-          value={selectedProductId}
-          onChange={(e) => setSelectedProductId(Number(e.target.value))}
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-        >
-          <option value={0}>Seleccione un producto</option>
-          {products.map((product) => (
-            <option key={product.id} value={product.id}>
-              {product.name}
-            </option>
-          ))}
-        </select>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 m-2">
+      <div className="ml-8 mt-2">
+        <h1 className="text-2xl text-[#264653] font-bold text-center mb-6">Crear Orden</h1>
+        <form className="bg-white shadow-md rounded px-6 py-4 mb-4 w-full">
+          <div className="mb-3">
+            <ProductSelector 
+              products={products} 
+              selectedProduct={selectedProduct} 
+              onProductChange={handleProductChange} 
+            />
+          </div>
+          <div className="mb-3">
+            <QuantityInput 
+              quantity={quantity} 
+              onQuantityChange={handleQuantityChange} 
+            />
+          </div>
+          <div className="mb-3">
+            <RoomSelector 
+              rooms={rooms} 
+              roomNumber={roomNumber} 
+              onRoomChange={handleRoomChange} 
+            />
+          </div>
+          <div className="mb-3">
+            <PriceDisplay 
+              productPrice={productPrice} 
+              totalPrice={totalPrice} 
+            />
+          </div>
+          <button 
+            type="button" 
+            onClick={handleAddToOrder} 
+            className="mt-4 bg-[#CD9C8A] text-white py-2 px-4 rounded"
+          >
+            Agregar al pedido
+          </button>
+        </form>
       </div>
 
-      <div className="mb-4">
-        <label
-          htmlFor="quantity"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Cantidad:
-        </label>
-        <input
-          type="number"
-          id="quantity"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          min={1}
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
+      <div className="ml-8 mt-2">
+        <h2 className="text-[#264653] text-xl font-semibold mb-3">Resumen de Orden</h2>
+        {showOrderSummary && (
+          <div className="overflow-x-auto">
+              <OrderSummary orderItems={orderItems} onRemoveItem={handleRemoveItem} />
+          </div>
+        )}
+      </div>
+
+      {orderItems.length > 0 && (
+        <div className="flex justify-end">
+          {/* Al hacer clic se abre el modal para seleccionar el método de pago */}
+          <button 
+            onClick={handleOpenPaymentModal} 
+            className="mt-4 bg-[#FF5100] text-white hover:bg-[#e66f38] py-2 px-4 rounded"
+          >
+            Confirmar Pedido
+          </button>
+        </div>
+      )}
+
+      {showPaymentModal && (
+        <HandleCajaComponent
+          onClose={handleClosePaymentModal}
+          onConfirm={handlePaymentConfirmed}
+          totalAmount={parseFloat(totalPrice)}
+          orderData={orderData}
         />
-      </div>
+      )}
 
-      <div className="mb-4">
-        <label
-          htmlFor="user"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Usuario:
-        </label>
-        <select
-          id="user"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-          required
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-        >
-          <option value="">Seleccione un usuario</option>
-          {users.map((user) => (
-            <option key={user.id} value={`${user.firstName} ${user.lastName}`}>
-              {user.firstName} {user.lastName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="roomNumber"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Número de Habitación:
-        </label>
-        <select
-          id="roomNumber"
-          value={roomNumber}
-          onChange={(e) => setRoomNumber(e.target.value)}
-          required
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-        >
-          <option value="">Seleccione una habitación</option>
-          {rooms.map((room) => (
-            <option key={room.id} value={room.roomNumber}>
-              {room.roomNumber}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="totalPrice"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Precio Total:
-        </label>
-        <input
-          type="number"
-          id="totalPrice"
-          value={totalPrice}
-          disabled
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="paidAmount"
-          className="block text-[#264653] text-sm font-bold mb-2"
-        >
-          Monto Pagado:
-        </label>
-        <input
-          type="number"
-          id="paidAmount"
-          value={paidAmount}
-          onChange={(e) => setPaidAmount(Number(e.target.value))}
-          min={0}
-          className="border border-[#CD9C8A] rounded w-full py-2 px-3 text-[#264653] focus:outline-none focus:ring focus:ring-[#FF5100]"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="bg-[#CD9C8A] text-white w-full py-2 rounded-lg focus:outline-none hover:bg-orange-400 transition-all"
-      >
-        Crear Orden
-      </button>
-    </form>
+      {notification && <NotificationsForms message={notification} />}
+    </div>
   );
 };
 

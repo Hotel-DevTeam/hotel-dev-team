@@ -42,6 +42,13 @@ export class Movimiento {
   })
   tipoMovimiento: TipoMovimiento;
 
+  @Column({ type: 'enum', enum: ['ingreso', 'egreso'], default: 'ingreso' })
+  tipo: 'ingreso' | 'egreso';
+
+
+  @Column('decimal', { precision: 10, scale: 2, nullable: false })
+  monto: number;
+
   @ManyToOne(() => Caja, (caja) => caja.movimiento)
   @JoinColumn({ name: 'cajaId' }) // En caso de tener una columna de relación
   caja: Caja;
