@@ -76,14 +76,14 @@ const ShowReservationModal: React.FC<ShowReservationModalProps> = ({
               </div>
               <div className="flex justify-between">
                 <p className="text-[#264653]">
-                  <strong>Horario de llegada:</strong>
+                  <strong>Horario de llegada: </strong>
                   {reservation.arrival
                     }
                 </p>
               </div>
               <div className="flex justify-between">
                 <p className="text-[#264653]">
-                  <strong>Notas:</strong>
+                  <strong>Notas: </strong>
                   {reservation.notasAdicionales ? reservation.notasAdicionales[0] : ''
                     }
                 </p>
