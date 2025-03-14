@@ -72,14 +72,14 @@ export default function  OptionRest() {
         ))}
       </div>
 
-      <div className="mt-8">
+      {/*<div className="mt-8">
         <Link
           href="/location/create"
           className="px-8 py-4 bg-[#CD9C8A] text-white font-semibold rounded-lg shadow-lg hover:bg-orange-400 transition-all duration-300"
         >
           Crear Nueva Ubicación
         </Link>
-      </div>
+      </div>*/}
     </div>
   );
 }

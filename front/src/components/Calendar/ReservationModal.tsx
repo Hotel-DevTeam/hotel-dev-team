@@ -83,8 +83,26 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <p className="text-[#264653]">
+                    <strong>DNI/Pasaporte:</strong>{" "}
+                    {reservation.pax.dniPassport}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
                     <strong>Saldo pendiente:</strong> $
                     {reservation.balance}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
+                    <strong>Horario de llegada:</strong>
+                    {reservation.arrival}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
+                    <strong>Notas:</strong>
+                    {reservation.notasAdicionales ? reservation.notasAdicionales[0] : ''}
                   </p>
                 </div>
                 {reservationText && (
@@ -116,8 +134,20 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <p className="text-[#264653]">
+                    <strong>DNI/Pasaporte:</strong>{" "}
+                    {reservation.pax.dniPassport}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
                     <strong>Saldo pendiente:</strong> $
                     {reservation.balance}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
+                    <strong>Notas:</strong>
+                    {reservation.notasAdicionales ? reservation.notasAdicionales[0] : ''}
                   </p>
                 </div>
                 {reservationText && (

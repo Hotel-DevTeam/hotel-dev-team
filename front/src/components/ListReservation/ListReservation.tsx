@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 import { roomsData } from "../../Data/Data"; // Importamos roomsData
+import ShowReservationModal from "./ShowReservation";
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
 import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
 import { log } from "console";
@@ -17,6 +18,7 @@ const ReservationsList: React.FC = () => {
     "all" | "finalized" | "inProgress" | "cancelled"
   >("all");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [selectedReservation, setSelectedReservation] = useState<string>("");
   const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -252,6 +254,12 @@ const ReservationsList: React.FC = () => {
                 >
                   Cancelar
                 </button>
+                <button
+                  className={buttonClass}
+                  onClick={() => setSelectedReservation(reservation.id)}
+                >
+                  Detalles
+                </button>
               </div>
             </div>
           );
@@ -275,6 +283,13 @@ const ReservationsList: React.FC = () => {
           />
         </div>
       )}
+
+      {selectedReservation && (
+              <ShowReservationModal
+                selectedReservation={selectedReservation}
+                closeModal={() => setSelectedReservation("")}
+              />
+            )}
     </div>
   );
 };

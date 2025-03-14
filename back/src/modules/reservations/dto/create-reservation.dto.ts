@@ -84,4 +84,10 @@ export class CreateReservationDto {
     example: ['Pax en silla de ruedas', 'Reserva cancelada'],
   })
   notasAdicionales: string[];
+
+  @ApiProperty({
+    description: 'Hora de llegada',
+    example: '12:00',
+  })
+  arrival: string;
 }

@@ -76,7 +76,7 @@ const HandleCajaComponent: React.FC<HandleCajaProps> = ({
                         className="border rounded px-3 py-2 w-full"
                     >
                         <option value="efectivo">Efectivo</option>
-                        <option value="tarjeta">Tarjeta</option>
+                        <option value="tarjeta">Crédito/Débito</option>
                     </select>
                 </div>
 
