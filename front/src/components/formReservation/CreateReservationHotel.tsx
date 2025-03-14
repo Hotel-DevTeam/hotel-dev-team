@@ -35,6 +35,7 @@ const CreateReservationHotel: React.FC = () => {
   const [deposit, setDeposit] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
+  const [arrival, setArrival] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const handleTotalPriceChange = (price: number) => {
@@ -82,6 +83,7 @@ const CreateReservationHotel: React.FC = () => {
       balance: remainingBalance,
       completed: false,
       notasAdicionales: [comments],
+      arrival,
     };
 
     // addReservation(newReservation);
@@ -112,6 +114,7 @@ const CreateReservationHotel: React.FC = () => {
     setDeposit(0);
     setRemainingBalance(0);
     setComments("");
+    setArrival("");
     setTotalPrice(0);
   };
 
@@ -170,7 +173,7 @@ const CreateReservationHotel: React.FC = () => {
         {/* Identificación */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Identificación:
+            DNI/Pasaporte:
           </label>
           <input
             type="text"
@@ -218,7 +221,7 @@ const CreateReservationHotel: React.FC = () => {
         {/* Fecha de entrada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Fecha de entrada:
+            Check-in:
           </label>
           <input
             type="date"
@@ -231,12 +234,25 @@ const CreateReservationHotel: React.FC = () => {
         {/* Fecha de salida */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Fecha de salida:
+            Check-out:
           </label>
           <input
             type="date"
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Hora de llegada */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Hora de llegada:
+          </label>
+          <input
+            type="text"
+            value={arrival}
+            onChange={(e) => setArrival(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>

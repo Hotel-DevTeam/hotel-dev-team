@@ -72,6 +72,7 @@ export class ReservationService {
     try {
       const reservation = await this.reservationsRepository.findOne({
         where: { id },
+        relations: ['pax', 'room'],
       });
       if (!reservation) {
         throw new NotFoundException('Reserva no encontrada');

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useContext } from "react";
-import Link from "next/link";
 import { ILocation } from "@/Interfaces/IUser";
 import { fetchLocations } from "@/components/Fetchs/UserFetchs/UserFetchs";
 import { useLocationContext } from "@/context/LocationContext";
@@ -72,14 +71,14 @@ export default function  OptionRest() {
         ))}
       </div>
 
-      <div className="mt-8">
+      {/*<div className="mt-8">
         <Link
           href="/location/create"
           className="px-8 py-4 bg-[#CD9C8A] text-white font-semibold rounded-lg shadow-lg hover:bg-orange-400 transition-all duration-300"
         >
           Crear Nueva Ubicación
         </Link>
-      </div>
+      </div>*/}
     </div>
   );
 }

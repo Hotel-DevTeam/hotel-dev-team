@@ -26,6 +26,7 @@ export interface Reservation {
   name: string;
   passengers: string;
   identification: string;
+  notasAdicionales: string[];
   pax: Pax;
   room: Room;
   passengerCount: number;
@@ -41,6 +42,7 @@ export interface Reservation {
   comments: string;
   status?: string;
   cancellationReason?: string;
+  arrival: string;
 }
 
 export interface CreateReservationDto {
