@@ -92,7 +92,7 @@ export class Reservation {
   @Column('text', { array: true, nullable: true, default: [] })
   notasAdicionales: string[];
 
-  @Column()
+  @Column('text', { array: false, nullable: true, default: '' })
   @ApiProperty({
     description: 'Hora de llegada',
     example: '12:00',
