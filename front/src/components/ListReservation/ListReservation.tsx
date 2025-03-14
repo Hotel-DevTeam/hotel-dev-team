@@ -232,12 +232,12 @@ const ReservationsList: React.FC = () => {
               </div>
 
               <div className="flex gap-4 mt-4">
-                <button
+                {/*<button
                   className={buttonClass}
                   onClick={() => togglePriceForm(reservation.id)}
                 >
                   Ver Precio Actualizado
-                </button>
+                </button>*/}
 
                 <button
                   className={buttonClass}
