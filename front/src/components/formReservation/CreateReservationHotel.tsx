@@ -37,6 +37,32 @@ const CreateReservationHotel: React.FC = () => {
   const [comments, setComments] = useState<string>("");
   const [arrival, setArrival] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [additionalSections, setAdditionalSections] = useState<{ id: number; name: string; lastname: string; identification: string }[]>([]);
+
+  const handleAddSection = () => {
+  setAdditionalSections([
+    ...additionalSections,
+    { id: Date.now(), name: "", lastname: "", identification: "" },
+  ]);
+  };
+
+  const handleSectionChange = (
+    id: number,
+    field: "name" | "lastname" | "identification",
+    value: string
+  ) => {
+    setAdditionalSections((prevSections) => {
+      const updatedSections = prevSections.map((section) =>
+        section.id === id ? { ...section, [field]: value } : section
+      );
+  
+      console.log("Secciones actualizadas:", updatedSections); // Verifica que el estado se actualiza correctamente
+  
+      return updatedSections;
+    });
+  };
+  
+
 
   const handleTotalPriceChange = (price: number) => {
     setTotalPrice(price);
@@ -144,7 +170,6 @@ const CreateReservationHotel: React.FC = () => {
       <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">
         Crear Reserva
       </h2>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Nombre */}
         <div>
@@ -183,7 +208,7 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
         {/* E-mail */}
-        <div>
+        {/*<div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             E-Mail:
           </label>
@@ -193,7 +218,7 @@ const CreateReservationHotel: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
-        </div>
+        </div>*/}
         {/* Número de teléfono */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -206,6 +231,22 @@ const CreateReservationHotel: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
+
+        {/* Tipo de pasajero */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Tipo de pasajero:
+          </label>
+          <select
+            value={passengerType}
+            onChange={(e) => setPassengerType(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="adulto">Adulto</option>
+            <option value="niño">Niño</option>
+          </select>
+        </div>
+
         {/* Fecha de Nacimiento */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -310,21 +351,6 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
-        {/* Tipo de pasajero */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Tipo de pasajero:
-          </label>
-          <select
-            value={passengerType}
-            onChange={(e) => setPassengerType(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          >
-            <option value="adulto">Adulto</option>
-            <option value="niño">Niño</option>
-          </select>
-        </div>
-
         {/* Método de reserva */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -373,7 +399,7 @@ const CreateReservationHotel: React.FC = () => {
         {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Depósito:
+            Seña:
           </label>
           <input
             type="text"
@@ -420,12 +446,56 @@ const CreateReservationHotel: React.FC = () => {
         ></textarea>
       </div>
 
-      <div className="flex justify-center mt-4">
+
+        {/* Renderizado de secciones adicionales */}
+        {additionalSections.length ? <h2 className="text-2xl font-semibold text-[#264653] mb-6 text-center">Pasajeros adicionales:</h2> : <div/>}
+        {additionalSections.map((section) => (
+          <div key={section.id} className="block">
+            <div>
+              <label className="block text-sm font-medium text-[#264653] mb-1">Nombre:</label>
+              <input
+                type="text"
+                value={section.name}
+                onChange={(e) => handleSectionChange(section.id, "name", e.target.value)}
+                className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#264653] mb-1">Apellido:</label>
+              <input
+                type="text"
+                value={section.lastname}
+                onChange={(e) => handleSectionChange(section.id, "lastname", e.target.value)}
+                className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#264653] mb-1">DNI/Pasaporte:</label>
+              <input
+                type="text"
+                value={section.identification}
+                onChange={(e) => handleSectionChange(section.id, "identification", e.target.value)}
+                className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+              />
+            </div>
+            <hr/>
+            <br/>
+          </div>
+        ))}
+
+      <div className="flex justify-center mt-4 gap-6">
         <button
           type="submit"
           className="bg-[#FF5100] text-white py-2 px-6 rounded-lg shadow-md hover:bg-[#FF3A00] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
         >
           Crear Reserva
+        </button>
+        <button
+          type="button"
+          onClick={handleAddSection}
+          className="bg-blue-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-600"
+        >
+          Añadir Pasajero
         </button>
       </div>
     </form>
