@@ -45,6 +45,40 @@ export class ReservationService {
     }
   }
 
+
+  async getReservationsByRoom(completed?: boolean) {
+    try {
+      const query =
+        this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room');
+      if (completed !== undefined) {
+        query.where('reservation.completed = :completed', { completed });
+      }
+      const totalReservations = await query.getMany();
+
+    let rooms = await this.roomRepository.find({});
+
+    let transformedRooms = rooms.reduce((acc, room) => {
+      acc[room.id] = {
+        id: room.id,
+        name: room.name,
+        reservations: []
+      };
+      return acc;
+    }, {});
+
+    totalReservations.forEach(reservation => {
+      const roomId = reservation.room.id;
+      if (transformedRooms[roomId]) {
+        transformedRooms[roomId].reservations.push(reservation);
+      }
+    })
+
+      return transformedRooms;
+    } catch (error) {
+      throw new BadRequestException('Error al obtener reservas');
+    }
+  }
+
   async getReservationByMail(email: string): Promise<Reservation> {
     try {
       console.log('Buscando la reserva con email:', email);
@@ -56,7 +90,6 @@ export class ReservationService {
         },
         relations: ['pax'],
       });
-      console.log('Reserva encontrada:', reservation);
       if (!reservation) {
         throw new NotFoundException(
           `Reserva no encontrada para el email: ${email}`,
