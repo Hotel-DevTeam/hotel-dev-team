@@ -66,3 +66,9 @@ export interface CreateReservationDto {
   notasAdicionales: string[]; // Detalles extra sobre el pax o la reserva
 }
 
+export interface RoomWithReservations {
+  id: string;
+  name: string;
+  reservations: Reservation[];
+}
+

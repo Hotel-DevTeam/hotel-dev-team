@@ -83,6 +83,15 @@ const Navbar: React.FC = () => {
       {/* Menú en móvil */}
       {isMobileMenuOpen && (
         <ul className="absolute top-14 right-0 bg-white shadow-md w-48 z-50">
+
+          <li className="border-b">
+            <Link
+              href={"/Calendar"}
+              className="block px-4 py-2 hover:bg-[#E9C46A] transition"
+            >
+              Calendario
+            </Link>
+          </li>
           <li className="border-b">
             <Link
               href={"/CreateOrder"}
@@ -98,34 +107,6 @@ const Navbar: React.FC = () => {
             >
               Gastos
             </Link>
-          </li>
-          <li
-            className="border-b cursor-pointer"
-            onClick={() => setSubMenuOpen(!isSubMenuOpen)} // Toggle del submenú
-          >
-            <span className="block px-4 py-2 hover:bg-[#E9C46A] transition">
-              Submenú
-            </span>
-            {isSubMenuOpen && (
-              <ul className="bg-white shadow-md w-full">
-                <li>
-                  <Link
-                    href="/SubmenuItem1"
-                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                  >
-                    Item 1
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/SubmenuItem2"
-                    className="block px-4 py-2 hover:bg-[#F4A261] transition"
-                  >
-                    Item 2
-                  </Link>
-                </li>
-              </ul>
-            )}
           </li>
 
           {/* Enlace directo a Reservas (Hotel) */}

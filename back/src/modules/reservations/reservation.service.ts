@@ -45,6 +45,40 @@ export class ReservationService {
     }
   }
 
+
+  async getReservationsByRoom(completed?: boolean) {
+    try {
+      const query =
+        this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room');
+      if (completed !== undefined) {
+        query.where('reservation.completed = :completed', { completed });
+      }
+      const totalReservations = await query.getMany();
+
+    let rooms = await this.roomRepository.find({});
+
+    let transformedRooms = rooms.reduce((acc, room) => {
+      acc[room.id] = {
+        id: room.id,
+        name: room.name,
+        reservations: []
+      };
+      return acc;
+    }, {});
+
+    totalReservations.forEach(reservation => {
+      const roomId = reservation.room.id;
+      if (transformedRooms[roomId]) {
+        transformedRooms[roomId].reservations.push(reservation);
+      }
+    })
+
+      return transformedRooms;
+    } catch (error) {
+      throw new BadRequestException('Error al obtener reservas');
+    }
+  }
+
   async getReservationByMail(email: string): Promise<Reservation> {
     try {
       console.log('Buscando la reserva con email:', email);
@@ -56,7 +90,6 @@ export class ReservationService {
         },
         relations: ['pax'],
       });
-      console.log('Reserva encontrada:', reservation);
       if (!reservation) {
         throw new NotFoundException(
           `Reserva no encontrada para el email: ${email}`,
@@ -103,13 +136,37 @@ export class ReservationService {
       await this.paxRepository.save(visitor);
     }
 
+    let paxIds = []
+    for(let addPax of createReservationDto.addPax){
+
+        let addVisitor = await this.paxRepository.findOne({
+          where: { dniPassport: addPax.dniPassport },
+        });
+
+        if (!addVisitor) {
+          addVisitor = this.paxRepository.create({
+            name: addPax.name,
+            lastname: addPax.lastname,
+            dniPassport: addPax.dniPassport
+          });
+          let newVisitor = await this.paxRepository.save(addVisitor);
+          paxIds.push(newVisitor.id)
+        }
+        else {
+          paxIds.push(addVisitor.id)
+        }
+
+    }
+    
+
     const reservation = this.reservationsRepository.create({
       ...createReservationDto,
       pax: visitor,
-      room
+      room,
+      addPaxIds: paxIds
     });
-    let pingo = await this.reservationsRepository.save(reservation);
-    return pingo
+    let res = await this.reservationsRepository.save(reservation);
+    return res
   }
 
   async cancelReservation(id: string) {

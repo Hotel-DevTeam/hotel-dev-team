@@ -98,4 +98,9 @@ export class Reservation {
     example: '12:00',
   })
   arrival: string;
+
+  @Column('integer', { array: true, nullable: true, default: [] })
+  @ApiProperty({ description: 'IDs de los pasajeros asociados a la reserva' })
+  addPaxIds: Pax[];
+  
 }

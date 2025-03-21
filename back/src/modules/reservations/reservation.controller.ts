@@ -68,6 +68,31 @@ export class ReservationsController {
     }
   }
 
+
+  @HttpCode(200)
+  @Get('/byRoom')
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de reservas obtenida exitosamente.',
+  })
+  @ApiQuery({
+    name: 'completed',
+    required: false,
+    type: Boolean,
+    description: 'Filtrar reservas completadas o no',
+  })
+  async getReservationsByRoom(
+    @Query('completed') completed?: boolean,
+  ) {
+    try {
+      return await this.reservationService.getReservationsByRoom(
+        completed,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException('Error al obtener reservas');
+    }
+  }
+
   @HttpCode(200)
   @Get('/findEmail')
   @ApiResponse({ status: 200, description: 'Reserva encontrada por email.' })
