@@ -37,18 +37,18 @@ const CreateReservationHotel: React.FC = () => {
   const [comments, setComments] = useState<string>("");
   const [arrival, setArrival] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [additionalSections, setAdditionalSections] = useState<{ id: number; name: string; lastname: string; identification: string }[]>([]);
+  const [additionalSections, setAdditionalSections] = useState<{ id: number; name: string; lastname: string; dniPassport: string }[]>([]);
 
   const handleAddSection = () => {
   setAdditionalSections([
     ...additionalSections,
-    { id: Date.now(), name: "", lastname: "", identification: "" },
+    { id: Date.now(), name: "", lastname: "", dniPassport: "" },
   ]);
   };
 
   const handleSectionChange = (
     id: number,
-    field: "name" | "lastname" | "identification",
+    field: "name" | "lastname" | "dniPassport",
     value: string
   ) => {
     setAdditionalSections((prevSections) => {
@@ -110,6 +110,7 @@ const CreateReservationHotel: React.FC = () => {
       completed: false,
       notasAdicionales: [comments],
       arrival,
+      addPax: additionalSections
     };
 
     // addReservation(newReservation);
@@ -142,6 +143,7 @@ const CreateReservationHotel: React.FC = () => {
     setComments("");
     setArrival("");
     setTotalPrice(0);
+    setAdditionalSections([]);
   };
 
   useEffect(() => {
@@ -473,8 +475,8 @@ const CreateReservationHotel: React.FC = () => {
               <label className="block text-sm font-medium text-[#264653] mb-1">DNI/Pasaporte:</label>
               <input
                 type="text"
-                value={section.identification}
-                onChange={(e) => handleSectionChange(section.id, "identification", e.target.value)}
+                value={section.dniPassport}
+                onChange={(e) => handleSectionChange(section.id, "dniPassport", e.target.value)}
                 className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
               />
             </div>

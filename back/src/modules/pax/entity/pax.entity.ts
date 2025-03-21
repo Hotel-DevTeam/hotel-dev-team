@@ -23,10 +23,11 @@ export class Pax {
   })
   dniPassport: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   @ApiProperty({
     description: 'Email del pasajero',
     example: 'juan.perez@example.com',
+    required: false,
   })
   email: string;
 
@@ -34,6 +35,7 @@ export class Pax {
   @ApiProperty({
     description: 'Número de teléfono del pasajero',
     example: '+54 9 11 1234 5678',
+    required: false,
   })
   phone: string;
 

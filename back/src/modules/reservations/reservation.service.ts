@@ -136,13 +136,37 @@ export class ReservationService {
       await this.paxRepository.save(visitor);
     }
 
+    let paxIds = []
+    for(let addPax of createReservationDto.addPax){
+
+        let addVisitor = await this.paxRepository.findOne({
+          where: { dniPassport: addPax.dniPassport },
+        });
+
+        if (!addVisitor) {
+          addVisitor = this.paxRepository.create({
+            name: addPax.name,
+            lastname: addPax.lastname,
+            dniPassport: addPax.dniPassport
+          });
+          let newVisitor = await this.paxRepository.save(addVisitor);
+          paxIds.push(newVisitor.id)
+        }
+        else {
+          paxIds.push(addVisitor.id)
+        }
+
+    }
+    
+
     const reservation = this.reservationsRepository.create({
       ...createReservationDto,
       pax: visitor,
-      room
+      room,
+      addPaxIds: paxIds
     });
-    let pingo = await this.reservationsRepository.save(reservation);
-    return pingo
+    let res = await this.reservationsRepository.save(reservation);
+    return res
   }
 
   async cancelReservation(id: string) {

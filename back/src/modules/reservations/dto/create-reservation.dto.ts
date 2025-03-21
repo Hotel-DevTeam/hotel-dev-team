@@ -90,4 +90,11 @@ export class CreateReservationDto {
     example: '12:00',
   })
   arrival: string;
+
+  @ApiProperty({
+    description: 'Pasajeros Adicionales',
+    type: CreatePaxDto,
+    isArray: true
+  })
+  addPax: CreatePaxDto[];
 }
