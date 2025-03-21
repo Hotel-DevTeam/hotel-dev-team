@@ -54,7 +54,7 @@ const Calendar: React.FC = () => {
     });
   };
 
-  const renderCalendarByRoom = (roomName: String, roomReservations: Reservation[]) => {
+  const renderCalendarByRoom = (roomName: string, roomReservations: Reservation[]) => {
     const daysInMonth = currentMonth.daysInMonth();
     const startOfMonth = currentMonth.startOf("month").day();
     const calendarDays = [];
