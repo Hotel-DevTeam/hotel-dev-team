@@ -86,3 +86,18 @@ export const fetchGetReservtionById = async (reservationId: string) => {
   return await response.json();
 };
 
+export const fetchGetReservtionsByRoom = async () => {
+  const response = await fetch(`${apiUrl}/reservations/byRoom`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al obtener las órdenes");
+  }
+
+  return await response.json();
+};
+
