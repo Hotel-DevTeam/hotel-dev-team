@@ -61,9 +61,10 @@ const Calendar: React.FC = () => {
 
     for (let i = 0; i < startOfMonth; i++) {
       if(i == 0){calendarDays.push(<div key={`empty-${i}`} className="w-1/7 h-16"><h1>{roomName}</h1></div>);}
-      else{calendarDays.push(<div key={`empty-${i}`} className="w-1/7 h-16"></div>);}
+      else{calendarDays.push(<div key={`empty-${i + roomName}`} className="w-1/7 h-16"></div>);}
     }
 
+    let waitingForEnd = false
     for (let day = 1; day <= daysInMonth; day++) {
       const formattedDay = currentMonth.date(day).format("YYYY-MM-DD");
       const reservationsForDay = getReservationsForDay(formattedDay, roomReservations);
@@ -72,16 +73,26 @@ const Calendar: React.FC = () => {
       reservationsForDay.forEach((res) => {
         const checkIn = res.checkInDate.slice(0, 10);
         const checkOut = res.checkOutDate.slice(0, 10);
+
+         
+        
         if (checkIn === formattedDay) {
-          dayColorClass = "bg-green-300"; // Check-in
-        }
+            dayColorClass = "bg-yellow-300";
+            waitingForEnd = true
+        } //Primer día
         if (checkOut === formattedDay) {
-          dayColorClass = "bg-red-300"; // Check-out
-        }
+            dayColorClass = "bg-yellow-300";
+            waitingForEnd = false
+        }//último día
         if (checkOut === formattedDay && checkIn === formattedDay) {
-          dayColorClass = "bg-blue-300"; // Check-in y Check-out el mismo día
-        }
+          dayColorClass = "bg-blue-300";
+        }//mismo día
       });
+      if (waitingForEnd && !dayColorClass) {
+        dayColorClass = "bg-yellow-300";
+      } else if(!waitingForEnd && !dayColorClass){
+        dayColorClass = "bg-green-300";
+      }
 
       calendarDays.push(
         <div
