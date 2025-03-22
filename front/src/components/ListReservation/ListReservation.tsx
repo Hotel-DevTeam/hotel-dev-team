@@ -211,8 +211,8 @@ const ReservationsList: React.FC = () => {
                 Habitación: {reservation.room ? reservation.room.name : "No especificada"}
               </div>
               <div className="text-gray-600 mt-2">
-                <div>Check-in: {reservation.checkInDate}</div>
-                <div>Check-out: {reservation.checkOutDate}</div> 
+                <div>Check-in: {reservation.checkInDate.slice(0,10)}</div>
+                <div>Check-out: {reservation.checkOutDate.slice(0,10)}</div> 
                 <div>Pasajero: {reservation.pax.name} {reservation.pax.lastname}</div>
                 <div className="font-semibold text-gray-800">
                   Precio Total: ${reservation.priceArg} ARS

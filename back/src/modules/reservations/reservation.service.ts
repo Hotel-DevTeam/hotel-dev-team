@@ -24,7 +24,7 @@ export class ReservationService {
   async getReservations(page: number, limit: number, completed?: boolean) {
     try {
       const query =
-        this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room');
+        this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room').orderBy('reservation.checkInDate', 'DESC');
       if (completed !== undefined) {
         query.where('reservation.completed = :completed', { completed });
       }
