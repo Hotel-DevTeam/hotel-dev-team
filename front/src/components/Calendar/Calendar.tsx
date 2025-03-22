@@ -58,10 +58,15 @@ const Calendar: React.FC = () => {
     const daysInMonth = currentMonth.daysInMonth();
     const startOfMonth = currentMonth.startOf("month").day();
     const calendarDays = [];
+    
+
+    for (let i = 0; i < 7; i++) {
+      if(i == 3){calendarDays.push(<div key={`empty-${i + roomName + i}`} className="text-center w-1/7 h-16"><h1 className="text-l font-semibold">{roomName}</h1></div>);}
+      else{calendarDays.push(<div key={`empty-${i + roomName + i}`} className="w-1/7 h-16"></div>);}
+    }
 
     for (let i = 0; i < startOfMonth; i++) {
-      if(i == 0){calendarDays.push(<div key={`empty-${i}`} className="w-1/7 h-16"><h1>{roomName}</h1></div>);}
-      else{calendarDays.push(<div key={`empty-${i + roomName}`} className="w-1/7 h-16"></div>);}
+      calendarDays.push(<div key={`empty-${i + roomName}`} className="w-1/7 h-16"></div>);
     }
 
     let waitingForEnd = false
