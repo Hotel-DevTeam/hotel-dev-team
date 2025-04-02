@@ -5,11 +5,9 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
-import { roomsData } from "../../Data/Data"; // Importamos roomsData
 import ShowReservationModal from "./ShowReservation";
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
 import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
-import { log } from "console";
 
 const ReservationsList: React.FC = () => {
   const { rooms, finalizeReservation, cancelReservation, updatePrice } =
@@ -192,17 +190,21 @@ const ReservationsList: React.FC = () => {
             "bg-white p-6 rounded-lg shadow-lg border border-gray-200";
           let buttonClass =
             "bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 hover:text-white";
+          let completeButtonClass =
+            "bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 hover:text-white";
 
-          if (reservation.status === "finalizada") {
+          if (reservation.status === "completed") {
             cardClass =
               "bg-green-50 p-6 rounded-lg shadow-lg border border-green-200";
             buttonClass =
               "bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 hover:text-white";
-          } else if (reservation.status === "cancelada") {
+            completeButtonClass = "invisible";
+          } else if (reservation.status === "cancelled") {
             cardClass =
               "bg-red-50 p-6 rounded-lg shadow-lg border border-red-200";
             buttonClass =
               "bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:text-white";
+            completeButtonClass = "invisible";
           }
 
           return (
@@ -241,24 +243,22 @@ const ReservationsList: React.FC = () => {
 
                 <button
                   className={buttonClass}
-                  onClick={() => CompleteReservation(reservation.id)}
-                >
-                  {reservation.status === "finalizada"
-                    ? "Finalizada"
-                    : "Finalizar"}
-                </button>
-
-                <button
-                  className={buttonClass}
-                  onClick={() => CancelReservation(reservation.id)}
-                >
-                  Cancelar
-                </button>
-                <button
-                  className={buttonClass}
                   onClick={() => setSelectedReservation(reservation.id)}
                 >
                   Detalles
+                </button>
+                <button
+                  className={completeButtonClass}
+                  onClick={() => CompleteReservation(reservation.id).then(()=>window.location.reload())}
+                >
+                  Finalizar
+                </button>
+
+                <button
+                  className={completeButtonClass}
+                  onClick={() => CancelReservation(reservation.id).then(()=>window.location.reload())}
+                >
+                  Cancelar
                 </button>
               </div>
             </div>

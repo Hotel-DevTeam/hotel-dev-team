@@ -118,7 +118,7 @@ export class ReservationService {
 
   async createReservation(createReservationDto: CreateReservationDto) {
     let visitor = await this.paxRepository.findOne({
-      where: { email: createReservationDto.pax.email },
+      where: { dniPassport: createReservationDto.pax.dniPassport },
     });
     let room = await this.roomRepository.findOne({
       where: { name: createReservationDto.roomType.name},

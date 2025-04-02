@@ -33,6 +33,7 @@ const ReservationContext = createContext<ReservationContextType | undefined>(
 
 export const ReservationProvider = ({ children }: { children: ReactNode }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  //const [backupToken, setBackupToken] = useState<string>('');
   // const [rooms, setRooms] = useState<IRoomId[]>([]);
   const [rooms, setRooms] = useState<IRoom[]>([]);
   const { token } = useContext(UserContext);
@@ -41,12 +42,14 @@ export const ReservationProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Cargar reservas del localStorage al iniciar
     const savedReservations = localStorage.getItem("reservations");
+    //const bkToken = localStorage.getItem("user");
+    //setBackupToken(JSON.parse(bkToken || '{token: ""}').token)
     if (savedReservations) {
       setReservations(JSON.parse(savedReservations));
     }
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
         const loadRooms = async () => {
           try {
             if (location) {
@@ -62,7 +65,7 @@ export const ReservationProvider = ({ children }: { children: ReactNode }) => {
         };
     
         loadRooms();
-      }, [location]);
+      }, [location]);*/
 
   useEffect(() => {
     // Guardar reservas en localStorage cada vez que cambian
