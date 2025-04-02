@@ -28,6 +28,7 @@ export interface Reservation {
   identification: string;
   notasAdicionales: string[];
   pax: Pax;
+  addPaxIds: Pax[];
   room: Room;
   passengerCount: number;
   passengerType?: string;

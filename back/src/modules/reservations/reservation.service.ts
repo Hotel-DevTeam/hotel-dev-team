@@ -30,6 +30,12 @@ export class ReservationService {
       }
       const totalReservations = await query.getMany();
 
+      for (const reservation of totalReservations) {
+        if (reservation.addPaxIds && reservation.addPaxIds.length > 0) {
+          reservation.addPaxIds = await this.paxRepository.findByIds(reservation.addPaxIds || []);
+        }
+      }
+
       const start = (page - 1) * limit;
       const end = start + limit;
 
