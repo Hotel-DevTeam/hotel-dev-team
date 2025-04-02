@@ -30,7 +30,6 @@ const CurrencyConverterForm: React.FC<CurrencyConverterFormProps> = ({
         if (usdRate) {
           const rate = usdRate.tipoCotizacion; // Usamos el tipoCotizacion para el cálculo
           setDollarRate(rate);
-          console.log("Tasa de cambio obtenida:", rate); // Log para verificar la tasa
           setTotalPriceUSD(pesosAmount / rate);
           setDepositUSD(depositAmount / rate);
         } else {
