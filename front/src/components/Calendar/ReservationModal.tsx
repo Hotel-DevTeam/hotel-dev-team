@@ -23,7 +23,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     const loadOrders = async () => {
       try {
         const data = await fetchGetReservtions();
-        console.log(data.reservation)
         setReservations(data.reservations);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Error desconocido");
@@ -105,6 +104,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                     {reservation.notasAdicionales ? reservation.notasAdicionales[0] : ''}
                   </p>
                 </div>
+                {reservation.addPaxIds && reservation.addPaxIds.length > 0 && (
+                  <div className="flex flex-col">
+                    <p className="text-[#264653] font-medium"><strong>Pasajeros adicionales:</strong></p>
+                    <ul className="ml-4 list-disc">
+                      {reservation.addPaxIds.map((pax) => (
+                        <li key={pax.id} className="text-[#264653]">
+                          {pax.name} {pax.lastname} - DNI/Pasaporte: {pax.dniPassport}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {reservationText && (
                   <button
                     onClick={handleRemoveText}
