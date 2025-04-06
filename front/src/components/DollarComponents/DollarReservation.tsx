@@ -47,10 +47,6 @@ const CurrencyConverterForm: React.FC<CurrencyConverterFormProps> = ({
     // Calculamos el saldo a abonar en dólares
     const calculatedBalanceUSD = totalPriceUSD - depositUSD;
     setBalanceUSD(calculatedBalanceUSD);
-
-    console.log("Monto total en USD:", totalPriceUSD);
-    console.log("Depósito en USD:", depositUSD);
-    console.log("Saldo a abonar en USD:", balanceUSD);
   }, [totalPriceUSD, depositUSD]);
 
   return (
