@@ -63,6 +63,7 @@ export interface CreateReservationDto {
   depositArg: number; // Depósito/seña en pesos argentinos
   depositUsd: number; // Depósito/seña en dólares
   balance: number; // Saldo restante
+  balanceUsd: number; // Saldo restante
   completed: boolean; // Indica si la reserva está completada
   notasAdicionales: string[]; // Detalles extra sobre el pax o la reserva
 }

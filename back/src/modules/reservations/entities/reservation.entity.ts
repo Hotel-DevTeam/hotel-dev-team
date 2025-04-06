@@ -80,6 +80,10 @@ export class Reservation {
   @ApiProperty({ description: 'Saldo restante', example: 10000.0 })
   balance: number;
 
+  @Column('decimal', { nullable: true, precision: 20, scale: 2 })
+  @ApiProperty({ description: 'Saldo restante USD', example: 10000.0 })
+  balanceUsd: number;
+
   @Column({ type: 'enum', enum: Status, default: Status.Active })
   @ApiProperty({
     description: 'Indica si la reserva está completada, activa o cancelada',

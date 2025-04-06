@@ -73,6 +73,9 @@ export class CreateReservationDto {
   @ApiProperty({ description: 'Saldo restante', example: 10000.0 })
   balance: number;
 
+  @ApiProperty({ description: 'Saldo restante USD', example: 10000.0 })
+  balanceUsd: number;
+
   @ApiProperty({
     description: 'Indica si la reserva está completada',
     example: true,

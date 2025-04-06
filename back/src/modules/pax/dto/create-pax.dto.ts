@@ -26,6 +26,12 @@ export class CreatePaxDto {
   phone: string;
 
   @ApiProperty({
+    description: 'Dirección del pasajero',
+    example: 'Calle 123',
+  })
+  address: string;
+
+  @ApiProperty({
     description: 'Fecha de nacimiento del pasajero',
     example: '1990-01-01',
   })

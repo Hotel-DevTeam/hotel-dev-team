@@ -137,6 +137,7 @@ export class ReservationService {
         email: createReservationDto.pax.email,
         dniPassport: createReservationDto.pax.dniPassport,
         phone: createReservationDto.pax.phone,
+        address: createReservationDto.pax.address,
         birthdate: createReservationDto.pax.birthdate,
       });
       await this.paxRepository.save(visitor);

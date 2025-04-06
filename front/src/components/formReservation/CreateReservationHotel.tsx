@@ -7,11 +7,9 @@ import { useReservationContext } from "@/context/reservationContext";
 import { fetchGetRoomById, fetchGetRooms } from '../Fetchs/RoomsFetch/RoomsFetch';
 import { useLocationContext } from '@/context/LocationContext';
 import Swal from "sweetalert2";
-import { Reservation } from "../../Interfaces/IReservation";
-import CurrencyConverterForm from "../DollarComponents/DollarReservation"; // Importamos el componente
 import { IRoom } from '@/Interfaces/IUser';
-import { fetchGetLocation } from "../Fetchs/LocaationsFetch/LocationsFetch";
 import { CreateReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { fetchDollarRate } from "../Fetchs/DollarFetch/fetchDollarRate";
 
 const CreateReservationHotel: React.FC = () => {
   const { addReservation, rooms } = useReservationContext();
@@ -30,13 +28,18 @@ const CreateReservationHotel: React.FC = () => {
   const [identification, setIdentification] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
   const [birthday, setBirthday] = useState<string>("");
   const [breakfast, setBreakfast] = useState<boolean>(false);
   const [deposit, setDeposit] = useState<number>(0);
   const [remainingBalance, setRemainingBalance] = useState<number>(0);
+  const [remainingBalanceUsd, setRemainingBalanceUsd] = useState<number>(0);
   const [comments, setComments] = useState<string>("");
   const [arrival, setArrival] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPriceUsd, setTotalPriceUsd] = useState<number>(0);
+  const [depositUsd, setDepositUsd] = useState<number>(0);
+  const [dollarRate, setDollarRate] = useState<number>(0);
   const [additionalSections, setAdditionalSections] = useState<{ id: number; name: string; lastname: string; dniPassport: string }[]>([]);
 
   const handleAddSection = () => {
@@ -66,12 +69,20 @@ const CreateReservationHotel: React.FC = () => {
 
   const handleTotalPriceChange = (price: number) => {
     setTotalPrice(price);
-    setRemainingBalance(price - deposit);
+    setRemainingBalanceUsd(price - depositUsd);
+    setRemainingBalance((price * dollarRate) - deposit);
   };
 
   const handleDepositChange = (amount: number) => {
     setDeposit(amount);
     setRemainingBalance(totalPrice - amount);
+  };
+
+  const handleDepositChangeUsd = (amount: number) => {
+    setDepositUsd(amount);
+    setDeposit(amount * dollarRate);
+    setRemainingBalanceUsd(totalPrice - amount);
+    setRemainingBalance((totalPrice * dollarRate) - (amount * dollarRate));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,7 +104,8 @@ const CreateReservationHotel: React.FC = () => {
         dniPassport: identification,
         email,
         phone,
-        birthdate: birthday,
+        address,
+        // birthdate: birthday,
         isActive: true
       },
       PaxNum: adultCount + childCount,
@@ -102,11 +114,12 @@ const CreateReservationHotel: React.FC = () => {
       ubicacion:{name: selectedLocation.name},
       roomType:{name: roomsData[0].name},
       breakfast,
-      priceArg: totalPrice,
-      priceUsd: 0,
+      priceArg: (totalPrice * dollarRate),
+      priceUsd: totalPrice,
       depositArg: deposit,
-      depositUsd: 0,
+      depositUsd: depositUsd,
       balance: remainingBalance,
+      balanceUsd: remainingBalanceUsd,
       completed: false,
       notasAdicionales: [comments],
       arrival,
@@ -133,13 +146,16 @@ const CreateReservationHotel: React.FC = () => {
     setIdentification("");
     setEmail("");
     setPhone("");
+    setAddress("");
     setBirthday("");
     setChildCount(0);
     setPassengerType("adulto");
     setReservationMethod("");
     setBreakfast(false);
     setDeposit(0);
+    setDepositUsd(0);
     setRemainingBalance(0);
+    setRemainingBalanceUsd(0);
     setComments("");
     setArrival("");
     setTotalPrice(0);
@@ -160,7 +176,25 @@ const CreateReservationHotel: React.FC = () => {
           console.error("Error al obtener las habitaciones:", error);
         }
       };
+
+    const fetchRate = async () => {
+      try {
+        const rateData = await fetchDollarRate();
+        const usdRate = rateData.results.detalle.find(
+          (item: { codigoMoneda: string }) => item.codigoMoneda === "USD"
+        );
+        if (usdRate) {
+          const rate = usdRate.tipoCotizacion;
+          setDollarRate(rate);
+        } else {
+          console.error("No se encontró la tasa de cambio para USD");
+        }
+      } catch (error) {
+        console.error("Error al obtener la tasa de cambio:", error);
+      }
+    };
   
+      fetchRate();
       loadRooms();
     }, [location]);
 
@@ -173,6 +207,59 @@ const CreateReservationHotel: React.FC = () => {
         Crear Reserva
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        {/* Número de habitación */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Número de habitación:
+          </label>
+          <select
+            value={roomId || ""}
+            onChange={(e) => setRoomId(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="">Selecciona una habitación</option>
+            {roomss && roomss.length > 0 ? (
+              roomss
+                // .filter((room) => room.id !== 7) // Filtra el ID 7
+                .map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.name}
+                  </option>
+                ))
+            ) : (
+              <option disabled>No hay habitaciones disponibles</option>
+            )}
+          </select>
+        </div>
+
+        {/* Fecha de entrada */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Check-in:
+          </label>
+          <input
+            type="date"
+            value={checkInDate}
+            onChange={(e) => setCheckInDate(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Fecha de salida */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Check-out:
+          </label>
+          <input
+            type="date"
+            value={checkOutDate}
+            onChange={(e) => setCheckOutDate(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+
         {/* Nombre */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -221,15 +308,29 @@ const CreateReservationHotel: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>*/}
-        {/* Número de teléfono */}
+
+        {/* Dirección */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Celular:
+            Dirección:
           </label>
           <input
             type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Hora de llegada */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Hora de llegada:
+          </label>
+          <input
+            type="text"
+            value={arrival}
+            onChange={(e) => setArrival(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
@@ -250,7 +351,7 @@ const CreateReservationHotel: React.FC = () => {
         </div>
 
         {/* Fecha de Nacimiento */}
-        <div>
+        {/*<div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
             Fecha de Nacimiento:
           </label>
@@ -260,70 +361,7 @@ const CreateReservationHotel: React.FC = () => {
             onChange={(e) => setBirthday(e.target.value)}
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
-        </div>
-        {/* Fecha de entrada */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-in:
-          </label>
-          <input
-            type="date"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Fecha de salida */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Check-out:
-          </label>
-          <input
-            type="date"
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Hora de llegada */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Hora de llegada:
-          </label>
-          <input
-            type="text"
-            value={arrival}
-            onChange={(e) => setArrival(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
-        {/* Número de habitación */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Número de habitación:
-          </label>
-          <select
-            value={roomId || ""}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          >
-            <option value="">Selecciona una habitación</option>
-            {roomss && roomss.length > 0 ? (
-              roomss
-                // .filter((room) => room.id !== 7) // Filtra el ID 7
-                .map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.name}
-                  </option>
-                ))
-            ) : (
-              <option disabled>No hay habitaciones disponibles</option>
-            )}
-          </select>
-        </div>
+        </div>*/}
 
         {/* Adultos */}
         <div>
@@ -353,19 +391,6 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
-        {/* Método de reserva */}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Método de reserva:
-          </label>
-          <input
-            type="text"
-            value={reservationMethod}
-            onChange={(e) => setReservationMethod(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
         {/* Desayuno */}
         <div className="flex items-center">
           <input
@@ -379,10 +404,37 @@ const CreateReservationHotel: React.FC = () => {
           </label>
         </div>
 
+        {/* Método de reserva */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Método de reserva:
+          </label>
+          <input
+            type="text"
+            value={reservationMethod}
+            onChange={(e) => setReservationMethod(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
+        {/* Número de teléfono */}
+        {/*<div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Celular:
+          </label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>/*}
+
+
         {/* Precio total */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio total:
+            Precio total (USD):
           </label>
           <input
             type="text"
@@ -398,6 +450,25 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
+        {/* Depósito USD*/}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Seña USD:
+          </label>
+          <input
+            type="text"
+            value={depositUsd || ""}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              if (/^\d*\.?\d*$/.test(newValue)) {
+                handleDepositChangeUsd(Number(newValue) || 0);
+              }
+            }}
+            inputMode="decimal"
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
         {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -406,6 +477,7 @@ const CreateReservationHotel: React.FC = () => {
           <input
             type="text"
             value={deposit || ""}
+            readOnly
             onChange={(e) => {
               const newValue = e.target.value;
               if (/^\d*\.?\d*$/.test(newValue)) {
@@ -413,7 +485,7 @@ const CreateReservationHotel: React.FC = () => {
               }
             }}
             inputMode="decimal"
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] bg-gray-200"
           />
         </div>
 
@@ -430,11 +502,24 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
+        {/* Saldo restante en USD */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Saldo restante en USD:
+          </label>
+          <input
+            type="text"
+            value={remainingBalanceUsd || ""}
+            readOnly
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] bg-gray-200"
+          />
+        </div>
+
         {/* Conversión a dólares */}
-        <CurrencyConverterForm
+        {/*<CurrencyConverterForm
           pesosAmount={totalPrice}
           depositAmount={deposit}
-        />
+        />*/}
       </div>
 
       <div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { UserContext } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { IUserN } from "@/Interfaces/IUser";
+import { usePathname } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const { isLogged, logOut, isAdmin } = useContext(UserContext);
@@ -45,6 +46,10 @@ const Navbar: React.FC = () => {
   };
 
   if (!isLogged) return null;
+
+  const pathname = usePathname();
+  if (pathname.includes("/OptionRes")) return null;
+
 
   return (
     <nav
