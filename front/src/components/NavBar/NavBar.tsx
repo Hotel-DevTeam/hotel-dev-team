@@ -45,10 +45,10 @@ const Navbar: React.FC = () => {
     }
   };
 
-  if (!isLogged) return null;
 
   const pathname = usePathname();
   if (pathname.includes("/OptionRes")) return null;
+  if (!isLogged) return null;
 
 
   return (
