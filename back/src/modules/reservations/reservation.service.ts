@@ -151,45 +151,45 @@ export class ReservationService {
   }
 
   async createReservation(createReservationDto: CreateReservationDto) {
-    let visitor = await this.paxRepository.findOne({
+    /*let visitor = await this.paxRepository.findOne({
       where: { dniPassport: createReservationDto.pax.dniPassport },
-    });
+    });*/
     let room = await this.roomRepository.findOne({
       where: { name: createReservationDto.roomType.name},
     });
 
-    if (!visitor) {
-      visitor = this.paxRepository.create({
-        name: createReservationDto.pax.name,
-        lastname: createReservationDto.pax.lastname,
-        email: createReservationDto.pax.email,
-        dniPassport: createReservationDto.pax.dniPassport,
-        phone: createReservationDto.pax.phone,
-        address: createReservationDto.pax.address,
-        birthdate: createReservationDto.pax.birthdate,
-      });
-      await this.paxRepository.save(visitor);
-    }
+    //if (!visitor) {
+    let visitor = this.paxRepository.create({
+      name: createReservationDto.pax.name,
+      lastname: createReservationDto.pax.lastname,
+      email: createReservationDto.pax.email,
+      dniPassport: createReservationDto.pax.dniPassport,
+      phone: createReservationDto.pax.phone,
+      address: createReservationDto.pax.address,
+      birthdate: createReservationDto.pax.birthdate,
+    });
+    await this.paxRepository.save(visitor);
+    //}
 
     let paxIds = []
     for(let addPax of createReservationDto.addPax){
 
-        let addVisitor = await this.paxRepository.findOne({
+        /*let addVisitor = await this.paxRepository.findOne({
           where: { dniPassport: addPax.dniPassport },
-        });
+        });*/
 
-        if (!addVisitor) {
-          addVisitor = this.paxRepository.create({
+        //if (!addVisitor) {
+          let addVisitor = this.paxRepository.create({
             name: addPax.name,
             lastname: addPax.lastname,
             dniPassport: addPax.dniPassport
           });
           let newVisitor = await this.paxRepository.save(addVisitor);
           paxIds.push(newVisitor.id)
-        }
+        /*}
         else {
           paxIds.push(addVisitor.id)
-        }
+        }*/
 
     }
     

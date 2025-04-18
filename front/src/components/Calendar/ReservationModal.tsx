@@ -102,6 +102,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <p className="text-[#264653]">
+                    <strong>Teléfono/Celular:</strong>
+                    {reservation.pax.phone || ''}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-[#264653]">
                     <strong>Saldo pendiente:</strong> $
                     {reservation.balance}
                   </p>

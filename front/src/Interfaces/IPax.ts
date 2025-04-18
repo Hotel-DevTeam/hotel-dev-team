@@ -3,4 +3,5 @@ export interface Pax {
   name: string;
   lastname: string;
   dniPassport: string;
+  phone: string;
 }
