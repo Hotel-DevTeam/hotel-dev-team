@@ -17,6 +17,7 @@ export default function AllProducts() {
     if (selectedType !== "") {
       filtered = filtered.filter((product) => product.tipo === selectedType);
     }
+    
     setFilteredProducts(filtered);
   }, [products, selectedType]);
 

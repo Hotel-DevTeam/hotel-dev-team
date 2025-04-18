@@ -5,10 +5,13 @@ import {
 } from '@nestjs/common';
 import { UsersRepository } from '../Users/users.repository';
 import { Users } from '../Users/entities/users.entity';
+import { Location } from '../Location/entities/location.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../Users/users.service';
 import { Role } from '../Users/roles.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +19,10 @@ export class AuthService {
     private readonly userRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
+    @InjectRepository(Location)
+    private readonly locationRepository: Repository<Location>,
   ) {}
 
   async getAuth(token: string): Promise<Users> {
@@ -62,7 +69,7 @@ export class AuthService {
   }
 
   async signUp(user: Partial<Users>) {
-    const { email, password, role } = user;
+    const { email, password, role, locations: locationIds = [] } = user;
 
     const foundUser = await this.userRepository.getUserByEmail(email);
     if (foundUser) throw new BadRequestException('Registered Email');
@@ -74,10 +81,12 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const locations = await this.locationRepository.findByIds(locationIds);
 
     const newUser = await this.userRepository.createUser({
       ...user,
       password: hashedPassword,
+      locations: locations
     });
 
     const payload = {

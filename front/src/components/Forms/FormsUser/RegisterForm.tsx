@@ -1,10 +1,11 @@
 "use client";
-import { IUserRegister,Role } from '@/Interfaces/IUser';
+import { ILocation, IUserRegister,Role } from '@/Interfaces/IUser';
 import { NotificationsForms } from '@/components/Notifications/NotificationsForms';
 import { validationRegister } from '@/utils/validationFormRegister';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '@/context/UserContext';
+import { fetchLocations } from '@/components/Fetchs/UserFetchs/UserFetchs';
 
 
 export default function RegisterForm() {
@@ -15,13 +16,27 @@ export default function RegisterForm() {
         name: '',
         password: '',
         confirmPassword: '',
-        role: Role.Recep 
+        role: Role.Recep,
+        locations : []
     });
     const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [showErrorNotification, setShowErrorNotification] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [ubicaciones, setUbicaciones] = useState<ILocation[]>([]);
+
+    useEffect(() => {
+        const getLocations = async () => {
+          try {
+            const data = await fetchLocations();
+            setUbicaciones(data);            
+          } catch (error) {
+            console.error("Error al obtener ubicaciones:", error);
+          }
+        };    
+        getLocations();
+      }, []);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -30,11 +45,19 @@ export default function RegisterForm() {
         const updatedUser = { ...userRegister, [name]: value };
         setUserRegister(updatedUser);
         setErrors(validationRegister(updatedUser));
+        
     };
+
+    const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);        
+        setUserRegister({ ...userRegister, locations: selectedOptions });
+      };
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const user: IUserRegister = { ...userRegister };
+        console.log(userRegister);
+        
 
         try {
             const isRegistered = await signUp(user);
@@ -154,6 +177,29 @@ export default function RegisterForm() {
                         </div>
                         {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
                     </div>
+
+                    <div>
+                        <label htmlFor="locations" className="block mb-2 text-sm font-medium text-gray-700">
+                            Ubicaciones permitidas
+                        </label>
+                        <select
+                            multiple
+                            name="locations"
+                            value={userRegister.locations}
+                            onChange={handleLocationChange}
+                            className="w-full h-40 rounded-lg border py-2 px-4 text-gray-500 text-sm shadow-sm focus:outline-none transition duration-300"
+                        >
+                            {ubicaciones.map((ubicacion) => (
+                            <option key={ubicacion.id} value={ubicacion.id}>
+                                {ubicacion.name}
+                            </option>
+                            ))}
+                        </select>
+                        {errors.allowedLocations && (
+                            <p className="text-red-500 text-sm mt-1">{errors.allowedLocations}</p>
+                        )}
+                    </div>
+
 
                     <div className="flex justify-center">
                         <button

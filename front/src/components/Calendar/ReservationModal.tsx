@@ -17,12 +17,26 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [reservationText, setReservationText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [savedLocation, setSavedLocation] = useState<string>('')
+
+
+  useEffect(() => {
+    const selectedLocation = localStorage.getItem("selectedLocation");
+    const locationId = selectedLocation ? JSON.parse(selectedLocation).id : null;
+    if (locationId) {
+      setSavedLocation(locationId);
+    } else {
+      setError("No hay ubicación seleccionada");
+    }
+  }, []);
 
 
   useEffect(() => {
     const loadOrders = async () => {
+      if (!savedLocation) return;
+
       try {
-        const data = await fetchGetReservtions();
+        const data = await fetchGetReservtions(savedLocation);
         setReservations(data.reservations);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Error desconocido");
@@ -30,7 +44,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     };
 
     loadOrders();
-  }, []);
+  }, [savedLocation]);
 
   const reservationsForDay = reservations.filter((res) => {
     const checkIn = res.checkInDate.slice(0, 10);

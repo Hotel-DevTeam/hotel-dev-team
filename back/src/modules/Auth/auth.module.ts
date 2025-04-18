@@ -5,11 +5,12 @@ import { AuthService } from './auth.service';
 import { UsersRepository } from '../Users/users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from '../Users/entities/users.entity';
+import { Location } from '../Location/entities/location.entity';
 import { UsersService } from '../Users/users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([Users, Location]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '365d' },

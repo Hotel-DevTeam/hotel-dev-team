@@ -53,12 +53,14 @@ export class ReservationsController {
   async getReservations(
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 5,
+    @Query('locationId') locationId: string,
     @Query('completed') completed?: boolean,
   ) {
     try {
       const validPage = Math.max(1, Number(page));
       const validLimit = Math.max(1, Number(limit));
       return await this.reservationService.getReservations(
+        locationId,
         validPage,
         validLimit,
         completed,
@@ -82,10 +84,12 @@ export class ReservationsController {
     description: 'Filtrar reservas completadas o no',
   })
   async getReservationsByRoom(
+    @Query('locationId') locationId: string,
     @Query('completed') completed?: boolean,
   ) {
     try {
       return await this.reservationService.getReservationsByRoom(
+        locationId,
         completed,
       );
     } catch (error) {

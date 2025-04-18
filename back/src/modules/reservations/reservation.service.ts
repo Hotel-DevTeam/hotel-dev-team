@@ -21,7 +21,8 @@ export class ReservationService {
     @InjectRepository(Room)
     private roomRepository: Repository<Room>,
   ) {}
-  async getReservations(page: number, limit: number, completed?: boolean) {
+  
+  async getReservations(locationId: string, page: number, limit: number, completed?: boolean) {
     try {
       const query =
         this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room').orderBy('reservation.checkInDate', 'DESC');
@@ -29,8 +30,25 @@ export class ReservationService {
         query.where('reservation.completed = :completed', { completed });
       }
       const totalReservations = await query.getMany();
+      const rooms = await this.roomRepository.find()
+      let allowedRoomIds = []
+      for (let room of rooms){
+        if(room.location.id == locationId){
+          allowedRoomIds.push(room.id)
+        }
+      }
+      
+      let newReservations = []
+      for (let res of totalReservations){
+        if(allowedRoomIds.indexOf(res.room.id) !== -1){
+          newReservations.push(res)
+        }
 
-      for (const reservation of totalReservations) {
+      }
+      
+      
+
+      for (const reservation of newReservations) {
         if (reservation.addPaxIds && reservation.addPaxIds.length > 0) {
           reservation.addPaxIds = await this.paxRepository.findByIds(reservation.addPaxIds || []);
         }
@@ -39,9 +57,9 @@ export class ReservationService {
       const start = (page - 1) * limit;
       const end = start + limit;
 
-      const reservations = totalReservations.slice(start, end);
+      const reservations = newReservations.slice(start, end);
       return {
-        total: totalReservations.length,
+        total: newReservations.length,
         page,
         limit,
         reservations,
@@ -52,7 +70,7 @@ export class ReservationService {
   }
 
 
-  async getReservationsByRoom(completed?: boolean) {
+  async getReservationsByRoom(locationId: string, completed?: boolean) {
     try {
       const query =
         this.reservationsRepository.createQueryBuilder('reservation').leftJoinAndSelect('reservation.pax', 'user').leftJoinAndSelect('reservation.room', 'room');
@@ -63,7 +81,17 @@ export class ReservationService {
 
     let rooms = await this.roomRepository.find({});
 
+    let allowedRoomIds = []
+    for (let room of rooms){
+      if(room.location.id == locationId){
+        allowedRoomIds.push(room.id)
+      }
+    }
+
     let transformedRooms = rooms.reduce((acc, room) => {
+      if(room.location.id !== locationId){
+        return acc;
+      }
       acc[room.id] = {
         id: room.id,
         name: room.name,
@@ -74,7 +102,8 @@ export class ReservationService {
 
     totalReservations.forEach(reservation => {
       const roomId = reservation.room.id;
-      if (transformedRooms[roomId]) {
+      
+      if (allowedRoomIds.indexOf(reservation.room.id) !== -1 && transformedRooms[roomId]) {
         transformedRooms[roomId].reservations.push(reservation);
       }
     })
@@ -87,7 +116,6 @@ export class ReservationService {
 
   async getReservationByMail(email: string): Promise<Reservation> {
     try {
-      console.log('Buscando la reserva con email:', email);
       const reservation = await this.reservationsRepository.findOne({
         where: {
           pax: {

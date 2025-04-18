@@ -8,11 +8,12 @@ import { LocationRepository } from './location.repository';
 import { RoomsRepository } from '../Rooms/room.repository';
 import { AuthModule } from '../Auth/auth.module';
 import { UsersModule } from '../Users/users.module';
+import { Users } from '../Users/entities/users.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Location, RoomsRepository]),
+    TypeOrmModule.forFeature([Location, RoomsRepository, Users]),
     RoomModule,
     AuthModule,
     UsersModule,

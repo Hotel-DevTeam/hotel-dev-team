@@ -7,6 +7,7 @@ import {
   Get,
   UseGuards,
   Request,
+  Query
 } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { Location } from '../Location/entities/location.entity';
@@ -75,6 +76,16 @@ export class LocationController {
   })
   async getAllLocationsByAdmin(@Request() req): Promise<Location[]> {
     return await this.locationService.getAllLocationsByAdmin(req.user.id);
+  }
+
+  @Get('user/locations')
+  @ApiOperation({ summary: 'Obtener todas las ubicaciones del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Ubicaciones del usuario obtenidas.',
+  })
+  async getAllLocationsByUser(@Query('userId') userId: string): Promise<Location[]> {    
+    return await this.locationService.getAllLocationsByUser(userId);
   }
 
   @Put(':locationId')

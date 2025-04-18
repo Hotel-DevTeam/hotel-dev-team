@@ -2,12 +2,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Location } from './entities/location.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { Users } from '../Users/entities/users.entity';
 
 @Injectable()
 export class LocationRepository {
   constructor(
     @InjectRepository(Location)
     private readonly locationRepository: Repository<Location>,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
   ) {}
 
   async createLocation(
@@ -26,6 +29,22 @@ export class LocationRepository {
       where: { admin: { id: adminId } },
     });
   }
+
+  async findAllLocationsByUser(userId: string): Promise<Location[]> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['locations'],
+    });
+  
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    console.log(user);
+    
+  
+    return user.locations;
+  }
+  
 
   async findLocationById(locationId: string): Promise<Location> {
     return await this.locationRepository.findOne({ where: { id: locationId } });

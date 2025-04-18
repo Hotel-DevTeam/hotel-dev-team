@@ -24,6 +24,10 @@ export class LocationService {
     return this.locationRepository.findAllLocationsByAdmin(adminId);
   }
 
+  async getAllLocationsByUser(userId: string): Promise<Location[]> {    
+    return this.locationRepository.findAllLocationsByUser(userId);
+  }
+
   async getLocationById(locationId: string): Promise<Location> {
     return this.locationRepository.findLocationById(locationId);
   }
