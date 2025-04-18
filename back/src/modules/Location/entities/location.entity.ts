@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  ManyToMany,
   OneToMany,
 } from 'typeorm';
 import { Users } from '../../Users/entities/users.entity';
@@ -35,5 +36,8 @@ export class Location {
 
   @OneToMany(() => Caja, (caja) => caja.ubicacion)
   caja: Caja[];
+
+  @ManyToMany(() => Users, (user) => user.locations)
+  usersWithAccess: Users[];  
 }
 

@@ -89,6 +89,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   role: Role;
 
+  @ApiProperty({
+    description:
+      'Ubicaciones disponibles'
+  })
+  allowedLocations: string[];
+
   /**
    * El campo isAdmin debe estar vacío, es un valor calculado
    */

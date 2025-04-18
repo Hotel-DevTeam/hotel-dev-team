@@ -56,7 +56,8 @@ export const fetchLocations = async (): Promise<ILocation[]> => {
     throw new Error("Token no encontrado. Por favor, inicia sesión.");
   }
 
-  const response = await fetch(`${apiUrl}/location/admin/locations`, {
+
+  const response = await fetch(`${apiUrl}/location/user/locations?userId=${storedUser ? JSON.parse(storedUser).user.id : ''}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

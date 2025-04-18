@@ -26,7 +26,7 @@ const CardProduct: React.FC<ICardProductProps> = ({
   };
 
   const handleSave = () => {
-    if (editedProduct.nombre && editedProduct.foto && editedProduct.ubicacion) {
+    if (editedProduct.nombre && editedProduct.foto && editedProduct.ubicacion && editedProduct.precio) {
       onEditSubmit(editedProduct); // Siempre definido
       onSaveEdit?.(editedProduct); // Pasa el objeto editedProduct como argumento
     } else {
@@ -54,16 +54,6 @@ const CardProduct: React.FC<ICardProductProps> = ({
         <h2 className="bg-[#c49f92] text-white inline-block px-2 py-1 rounded-md shadow-md">
           {product.ubicacion?.name || "Ubicación no disponible"}
         </h2>
-        <div className="w-full h-48 relative cursor-pointer overflow-hidden rounded-t-xl flex justify-center items-center">
-          <Image
-            src={product.foto || "/default-image.jpg"} // Default image if foto is undefined
-            alt={product.nombre || "Producto sin nombre"}  // Default alt text if nombre is undefined
-            width={200}
-            height={200}
-            priority
-            className="object-contain transform transition-transform duration-300 hover:scale-110"
-          />
-        </div>
       </Link>
 
       <div className="flex flex-col items-center text-center mt-3">
@@ -78,6 +68,20 @@ const CardProduct: React.FC<ICardProductProps> = ({
         ) : (
           <h2 className="text-xl font-semibold text-gray-800">
             {product.nombre || "Producto sin nombre"}
+          </h2>
+        )}
+        
+        {isEditing ? (
+          <input
+            type="number"
+            name="precio"
+            value={editedProduct.precio || ""}
+            onChange={handleChange}
+            className="text-xl font-semibold text-gray-800 border rounded p-1"
+          />
+        ) : (
+          <h2 className="text-xl font-semibold text-gray-800">
+            $ {product.precio || "Producto sin precio"}
           </h2>
         )}
 

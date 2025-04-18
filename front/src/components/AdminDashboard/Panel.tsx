@@ -1,4 +1,4 @@
-import { FaUser, FaCashRegister, FaBox } from 'react-icons/fa';
+import { FaUser, FaCashRegister, FaBox, FaHotel } from 'react-icons/fa';
 import { MdNotifications } from 'react-icons/md';
 import Link from 'next/link';
 import React from 'react';
@@ -67,7 +67,24 @@ export default function Panel() {
                 Aquí verás los productos y servicios creados por ti, podrás editarlos y eliminarlos.
               </p>
               <button className="mt-4 px-4 py-2 bg-[#CD9C8A] text-white rounded-lg hover:bg-[#b77f6d] transition-all duration-300 ease-in-out">
-                Ver más
+                Ver Más
+              </button>
+            </div>
+          </Link>
+
+
+          {/* cambio de ubicación */}
+          <Link href={"/OptionRes"}>
+            <div className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-102">
+              <h2 className="text-2xl font-semibold text-[#CD9C8A] mb-4">
+                <FaHotel className="inline-block mr-2" />
+                Cambiar de ubicación
+              </h2>
+              <p className="text-gray-600">
+                Aquí podrás cambiar de ubicación cuando lo requieras.
+              </p>
+              <button className="mt-4 px-4 py-2 bg-[#CD9C8A] text-white rounded-lg hover:bg-[#b77f6d] transition-all duration-300 ease-in-out">
+                Ver Más
               </button>
             </div>
           </Link>

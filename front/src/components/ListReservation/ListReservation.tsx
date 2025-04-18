@@ -8,6 +8,7 @@ import { Reservation } from "../../Interfaces/IReservation";
 import ShowReservationModal from "./ShowReservation";
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
 import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { log } from "node:console";
 
 const ReservationsList: React.FC = () => {
   const { rooms, finalizeReservation, cancelReservation, updatePrice } =
@@ -21,12 +22,26 @@ const ReservationsList: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [savedLocation, setSavedLocation] = useState<string>('')
+
+  useEffect(() => {
+        const selectedLocation = localStorage.getItem("selectedLocation");
+        const locationId = selectedLocation ? JSON.parse(selectedLocation).id : null;
+        if (locationId) {
+          setSavedLocation(locationId);
+        } else {
+          setError("No hay ubicación seleccionada");
+          setLoading(false);
+        }
+      }, []);
 
 
   useEffect(() => {
       const loadOrders = async () => {
-        try {
-          const data = await fetchGetReservtions();
+        if (!savedLocation) return;
+
+        try {          
+          const data = await fetchGetReservtions(savedLocation);
           setReservations(data.reservations);
         } catch (error) {
           setError(error instanceof Error ? error.message : "Error desconocido");
@@ -36,7 +51,7 @@ const ReservationsList: React.FC = () => {
       };
 
       loadOrders();
-    }, []);
+    }, [savedLocation]);
   
   // Filtrar reservas por estado y habitación
   const filteredReservations = reservations.filter((reservation) => {

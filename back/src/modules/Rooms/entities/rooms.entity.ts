@@ -28,7 +28,7 @@ export class Room {
   @Column()
   type: string; // ej single, double, suite
 
-  @ManyToOne(() => Location, (location) => location.rooms)
+  @ManyToOne(() => Location, (location) => location.rooms, {eager: true})
   location: Location;
 
   @OneToMany(() => Reservation, (reservation) => reservation.room)

@@ -15,24 +15,36 @@ const Calendar: React.FC = () => {
   const [reservations2, setReservations2] = useState<RoomWithReservations>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [savedLocation, setSavedLocation] = useState<string>('')
 
 
-  useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        const data = await fetchGetReservtions();
-        const data2 = await fetchGetReservtionsByRoom();
-        //setReservations(data.reservations);
-        setReservations2(data2);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Error desconocido");
-      } finally {
-        setLoading(false); // Esto asegura que el estado de loading se cambie cuando termine la carga
+    useEffect(() => {
+      const selectedLocation = localStorage.getItem("selectedLocation");
+      const locationId = selectedLocation ? JSON.parse(selectedLocation).id : null;
+      if (locationId) {
+        setSavedLocation(locationId);
+      } else {
+        setError("No hay ubicación seleccionada");
+        setLoading(false);
       }
-    };
+    }, []);
 
-    loadOrders();
-  }, []);
+    useEffect(() => {
+      const loadOrders = async () => {
+        if (!savedLocation) return;
+    
+        try {
+          const data2 = await fetchGetReservtionsByRoom(savedLocation);
+          setReservations2(data2);
+        } catch (error) {
+          setError(error instanceof Error ? error.message : "Error desconocido");
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      loadOrders();
+    }, [savedLocation]);
 
   const handleDayClick = (day: string) => {
     setSelectedDate(day); 

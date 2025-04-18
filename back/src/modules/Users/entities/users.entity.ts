@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Location } from 'src/modules/Location/entities/location.entity';
 import { Role } from '../roles.enum';
 import { Movimiento } from 'src/modules/caja/movimientos/entities/movimiento.entity';
@@ -32,6 +32,21 @@ export class Users {
   @Column({ type: 'enum', enum: Role, default: Role.Admin })
   @ApiProperty({ description: 'User role', example: 'admin' })
   role: Role;
+
+  @ManyToMany(() => Location, { eager: false }) // eager: true para cargar automáticamente si querés
+  @JoinTable({
+    name: 'user_locations', // nombre de la tabla intermedia
+    joinColumn: {
+      name: 'userId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'locationId',
+      referencedColumnName: 'id',
+    },
+  })
+  @ApiProperty({ description: 'Locations the user can access', type: [Location] })
+  locations: Location[];
 
   @OneToMany(() => Location, (location) => location.admin)
   location: Location[];

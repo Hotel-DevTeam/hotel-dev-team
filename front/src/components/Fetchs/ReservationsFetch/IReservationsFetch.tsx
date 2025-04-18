@@ -56,8 +56,8 @@ export const CompleteReservation = async (reservationId: string) => {
 };
 
 
-export const fetchGetReservtions = async () => {
-  const response = await fetch(`${apiUrl}/reservations?page=1&limit=50000`, {
+export const fetchGetReservtions = async (locationId: string) => {
+  const response = await fetch(`${apiUrl}/reservations?page=1&limit=50000${locationId ? '&locationId=' + locationId : '&locationId=""'}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -86,8 +86,8 @@ export const fetchGetReservtionById = async (reservationId: string) => {
   return await response.json();
 };
 
-export const fetchGetReservtionsByRoom = async () => {
-  const response = await fetch(`${apiUrl}/reservations/byRoom`, {
+export const fetchGetReservtionsByRoom = async (locationId: string) => {
+  const response = await fetch(`${apiUrl}/reservations/byRoom?locationId=${locationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
