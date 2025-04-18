@@ -16,7 +16,7 @@ export class Pax {
   @ApiProperty({ description: 'Apellido del pasajero', example: 'Pérez' })
   lastname: string;
 
-  @Column({ unique: true })
+  @Column({ unique: false })
   @ApiProperty({
     description: 'Número de DNI o pasaporte del pasajero',
     example: '12345678',

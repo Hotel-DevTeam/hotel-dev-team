@@ -47,7 +47,7 @@ const Navbar: React.FC = () => {
 
 
   const pathname = usePathname();
-  if (pathname.includes("/OptionRes")) return null;
+  if (pathname.includes("/OptionRes") || pathname.includes("/login")) return null;
   if (!isLogged) return null;
 
 

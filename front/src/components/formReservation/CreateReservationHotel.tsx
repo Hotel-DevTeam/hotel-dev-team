@@ -322,6 +322,19 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
+        {/* Número de teléfono */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Celular:
+          </label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          />
+        </div>
+
         {/* Hora de llegada */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -391,19 +404,6 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
-        {/* Desayuno */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            checked={breakfast}
-            onChange={() => setBreakfast(!breakfast)}
-            className="mr-2"
-          />
-          <label className="text-sm font-medium text-[#264653]">
-            Desayuno incluido
-          </label>
-        </div>
-
         {/* Método de reserva */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
@@ -416,19 +416,6 @@ const CreateReservationHotel: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
-
-        {/* Número de teléfono */}
-        {/*<div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Celular:
-          </label>
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>/*}
 
 
         {/* Precio total */}
@@ -521,6 +508,20 @@ const CreateReservationHotel: React.FC = () => {
           depositAmount={deposit}
         />*/}
       </div>
+
+
+        {/* Desayuno */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            checked={breakfast}
+            onChange={() => setBreakfast(!breakfast)}
+            className="mr-2"
+          />
+          <label className="text-sm font-medium text-[#264653]">
+            Desayuno incluido
+          </label>
+        </div>
 
       <div>
         <label className="block text-sm font-medium text-[#264653] mb-1">
