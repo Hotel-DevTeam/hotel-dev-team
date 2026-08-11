@@ -40,6 +40,7 @@ const CreateReservationHotel: React.FC = () => {
   const [totalPriceUsd, setTotalPriceUsd] = useState<number>(0);
   const [depositUsd, setDepositUsd] = useState<number>(0);
   const [dollarRate, setDollarRate] = useState<number>(0);
+  const [divisa, setDivisa] = useState<string>("");
   const [additionalSections, setAdditionalSections] = useState<{ id: number; name: string; lastname: string; dniPassport: string }[]>([]);
 
   const handleAddSection = () => {
@@ -68,21 +69,37 @@ const CreateReservationHotel: React.FC = () => {
 
 
   const handleTotalPriceChange = (price: number) => {
-    setTotalPrice(price);
-    setRemainingBalanceUsd(price - depositUsd);
-    setRemainingBalance((price * dollarRate) - deposit);
+    if(!divisa){
+      alert('Seleccione una divisa.')
+    }
+    if(divisa == 'dolar'){
+      setTotalPriceUsd(Number(price.toFixed(2)))
+      setTotalPrice(Number((price * dollarRate).toFixed(2)));
+      setRemainingBalanceUsd(Number((price - depositUsd).toFixed(2)));
+      setRemainingBalance(Number(((price * dollarRate) - deposit).toFixed(2)));
+    } else {
+      setTotalPrice(Number(price.toFixed(2)));
+      setTotalPriceUsd(Number((price / dollarRate).toFixed(2)));
+      setRemainingBalanceUsd(Number(((price / dollarRate) - depositUsd).toFixed(2)));
+      setRemainingBalance(Number((price - deposit).toFixed(2)));
+    }
   };
 
   const handleDepositChange = (amount: number) => {
-    setDeposit(amount);
-    setRemainingBalance(totalPrice - amount);
-  };
-
-  const handleDepositChangeUsd = (amount: number) => {
-    setDepositUsd(amount);
-    setDeposit(amount * dollarRate);
-    setRemainingBalanceUsd(totalPrice - amount);
-    setRemainingBalance((totalPrice * dollarRate) - (amount * dollarRate));
+    if(!divisa){
+      alert('Seleccione una divisa.')
+    }
+    if(divisa == 'dolar'){
+      setDepositUsd(Number(amount.toFixed(2)));
+      setRemainingBalanceUsd(Number((totalPriceUsd - amount).toFixed(2)));
+      setDeposit(Number((amount * dollarRate).toFixed(2)));
+      setRemainingBalance(Number(((totalPrice) - (amount * dollarRate)).toFixed(2)));
+    }else{
+      setDepositUsd(Number((amount / dollarRate).toFixed(2)));
+      setRemainingBalanceUsd(Number((totalPriceUsd - (amount / dollarRate)).toFixed(2)));
+      setDeposit(Number(amount.toFixed(2)));
+      setRemainingBalance(Number((totalPrice - amount).toFixed(2)));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,12 +131,13 @@ const CreateReservationHotel: React.FC = () => {
       ubicacion:{name: selectedLocation.name},
       roomType:{name: roomsData[0].name},
       breakfast,
-      priceArg: (totalPrice * dollarRate),
-      priceUsd: totalPrice,
+      priceArg: totalPrice,
+      priceUsd: totalPriceUsd,
       depositArg: deposit,
       depositUsd: depositUsd,
       balance: remainingBalance,
       balanceUsd: remainingBalanceUsd,
+      divisa: divisa,
       completed: false,
       notasAdicionales: [comments],
       arrival,
@@ -416,16 +434,37 @@ const CreateReservationHotel: React.FC = () => {
             className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
           />
         </div>
+        {/* espaciado */}
+        <div>
+        </div>
 
+        <div>
+        </div>
+
+        {/* Divisa */}
+        <div>
+          <label className="block text-sm font-medium text-[#264653] mb-1">
+            Divisa:
+          </label>
+          <select
+            value={divisa || ""}
+            onChange={(e) => setDivisa(e.target.value)}
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
+          >
+            <option value="">Selecciona una divisa</option>
+            <option key="dolar" value="dolar">Dólar</option>
+            <option key="peso" value="peso">Peso</option>
+          </select>
+        </div>
 
         {/* Precio total */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Precio total (USD):
+            Precio total en Divisa:
           </label>
           <input
             type="text"
-            value={totalPrice || ""}
+            //value={totalPrice || ""}
             onChange={(e) => {
               const newValue = e.target.value;
               if (/^\d*\.?\d*$/.test(newValue)) {
@@ -437,34 +476,14 @@ const CreateReservationHotel: React.FC = () => {
           />
         </div>
 
-        {/* Depósito USD*/}
-        <div>
-          <label className="block text-sm font-medium text-[#264653] mb-1">
-            Seña USD:
-          </label>
-          <input
-            type="text"
-            value={depositUsd || ""}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              if (/^\d*\.?\d*$/.test(newValue)) {
-                handleDepositChangeUsd(Number(newValue) || 0);
-              }
-            }}
-            inputMode="decimal"
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] focus:outline-none focus:ring-2 focus:ring-[#FF5100]"
-          />
-        </div>
-
         {/* Depósito */}
         <div>
           <label className="block text-sm font-medium text-[#264653] mb-1">
-            Seña:
+            Seña en Divisa:
           </label>
           <input
             type="text"
-            value={deposit || ""}
-            readOnly
+            // value={deposit || ""}
             onChange={(e) => {
               const newValue = e.target.value;
               if (/^\d*\.?\d*$/.test(newValue)) {
@@ -472,7 +491,7 @@ const CreateReservationHotel: React.FC = () => {
               }
             }}
             inputMode="decimal"
-            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653] bg-gray-200"
+            className="border border-[#CD9C8A] rounded-lg w-full px-3 py-2 text-[#264653]"
           />
         </div>
 
