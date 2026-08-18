@@ -1,57 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
-import { useReservationContext } from "@/context/reservationContext";
+import React, { useState } from "react";
 import { Reservation } from "../../Interfaces/IReservation";
-import { fetchGetReservtions } from "../Fetchs/ReservationsFetch/IReservationsFetch";
 
 interface ReservationModalProps {
   selectedDate: string;
+  roomName: string;
+  reservations: Reservation[];
   closeModal: () => void;
 }
 
 const ReservationModal: React.FC<ReservationModalProps> = ({
   selectedDate,
+  roomName,
+  reservations,
   closeModal,
 }) => {
-  // const { reservations } = useReservationContext();
-  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [reservationText, setReservationText] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [savedLocation, setSavedLocation] = useState<string>('')
-
-
-  useEffect(() => {
-    const selectedLocation = localStorage.getItem("selectedLocation");
-    const locationId = selectedLocation ? JSON.parse(selectedLocation).id : null;
-    if (locationId) {
-      setSavedLocation(locationId);
-    } else {
-      setError("No hay ubicación seleccionada");
-    }
-  }, []);
-
-
-  useEffect(() => {
-    const loadOrders = async () => {
-      if (!savedLocation) return;
-
-      try {
-        const data = await fetchGetReservtions(savedLocation);
-        setReservations(data.reservations);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Error desconocido");
-      }
-    };
-
-    loadOrders();
-  }, [savedLocation]);
 
   const reservationsForDay = reservations.filter((res) => {
     const checkIn = res.checkInDate.slice(0, 10);
     return checkIn === selectedDate;
   });
   const reservationsEndForDay = reservations.filter((res) => {
-    console.log(reservations)
     const checkOut = res.checkOutDate.slice(0, 10);
     return checkOut === selectedDate;
   });
@@ -65,7 +35,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
         <h3 className="text-2xl font-semibold text-[#264653] text-center mb-6">
-          Reservas para {selectedDate}
+          {roomName} — {selectedDate}
         </h3>
 
         {reservationsForDay.length === 0 && reservationsEndForDay.length === 0 ? (

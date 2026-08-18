@@ -106,5 +106,8 @@ export class Reservation {
   @Column('integer', { array: true, nullable: true, default: [] })
   @ApiProperty({ description: 'IDs de los pasajeros asociados a la reserva' })
   addPaxIds: Pax[];
+
+  @Column({ type: 'enum', enum: ['dolar', 'peso'], default: 'dolar' })
+  divisa: 'dolar' | 'peso';
   
 }

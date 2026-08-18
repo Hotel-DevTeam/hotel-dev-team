@@ -65,6 +65,7 @@ export interface CreateReservationDto {
   balance: number; // Saldo restante
   balanceUsd: number; // Saldo restante
   completed: boolean; // Indica si la reserva está completada
+  divisa: string; // Indica en que divisa se creó la reserva
   notasAdicionales: string[]; // Detalles extra sobre el pax o la reserva
 }
 

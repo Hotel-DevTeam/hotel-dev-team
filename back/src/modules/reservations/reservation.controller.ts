@@ -19,6 +19,7 @@ import {
 import { ApiTags, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger'; // Importa los decoradores necesarios
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 
 @ApiTags('reservas')
@@ -145,6 +146,46 @@ export class ReservationsController {
     return await this.reservationService.createReservation(
       createReservationDto,
     );
+  }
+
+  @Patch(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'La reserva fue actualizada exitosamente.',
+    type: Reservation,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No se encontró la reserva con el ID proporcionado.',
+  })
+  async updateReservation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateReservationDto: UpdateReservationDto,
+  ) {
+    const updatedReservation = await this.reservationService.updateReservation(
+      id,
+      updateReservationDto,
+    );
+    return {
+      message: 'Reserva actualizada exitosamente',
+      reservation: updatedReservation,
+    };
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'La reserva fue eliminada exitosamente.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No se encontró la reserva con el ID proporcionado.',
+  })
+  async deleteReservation(@Param('id', ParseUUIDPipe) id: string) {
+    await this.reservationService.deleteReservation(id);
+    return { message: 'Reserva eliminada exitosamente' };
   }
 
   @Patch(':id/cancel')
