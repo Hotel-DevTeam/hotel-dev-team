@@ -3,3 +3,8 @@ export enum Status {
   Cancelled = 'cancelled',
   Completed = 'completed',
 }
+
+export enum Divisa {
+  peso = 'peso',
+  dolar = 'dolar',
+}

@@ -9,10 +9,10 @@ import { fetchGetReservtions, fetchGetReservtionsByRoom } from "../Fetchs/Reserv
 import { Reservation, RoomWithReservations } from "@/Interfaces/IReservation";
 
 const Calendar: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<{ date: string; roomId: string } | null>(null);
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [reservations2, setReservations2] = useState<RoomWithReservations>();
+  const [reservations2, setReservations2] = useState<Record<string, RoomWithReservations>>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [savedLocation, setSavedLocation] = useState<string>('')
@@ -46,8 +46,8 @@ const Calendar: React.FC = () => {
       loadOrders();
     }, [savedLocation]);
 
-  const handleDayClick = (day: string) => {
-    setSelectedDate(day); 
+  const handleDayClick = (day: string, roomId: string) => {
+    setSelectedDay({ date: day, roomId });
   };
 
   const handleMonthChange = (direction: string) => {
@@ -58,15 +58,10 @@ const Calendar: React.FC = () => {
     setCurrentMonth(newMonth);
   };
 
-  const getReservationsForDay = (day: string, resArr: Reservation[]) => {
-    return resArr.filter((res) => {
-      const checkIn = res.checkInDate.slice(0, 10);
-      const checkOut = res.checkOutDate.slice(0, 10);
-      return checkIn == day || checkOut == day;
-    });
-  };
-
-  const renderCalendarByRoom = (roomName: string, roomReservations: Reservation[]) => {
+  const renderCalendarByRoom = (roomId: string, roomName: string, roomReservations: Reservation[]) => {
+    const activeReservations = roomReservations.filter(
+      (res) => res.status !== "cancelled"
+    );
     const daysInMonth = currentMonth.daysInMonth();
     const startOfMonth = currentMonth.startOf("month").day();
     const calendarDays = [];
@@ -81,41 +76,35 @@ const Calendar: React.FC = () => {
       calendarDays.push(<div key={`empty-${i + roomName}`} className="w-1/7 h-16"></div>);
     }
 
-    let waitingForEnd = false
     for (let day = 1; day <= daysInMonth; day++) {
       const formattedDay = currentMonth.date(day).format("YYYY-MM-DD");
-      const reservationsForDay = getReservationsForDay(formattedDay, roomReservations);
 
-      let dayColorClass = "";
-      reservationsForDay.forEach((res) => {
+      let dayColorClass = "bg-green-300";
+      let sameDayTurnaround = false;
+
+      activeReservations.forEach((res) => {
         const checkIn = res.checkInDate.slice(0, 10);
         const checkOut = res.checkOutDate.slice(0, 10);
 
-         
-        
-        if (checkIn === formattedDay) {
-            dayColorClass = "bg-yellow-300";
-            waitingForEnd = true
-        } //Primer día
-        if (checkOut === formattedDay) {
-            dayColorClass = "bg-yellow-300";
-            waitingForEnd = false
-        }//último día
-        if (checkOut === formattedDay && checkIn === formattedDay) {
-          dayColorClass = "bg-blue-300";
-        }//mismo día
+        if (checkIn === checkOut && checkIn === formattedDay) {
+          sameDayTurnaround = true;
+          return;
+        }
+
+        if (formattedDay >= checkIn && formattedDay <= checkOut) {
+          dayColorClass = "bg-yellow-300";
+        }
       });
-      if (waitingForEnd && !dayColorClass) {
-        dayColorClass = "bg-yellow-300";
-      } else if(!waitingForEnd && !dayColorClass){
-        dayColorClass = "bg-green-300";
+
+      if (sameDayTurnaround) {
+        dayColorClass = "bg-blue-300";
       }
 
       calendarDays.push(
         <div
           key={day}
           className={`w-1/7 h-16 flex items-center justify-center cursor-pointer ${dayColorClass} border border-gray-300 rounded-md`}
-          onClick={() => handleDayClick(formattedDay)}
+          onClick={() => handleDayClick(formattedDay, roomId)}
         >
           {day}
         </div>
@@ -137,7 +126,7 @@ const Calendar: React.FC = () => {
     }
     const te: React.JSX.Element[][] = []
     Object.entries(reservations2 || {}).forEach(([roomId, roomData]) => {
-      te.push(renderCalendarByRoom(roomData.name, roomData.reservations))
+      te.push(renderCalendarByRoom(roomId, roomData.name, roomData.reservations))
     });
     return te;
   };
@@ -163,10 +152,12 @@ const Calendar: React.FC = () => {
       </div>
       <div className="grid grid-cols-7 gap-2">{renderCalendar()}</div>
 
-      {selectedDate && (
+      {selectedDay && reservations2 && reservations2[selectedDay.roomId] && (
         <ReservationModal
-          selectedDate={selectedDate}
-          closeModal={() => setSelectedDate(null)}
+          selectedDate={selectedDay.date}
+          roomName={reservations2[selectedDay.roomId].name}
+          reservations={reservations2[selectedDay.roomId].reservations}
+          closeModal={() => setSelectedDay(null)}
         />
       )}
     </div>

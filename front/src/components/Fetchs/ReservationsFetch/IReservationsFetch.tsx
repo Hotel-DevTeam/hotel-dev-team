@@ -56,6 +56,50 @@ export const CompleteReservation = async (reservationId: string) => {
 };
 
 
+export const UpdateReservation = async (
+  reservationId: string,
+  data: Partial<{
+    checkInDate: string;
+    checkOutDate: string;
+    priceArg: number;
+    priceUsd: number;
+    depositArg: number;
+    depositUsd: number;
+    balance: number;
+    balanceUsd: number;
+    roomId: string;
+  }>
+) => {
+  const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al modificar la reserva.");
+  }
+
+  return response.json();
+};
+
+export const DeleteReservation = async (reservationId: string) => {
+  const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al eliminar la reserva.");
+  }
+
+  return true;
+};
+
 export const fetchGetReservtions = async (locationId: string) => {
   const response = await fetch(`${apiUrl}/reservations?page=1&limit=50000${locationId ? '&locationId=' + locationId : '&locationId=""'}`, {
     method: "GET",
