@@ -1,10 +1,13 @@
 import { ICaja, ICloseCaja, ICreateCaja } from "@/Interfaces/ICaja";
+import { authHeaders } from "@/helpers/authHeaders";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
     try {
-      const response = await fetch(`${apiUrl}/caja`);
+      const response = await fetch(`${apiUrl}/caja`, {
+        headers: authHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Error al obtener las cajas.');
       }
@@ -14,12 +17,14 @@ export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
         console.error('Error:', err);
         throw new Error('Ocurrió un error inesperado.');
       }
-      
+
   };
-  
+
   export const fetchFindBoxById = async (id: string): Promise<ICaja> => {
     try {
-      const response = await fetch(`${apiUrl}/caja/${id}`);
+      const response = await fetch(`${apiUrl}/caja/${id}`, {
+        headers: authHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Caja no encontrada.');
       }
@@ -29,7 +34,7 @@ export const fetchFindBoxBy = async (): Promise<ICaja[]> => {
       console.error('Error:', err);
       throw new Error('Ocurrió un error inesperado.');
     }
-    
+
   };
 
 
@@ -37,9 +42,9 @@ export const fetchCreateCaja = async (caja: ICreateCaja) => {
   try {
     const response = await fetch(`${apiUrl}/caja`, {
       method: 'POST',
-      headers: {
+      headers: authHeaders({
         'Content-Type': 'application/json',
-      },
+      }),
       body: JSON.stringify(caja),
     });
     return response.json();
@@ -54,9 +59,9 @@ export const fetchUpdateCaja = async (id: string, caja: ICloseCaja) => {
   try {
     const response = await fetch(`${apiUrl}/caja/${id}`, {
       method: 'PUT',
-      headers: {
+      headers: authHeaders({
         'Content-Type': 'application/json',
-      },
+      }),
       body: JSON.stringify(caja),
     });
 

@@ -4,11 +4,18 @@ import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { ProductRepository } from './products.repository';
-import { LocationModule } from '../Location/location.module'; 
+import { LocationModule } from '../Location/location.module';
 import { Location } from '../Location/entities/location.entity';
+import { AuthModule } from '../Auth/auth.module';
+import { UsersModule } from '../Users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, Location]), LocationModule], 
+  imports: [
+    TypeOrmModule.forFeature([Product, Location]),
+    LocationModule,
+    AuthModule,
+    UsersModule,
+  ],
   controllers: [ProductsController],
   providers: [ProductsService, ProductRepository],
   exports: [ProductRepository, ProductsService],

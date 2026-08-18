@@ -1,10 +1,13 @@
 import OrderPage from "../../components/OrderList/OrderList";
+import ProtectedRouteStaff from "@/components/ProtectedRouteStaff";
 
 function Page() {
   return (
-    <div>
-      <OrderPage />
-    </div>
+    <ProtectedRouteStaff>
+      <div>
+        <OrderPage />
+      </div>
+    </ProtectedRouteStaff>
   );
 }
 

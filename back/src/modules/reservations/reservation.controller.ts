@@ -15,15 +15,22 @@ import {
   Req,
   HttpStatus,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger'; // Importa los decoradores necesarios
+import { ApiTags, ApiResponse, ApiQuery, ApiParam, ApiBearerAuth } from '@nestjs/swagger'; // Importa los decoradores necesarios
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
+import { AuthGuard } from '../Auth/guards/auth.guard';
+import { RolesGuard } from '../Auth/guards/roles.guard';
+import { Roles } from '../Decorators/roles.decorator';
+import { Role } from '../Users/roles.enum';
 
 @ApiTags('reservas')
 @Controller('reservations')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
 export class ReservationsController {
   constructor(private readonly reservationService: ReservationService) {}
 
@@ -174,6 +181,7 @@ export class ReservationsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,

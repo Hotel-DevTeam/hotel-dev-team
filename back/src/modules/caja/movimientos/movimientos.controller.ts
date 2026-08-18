@@ -6,14 +6,21 @@ import {
   Param,
   Delete,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { MovimientosService } from './movimientos.service';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Movimiento } from './entities/movimiento.entity';
+import { AuthGuard } from '../../Auth/guards/auth.guard';
+import { RolesGuard } from '../../Auth/guards/roles.guard';
+import { Roles } from '../../Decorators/roles.decorator';
+import { Role } from '../../Users/roles.enum';
 
 @ApiTags('movimientos')
 @Controller('movimientos')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
 export class MovimientosController {
   constructor(private readonly movimientosService: MovimientosService) {}
 
@@ -44,6 +51,7 @@ export class MovimientosController {
   }
 
   @ApiOperation({ summary: 'Eliminar un movimiento' })
+  @Roles(Role.Admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.movimientosService.remove(id);

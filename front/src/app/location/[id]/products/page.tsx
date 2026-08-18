@@ -5,8 +5,17 @@ import { useParams } from "next/navigation";
 import { IProduct } from "@/Interfaces/IUser";
 import CardProduct from "@/components/Products/cardProduct";
 import { useProducts } from "@/components/Products/useProduct";
+import ProtectedRouteStaff from "@/components/ProtectedRouteStaff";
 
 export default function LocationProducts() {
+  return (
+    <ProtectedRouteStaff>
+      <LocationProductsView />
+    </ProtectedRouteStaff>
+  );
+}
+
+function LocationProductsView() {
   const { products, loading, toggleProductStatus, handleEditSubmit } =
     useProducts(); // Aquí ya tienes handleEditSubmit
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);

@@ -159,6 +159,28 @@ export class ReservationService {
       where: { name: createReservationDto.roomType.name},
     });
 
+    if (room) {
+      const overlapping = await this.reservationsRepository
+        .createQueryBuilder('reservation')
+        .where('reservation.roomId = :roomId', { roomId: room.id })
+        .andWhere('reservation.status != :cancelled', {
+          cancelled: Status.Cancelled,
+        })
+        .andWhere('reservation.checkInDate < :checkOutDate', {
+          checkOutDate: createReservationDto.checkOutDate,
+        })
+        .andWhere('reservation.checkOutDate > :checkInDate', {
+          checkInDate: createReservationDto.checkInDate,
+        })
+        .getOne();
+
+      if (overlapping) {
+        throw new BadRequestException(
+          'La habitación ya tiene una reserva activa que se superpone con esas fechas',
+        );
+      }
+    }
+
     //if (!visitor) {
     let visitor = this.paxRepository.create({
       name: createReservationDto.pax.name,
