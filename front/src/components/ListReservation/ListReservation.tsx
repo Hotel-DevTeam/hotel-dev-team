@@ -6,8 +6,9 @@ import Swal from "sweetalert2";
 import { useReservationContext } from "../../context/reservationContext";
 import { Reservation } from "../../Interfaces/IReservation";
 import ShowReservationModal from "./ShowReservation";
+import EditReservationModal from "./EditReservationModal";
 import CurrencyForm from "../DollarComponents/DollarReservation"; // Importamos el nuevo formulario
-import { fetchGetReservtions, CancelReservation, CompleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
+import { fetchGetReservtions, CancelReservation, CompleteReservation, DeleteReservation } from "../Fetchs/ReservationsFetch/IReservationsFetch";
 import { log } from "node:console";
 
 const ReservationsList: React.FC = () => {
@@ -18,6 +19,7 @@ const ReservationsList: React.FC = () => {
   >("all");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [selectedReservation, setSelectedReservation] = useState<string>("");
+  const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [showPriceForm, setShowPriceForm] = useState<null | string>(null); // Estado para mostrar el formulario
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -115,6 +117,34 @@ const ReservationsList: React.FC = () => {
     });
   };
 
+  const handleDeleteReservation = (reservation: Reservation) => {
+    Swal.fire({
+      title: "¿Eliminar esta reserva?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#FF5100",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        DeleteReservation(reservation.id)
+          .then(() => {
+            Swal.fire("Eliminada", "La reserva ha sido eliminada.", "success");
+            window.location.reload();
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error",
+              error instanceof Error ? error.message : "No se pudo eliminar la reserva.",
+              "error"
+            );
+          });
+      }
+    });
+  };
+
   const handlePriceChange = async (reservation: Reservation) => {
     const dollarRate = await fetch("/api/get-dollar-rate").then((res) =>
       res.json()
@@ -204,21 +234,21 @@ const ReservationsList: React.FC = () => {
           let cardClass =
             "bg-white p-6 rounded-lg shadow-lg border border-gray-200";
           let buttonClass =
-            "bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 hover:text-white";
+            "bg-orange-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-orange-600 hover:text-white";
           let completeButtonClass =
-            "bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 hover:text-white";
+            "bg-orange-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-orange-600 hover:text-white";
 
           if (reservation.status === "completed") {
             cardClass =
               "bg-green-50 p-6 rounded-lg shadow-lg border border-green-200";
             buttonClass =
-              "bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 hover:text-white";
+              "bg-green-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-green-600 hover:text-white";
             completeButtonClass = "invisible";
           } else if (reservation.status === "cancelled") {
             cardClass =
               "bg-red-50 p-6 rounded-lg shadow-lg border border-red-200";
             buttonClass =
-              "bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:text-white";
+              "bg-red-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-red-600 hover:text-white";
             completeButtonClass = "invisible";
           }
 
@@ -248,7 +278,7 @@ const ReservationsList: React.FC = () => {
                   )}
               </div>
 
-              <div className="flex gap-4 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
                 {/*<button
                   className={buttonClass}
                   onClick={() => togglePriceForm(reservation.id)}
@@ -274,6 +304,20 @@ const ReservationsList: React.FC = () => {
                   onClick={() => CancelReservation(reservation.id).then(()=>window.location.reload())}
                 >
                   Cancelar
+                </button>
+
+                <button
+                  className={buttonClass}
+                  onClick={() => setEditingReservation(reservation)}
+                >
+                  Editar
+                </button>
+
+                <button
+                  className="bg-red-600 text-white px-3 py-1.5 text-sm rounded-md hover:bg-red-700 hover:text-white"
+                  onClick={() => handleDeleteReservation(reservation)}
+                >
+                  Eliminar
                 </button>
               </div>
             </div>
@@ -305,6 +349,14 @@ const ReservationsList: React.FC = () => {
                 closeModal={() => setSelectedReservation("")}
               />
             )}
+
+      {editingReservation && (
+        <EditReservationModal
+          reservation={editingReservation}
+          closeModal={() => setEditingReservation(null)}
+          onSaved={() => window.location.reload()}
+        />
+      )}
     </div>
   );
 };

@@ -26,14 +26,40 @@ export class SeedService {
     const locationsData = JSON.parse(
       fs.readFileSync(path.join(__dirname, 'locations.json'), 'utf-8'),
     );
-    await this.locationRepository.save(locationsData);
+    for (const { adminId, ...location } of locationsData) {
+      const saved = await this.locationRepository.save({
+        ...location,
+        admin: { id: adminId },
+      });
+      const [{ count }] = await this.locationRepository.query(
+        'SELECT COUNT(*) FROM user_locations WHERE "userId" = $1 AND "locationId" = $2',
+        [adminId, saved.id],
+      );
+      if (Number(count) === 0) {
+        await this.locationRepository
+          .createQueryBuilder()
+          .relation(Location, 'usersWithAccess')
+          .of(saved)
+          .add(adminId);
+      }
+    }
   }
 
   async seedRooms() {
     const roomsData = JSON.parse(
       fs.readFileSync(path.join(__dirname, 'rooms.json'), 'utf-8'),
     );
-    await this.roomRepository.save(roomsData);
+    for (const { locationId, ...room } of roomsData) {
+      const exists = await this.roomRepository.findOne({
+        where: { number: room.number, location: { id: locationId } },
+      });
+      if (!exists) {
+        await this.roomRepository.save({
+          ...room,
+          location: { id: locationId },
+        });
+      }
+    }
   }
 
   async run() {

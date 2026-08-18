@@ -16,7 +16,7 @@ export class UserSeedService {
     const defaultUser = {
       name: 'Angelina Admin',
       email: 'admin@example.com',
-      password: await hash('password123', 10),
+      password: await hash('Admin123$', 10),
       role: Role.Admin,
       id: '61672613-e397-420b-92d2-c1fb788be64d',
     };

@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Room } from 'src/modules/Rooms/entities/rooms.entity';
@@ -202,6 +203,41 @@ export class ReservationService {
     });
     let res = await this.reservationsRepository.save(reservation);
     return res
+  }
+
+  async updateReservation(id: string, data: UpdateReservationDto) {
+    const reservation = await this.reservationsRepository.findOne({
+      where: { id },
+    });
+    if (!reservation) {
+      throw new NotFoundException('Reserva no encontrada');
+    }
+
+    const { roomId, ...rest } = data;
+
+    if (roomId) {
+      const newRoom = await this.roomRepository.findOne({
+        where: { id: roomId },
+      });
+      if (!newRoom) {
+        throw new NotFoundException('Habitación no encontrada');
+      }
+      reservation.room = newRoom;
+    }
+
+    Object.assign(reservation, rest);
+    return await this.reservationsRepository.save(reservation);
+  }
+
+  async deleteReservation(id: string) {
+    const reservation = await this.reservationsRepository.findOne({
+      where: { id },
+    });
+    if (!reservation) {
+      throw new NotFoundException('Reserva no encontrada');
+    }
+
+    await this.reservationsRepository.remove(reservation);
   }
 
   async cancelReservation(id: string) {
