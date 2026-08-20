@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
         throw new ForbiddenException('User does not have a valid role');
       }
 
-      const user = await this.usersService.findOneById(payload.sub);
+      const user = await this.usersService.findOneById(payload.id);
       if (!user) {
         throw new UnauthorizedException('User not found');
       }

@@ -1,15 +1,16 @@
 import { ISalesOrderLines } from "@/Interfaces/IOrders";
 import { ISalesOrders } from "@/Interfaces/IOrders";
+import { authHeaders } from "@/helpers/authHeaders";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const createSalesOrder = async (data: ISalesOrders) => {
   const response = await fetch(`${apiUrl}/salesOrders`, {
     method: "POST",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data), 
+    }),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
@@ -18,16 +19,16 @@ export const createSalesOrder = async (data: ISalesOrders) => {
     );
   }
 
-  return response.json(); 
+  return response.json();
 };
 export const createSalesOrderLine = async (data: ISalesOrderLines) => {
-  console.log("Datos que se envían al backend:", JSON.stringify(data)); 
+  console.log("Datos que se envían al backend:", JSON.stringify(data));
   try {
     const response = await fetch(`${apiUrl}/salesOrderLines`, {
       method: "POST",
-      headers: {
+      headers: authHeaders({
         "Content-Type": "application/json",
-      },
+      }),
       body: JSON.stringify(data),
     });
 
@@ -50,9 +51,9 @@ export const createSalesOrderLine = async (data: ISalesOrderLines) => {
 export const fetchGetOrders = async () => {
   const response = await fetch(`${apiUrl}/salesOrders`, {
     method: "GET",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {

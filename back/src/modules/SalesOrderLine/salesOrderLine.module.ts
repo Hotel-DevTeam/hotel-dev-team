@@ -4,9 +4,16 @@ import { SalesOrderLineService } from './salesOrderLine.service';
 import { SalesOrderLineController } from './salesOrderLine.controller';
 import { SalesOrderLineRepository } from './salesOrderLine.repository';
 import { SalesOrderLine } from './entities/salesOrderLine.entity';
+import { Product } from '../products/entities/product.entity';
+import { AuthModule } from '../Auth/auth.module';
+import { UsersModule } from '../Users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SalesOrderLine])],
+  imports: [
+    TypeOrmModule.forFeature([SalesOrderLine, Product]),
+    AuthModule,
+    UsersModule,
+  ],
   providers: [SalesOrderLineService, SalesOrderLineRepository],
   controllers: [SalesOrderLineController],
   exports: [SalesOrderLineRepository], 

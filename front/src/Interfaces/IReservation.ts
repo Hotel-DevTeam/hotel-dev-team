@@ -1,7 +1,7 @@
 import { Pax } from "./IPax";
  
 export interface Room {
-  id: number;
+  id: string;
   roomNumber: string;
   name: string;
   description: string;
