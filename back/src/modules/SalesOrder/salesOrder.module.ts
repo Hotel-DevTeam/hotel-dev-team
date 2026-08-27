@@ -13,6 +13,7 @@ import { UsersModule } from '../Users/users.module';
 import { LocationModule } from '../Location/location.module'; 
 import { UsersRepository } from '../Users/users.repository';
 import { Users } from '../Users/entities/users.entity';
+import { AuthModule } from '../Auth/auth.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { Users } from '../Users/entities/users.entity';
     SalesOrderLineModule,
     ProductsModule,
     UsersModule,
-    LocationModule, 
+    LocationModule,
+    AuthModule,
   ],
   providers: [
     SalesOrderService,

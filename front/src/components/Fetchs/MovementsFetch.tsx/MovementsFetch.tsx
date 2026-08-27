@@ -1,15 +1,16 @@
 import { ICreateMovement } from "@/Interfaces/IMovements";
+import { authHeaders } from "@/helpers/authHeaders";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const crearMovimiento = async (movimiento: ICreateMovement) => {
-   
+
       try {
       const response = await fetch(`${apiUrl}/movimientos`, {
         method: 'POST',
-        headers: {
+        headers: authHeaders({
           'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify(movimiento),
       });
   
@@ -29,9 +30,9 @@ export const crearMovimiento = async (movimiento: ICreateMovement) => {
 export const fetchCashMovements = async (locationId:string) => {
   const response = await fetch(`${apiUrl}/movimientos/${locationId}`, {
     method: "GET",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {

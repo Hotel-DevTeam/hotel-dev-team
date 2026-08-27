@@ -1,10 +1,13 @@
 import CreateReservationHotel from "../../components/formReservation/CreateReservationHotel";
+import ProtectedRouteStaff from "@/components/ProtectedRouteStaff";
 
 function Page() {
   return (
-    <div>
-      <CreateReservationHotel />
-    </div>
+    <ProtectedRouteStaff>
+      <div>
+        <CreateReservationHotel />
+      </div>
+    </ProtectedRouteStaff>
   );
 }
 

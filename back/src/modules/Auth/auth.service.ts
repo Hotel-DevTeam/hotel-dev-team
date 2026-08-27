@@ -69,22 +69,20 @@ export class AuthService {
   }
 
   async signUp(user: Partial<Users>) {
-    const { email, password, role, locations: locationIds = [] } = user;
+    const { email, password, locations: locationIds = [] } = user;
 
     const foundUser = await this.userRepository.getUserByEmail(email);
     if (foundUser) throw new BadRequestException('Registered Email');
 
-    if (!Object.values(Role).includes(role as Role)) {
-      throw new BadRequestException(
-        'Invalid role. Allowed roles are: admin, receptionist, employee',
-      );
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const locations = await this.locationRepository.findByIds(locationIds);
 
+    // El alta pública nunca puede auto-asignarse un rol: se fuerza siempre
+    // al de menor privilegio. Roles superiores solo los asigna un admin
+    // autenticado desde POST/PUT /users.
     const newUser = await this.userRepository.createUser({
       ...user,
+      role: Role.Emplo,
       password: hashedPassword,
       locations: locations
     });

@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { CajaService } from './caja.service';
 import { CreateCajaDto } from './dto/create-caja.dto';
 import { UpdateCajaDto } from './dto/update-caja.dto';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '../../Auth/guards/auth.guard';
+import { RolesGuard } from '../../Auth/guards/roles.guard';
 
 @ApiTags('caja')
 @Controller('caja')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
 export class CajaController {
   constructor(private readonly cajaService: CajaService) {}
 

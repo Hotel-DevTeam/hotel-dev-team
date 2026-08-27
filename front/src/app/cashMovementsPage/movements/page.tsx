@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocationContext } from "@/context/LocationContext";
 import { fetchCashMovements } from "@/components/Fetchs/MovementsFetch.tsx/MovementsFetch";
 import { IMovimientoCaja } from "@/Interfaces/IMovements";
+import ProtectedRouteStaff from "@/components/ProtectedRouteStaff";
 
 const Movements: React.FC = () => {
   const [movimientosCaja, setMovimientosCaja] = useState<IMovimientoCaja[]>([]);
@@ -64,6 +65,7 @@ const Movements: React.FC = () => {
   };
 
   return (
+    <ProtectedRouteStaff>
     <div className="bg-gradient-to-r font-sans min-h-screen">
     <div className="flex justify-center items-center space-x-2 my-16">
       <h1 className="text-4xl font-bold text-gray-800 tracking-wide">
@@ -172,6 +174,7 @@ const Movements: React.FC = () => {
         <p className="text-center text-xl text-gray-500">No hay movimientos de caja disponibles.</p>
       )}
     </div>
+    </ProtectedRouteStaff>
   );
 };
 

@@ -1,10 +1,21 @@
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ path: '.env.development' });
+
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SeedService } from './seeds/seed.service'; // Importa el SeedService
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Activa las validaciones de class-validator declaradas en los DTOs
+  // (antes eran solo metadata para Swagger y nunca se ejecutaban).
+  // Sin whitelist/forbidNonWhitelisted por ahora: varios DTOs tienen
+  // objetos anidados (pax, roomType, ubicacion) sin @Type()/@ValidateNested(),
+  // y activar esas opciones los rechazaría o vaciaría en runtime.
+  app.useGlobalPipes(new ValidationPipe());
 
   // Habilitar CORS con la configuración adecuada
   app.enableCors({

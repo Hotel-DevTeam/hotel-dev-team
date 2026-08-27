@@ -1,14 +1,15 @@
 import { CreateReservationDto } from "@/Interfaces/IReservation";
+import { authHeaders } from "@/helpers/authHeaders";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const CreateReservation = async (data: CreateReservationDto) => {
   const response = await fetch(`${apiUrl}/reservations`, {
     method: "POST",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data), 
+    }),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
@@ -24,9 +25,9 @@ export const CreateReservation = async (data: CreateReservationDto) => {
 export const CancelReservation = async (reservationId: string) => {
   const response = await fetch(`${apiUrl}/reservations/${reservationId}/cancel`, {
     method: "PATCH",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    }
+    }),
   });
 
   if (!response.ok) {
@@ -35,15 +36,15 @@ export const CancelReservation = async (reservationId: string) => {
     );
   }
 
-  return true; 
+  return true;
 };
 
 export const CompleteReservation = async (reservationId: string) => {
   const response = await fetch(`${apiUrl}/reservations/${reservationId}/complete`, {
     method: "PATCH",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    }
+    }),
   });
 
   if (!response.ok) {
@@ -72,9 +73,9 @@ export const UpdateReservation = async (
 ) => {
   const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
     method: "PATCH",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
     body: JSON.stringify(data),
   });
 
@@ -88,9 +89,9 @@ export const UpdateReservation = async (
 export const DeleteReservation = async (reservationId: string) => {
   const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
     method: "DELETE",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {
@@ -103,9 +104,9 @@ export const DeleteReservation = async (reservationId: string) => {
 export const fetchGetReservtions = async (locationId: string) => {
   const response = await fetch(`${apiUrl}/reservations?page=1&limit=50000${locationId ? '&locationId=' + locationId : '&locationId=""'}`, {
     method: "GET",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {
@@ -118,9 +119,9 @@ export const fetchGetReservtions = async (locationId: string) => {
 export const fetchGetReservtionById = async (reservationId: string) => {
   const response = await fetch(`${apiUrl}/reservations/${reservationId}`, {
     method: "GET",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {
@@ -133,9 +134,9 @@ export const fetchGetReservtionById = async (reservationId: string) => {
 export const fetchGetReservtionsByRoom = async (locationId: string) => {
   const response = await fetch(`${apiUrl}/reservations/byRoom?locationId=${locationId}`, {
     method: "GET",
-    headers: {
+    headers: authHeaders({
       "Content-Type": "application/json",
-    },
+    }),
   });
 
   if (!response.ok) {

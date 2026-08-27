@@ -1,10 +1,13 @@
 import ListReservation from "@/components/ListReservation/ListReservation";
+import ProtectedRouteStaff from "@/components/ProtectedRouteStaff";
 
 function Page() {
   return (
-    <div>
-      <ListReservation />
-    </div>
+    <ProtectedRouteStaff>
+      <div>
+        <ListReservation />
+      </div>
+    </ProtectedRouteStaff>
   );
 }
 

@@ -105,11 +105,41 @@ const CreateReservationHotel: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!roomId) {
+      Swal.fire("Falta la habitación", "Seleccioná una habitación antes de continuar.", "warning");
+      return;
+    }
+    if (!checkInDate || !checkOutDate) {
+      Swal.fire("Faltan fechas", "Completá la fecha de check-in y check-out.", "warning");
+      return;
+    }
+    if (checkOutDate <= checkInDate) {
+      Swal.fire("Fechas inválidas", "La fecha de check-out debe ser posterior a la de check-in.", "warning");
+      return;
+    }
+    if (!divisa) {
+      Swal.fire("Falta la divisa", "Seleccioná en qué divisa se cobra la reserva.", "warning");
+      return;
+    }
+    if (!name.trim() || !lastname.trim() || !identification.trim()) {
+      Swal.fire("Faltan datos del pasajero", "Completá nombre, apellido y DNI/Pasaporte.", "warning");
+      return;
+    }
+
     const selectedLocation = JSON.parse(localStorage.getItem("selectedLocation") || '');
 
-    // const locationInfo = await fetchGetLocation(selectedLocation.id, token || '')
-    const roomsData = await fetchGetRoomById(roomId || '', token || '');
-    
+    let roomsData;
+    try {
+      roomsData = await fetchGetRoomById(roomId, token || '');
+    } catch (error) {
+      Swal.fire("Error", "No se pudo obtener la habitación seleccionada.", "error");
+      return;
+    }
+    if (!roomsData || !roomsData[0]) {
+      Swal.fire("Error", "La habitación seleccionada ya no está disponible.", "error");
+      return;
+    }
+
     const newReservation = {
       checkIn: false,
       checkInDate,
@@ -144,7 +174,16 @@ const CreateReservationHotel: React.FC = () => {
       addPax: additionalSections
     };
 
-    // addReservation(newReservation);
+    try {
+      await CreateReservation(newReservation);
+    } catch (error) {
+      Swal.fire(
+        "Error al crear la reserva",
+        error instanceof Error ? error.message : "No se pudo crear la reserva. Intentá de nuevo.",
+        "error"
+      );
+      return;
+    }
 
     Swal.fire({
       title: "Reserva creada",
@@ -154,7 +193,6 @@ const CreateReservationHotel: React.FC = () => {
       confirmButtonText: "Aceptar",
     });
 
-    CreateReservation(newReservation)
     setCheckInDate("");
     setCheckOutDate("");
     setRoomId(null);
@@ -177,6 +215,7 @@ const CreateReservationHotel: React.FC = () => {
     setComments("");
     setArrival("");
     setTotalPrice(0);
+    setDivisa("");
     setAdditionalSections([]);
   };
 
@@ -214,7 +253,7 @@ const CreateReservationHotel: React.FC = () => {
   
       fetchRate();
       loadRooms();
-    }, [location]);
+    }, [location, token]);
 
   return (
     <form
